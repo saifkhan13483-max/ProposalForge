@@ -11,7 +11,7 @@ const demoUsage = new Map<string, string>()
 router.get('/proposal/:token', async (req, res) => {
   try {
     const result = await query(
-      `SELECT p.*, u.business_name, u.logo_url, u.accent_color, u.plan,
+      `SELECT p.*, u.business_name, u.logo_url, u.accent_color, u.plan, u.font_family,
         (SELECT json_agg(json_build_object('description', description, 'quantity', quantity, 'unit_price', unit_price) ORDER BY sort_order) 
          FROM quote_line_items WHERE proposal_id = p.id) as line_items
        FROM proposals p
@@ -111,7 +111,13 @@ router.post('/proposal/:token/accept', async (req, res) => {
     const p = proposalFull.rows[0]
     const lineItemsResult = await query('SELECT * FROM quote_line_items WHERE proposal_id = $1 ORDER BY sort_order', [proposal.id])
 
-    const invoiceNumber = `INV-${Date.now().toString().slice(-6)}`
+    const [invCountResult, invUserResult] = await Promise.all([
+      query('SELECT COUNT(*) as count FROM invoices WHERE user_id = $1', [proposal.user_id]),
+      query('SELECT invoice_prefix FROM users WHERE id = $1', [proposal.user_id]),
+    ])
+    const invCount = parseInt(invCountResult.rows[0].count) + 1
+    const invPrefix = invUserResult.rows[0]?.invoice_prefix || 'INV'
+    const invoiceNumber = `${invPrefix}-${String(invCount).padStart(4, '0')}`
     const lineItems = lineItemsResult.rows.map(i => ({
       description: i.description,
       quantity: parseFloat(i.quantity),
@@ -180,6 +186,53 @@ router.post('/proposal/:token/comment', async (req, res) => {
   } catch (err) {
     console.error('Comment error:', err)
     res.status(500).json({ error: 'Failed to add comment' })
+  }
+})
+
+// Decline proposal
+router.post('/proposal/:token/decline', async (req, res) => {
+  try {
+    const { reason } = req.body
+
+    const result = await query(
+      `SELECT p.id, p.status, p.user_id, p.title, p.client_name,
+        u.email as owner_email, u.business_name
+       FROM proposals p JOIN users u ON u.id = p.user_id
+       WHERE p.accept_token = $1`,
+      [req.params.token]
+    )
+    if (result.rows.length === 0) return res.status(404).json({ error: 'Proposal not found' })
+    const proposal = result.rows[0]
+    if (proposal.status === 'accepted') return res.status(409).json({ error: 'Proposal already accepted' })
+    if (proposal.status === 'declined') return res.status(409).json({ error: 'Proposal already declined' })
+
+    await query(
+      'UPDATE proposals SET status = $1, updated_at = NOW() WHERE id = $2',
+      ['declined', proposal.id]
+    )
+
+    await query(
+      'INSERT INTO acceptance_events (proposal_id, event_type, comment, ip_address) VALUES ($1, $2, $3, $4)',
+      [proposal.id, 'declined', reason || null, req.ip]
+    )
+
+    const baseUrl = process.env.REPLIT_DOMAINS
+      ? `https://${process.env.REPLIT_DOMAINS.split(',')[0]}`
+      : 'http://localhost:5000'
+
+    sendFreelancerEmail(
+      proposal.owner_email,
+      `Proposal declined: ${proposal.title}`,
+      `<h2>Your proposal was declined.</h2>
+       <p><strong>${proposal.client_name || 'Your client'}</strong> has declined your proposal: <strong>${proposal.title}</strong>.</p>
+       ${reason ? `<p>Reason: <em>${reason}</em></p>` : ''}
+       <a href="${baseUrl}/proposals" style="background:#6366f1;color:white;padding:12px 24px;border-radius:6px;text-decoration:none;display:inline-block;margin-top:16px;">View Proposals</a>`
+    )
+
+    res.json({ success: true })
+  } catch (err) {
+    console.error('Decline proposal error:', err)
+    res.status(500).json({ error: 'Failed to decline proposal' })
   }
 })
 

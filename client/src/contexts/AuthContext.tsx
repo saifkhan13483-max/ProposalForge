@@ -10,6 +10,8 @@ interface User {
   accent_color: string
   default_currency: string
   proposals_this_month: number
+  invoice_prefix: string
+  font_family: string
 }
 
 interface AuthContextType {

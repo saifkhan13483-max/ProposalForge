@@ -46,6 +46,7 @@ export function Invoices() {
   const [invoices, setInvoices] = useState<Invoice[]>([])
   const [loading, setLoading] = useState(true)
   const [statusFilter, setStatusFilter] = useState('all')
+  const [search, setSearch] = useState('')
   const [showNew, setShowNew] = useState(false)
   const [form, setForm] = useState<NewInvoiceForm>({ clientName: '', clientEmail: '', dueDate: '', notes: '' })
   const [saving, setSaving] = useState(false)
@@ -56,6 +57,7 @@ export function Invoices() {
     try {
       const params = new URLSearchParams()
       if (statusFilter !== 'all') params.set('status', statusFilter)
+      if (search) params.set('search', search)
       const data = await api.get<{ invoices: Invoice[] }>(`/invoices?${params}`)
       setInvoices(data.invoices)
     } catch {
@@ -65,7 +67,7 @@ export function Invoices() {
     }
   }
 
-  useEffect(() => { load() }, [statusFilter])
+  useEffect(() => { load() }, [statusFilter, search])
 
   async function createInvoice() {
     setSaving(true)
@@ -128,10 +130,20 @@ export function Invoices() {
         </Button>
       </div>
 
-      {/* Filter */}
-      <div className="flex gap-3">
+      {/* Filters */}
+      <div className="flex flex-col sm:flex-row gap-3">
+        <div className="relative flex-1">
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+          <Input
+            placeholder="Search by client or invoice number..."
+            value={search}
+            onChange={e => setSearch(e.target.value)}
+            className="pl-9"
+            data-testid="input-search-invoices"
+          />
+        </div>
         <Select value={statusFilter} onValueChange={setStatusFilter}>
-          <SelectTrigger className="w-40">
+          <SelectTrigger className="w-full sm:w-40">
             <SelectValue />
           </SelectTrigger>
           <SelectContent>

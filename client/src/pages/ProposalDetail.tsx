@@ -15,7 +15,7 @@ import { useToast } from '@/hooks/use-toast'
 import { cn } from '@/lib/utils'
 import {
   ArrowLeft, Sparkles, Send, Loader2, Plus, Trash2, RotateCw,
-  RefreshCw, Save, ExternalLink, Copy, CheckCircle, Download, MessageSquare, Clock
+  RefreshCw, Save, ExternalLink, Copy, CheckCircle, Download, MessageSquare, Clock, Eye
 } from 'lucide-react'
 import { useEditor, EditorContent } from '@tiptap/react'
 import StarterKit from '@tiptap/starter-kit'
@@ -35,6 +35,7 @@ interface Proposal {
   accept_token: string
   accepted_at: string
   sent_at: string
+  viewed_at: string
 }
 
 interface LineItem {
@@ -62,6 +63,8 @@ export function ProposalDetail() {
   const [sentUrl, setSentUrl] = useState('')
   const [activeTab, setActiveTab] = useState('intake')
   const [regeneratingSection, setRegeneratingSection] = useState<string | null>(null)
+  const [regenerateInstructions, setRegenerateInstructions] = useState('')
+  const [showRegenerateDialog, setShowRegenerateDialog] = useState<string | null>(null)
   const [comments, setComments] = useState<{ id: string; comment: string; commenter_name: string | null; created_at: string }[]>([])
 
   const [form, setForm] = useState({
@@ -186,11 +189,13 @@ export function ProposalDetail() {
     }
   }
 
-  async function regenerateSection(section: string) {
+  async function regenerateSection(section: string, instructions?: string) {
     if (!proposal) return
     setRegeneratingSection(section)
+    setShowRegenerateDialog(null)
+    setRegenerateInstructions('')
     try {
-      const data = await api.post<{ content: Record<string, unknown> }>(`/proposals/${proposal.id}/regenerate-section`, { section })
+      const data = await api.post<{ content: Record<string, unknown> }>(`/proposals/${proposal.id}/regenerate-section`, { section, instructions: instructions || undefined })
       if (section === 'executiveSummary') executiveSummaryEditor?.commands.setContent((data.content.executiveSummary as string) || '')
       if (section === 'scopeOfWork') scopeEditor?.commands.setContent((data.content.scopeOfWork as string) || '')
       if (section === 'terms') termsEditor?.commands.setContent((data.content.terms as string) || '')
@@ -278,9 +283,26 @@ export function ProposalDetail() {
               {proposal.status}
             </span>
           </div>
-          {proposal.client_name && (
-            <p className="text-sm text-muted-foreground mt-0.5">{proposal.client_name}</p>
-          )}
+          <div className="flex items-center gap-3 flex-wrap mt-0.5">
+            {proposal.client_name && (
+              <p className="text-sm text-muted-foreground">{proposal.client_name}</p>
+            )}
+            {proposal.sent_at && (
+              <span className="text-xs text-muted-foreground flex items-center gap-1">
+                <Send className="h-3 w-3" /> Sent {new Date(proposal.sent_at).toLocaleDateString()}
+              </span>
+            )}
+            {proposal.viewed_at && (
+              <span className="text-xs text-blue-600 flex items-center gap-1">
+                <Eye className="h-3 w-3" /> Viewed {new Date(proposal.viewed_at).toLocaleDateString()}
+              </span>
+            )}
+            {proposal.accepted_at && (
+              <span className="text-xs text-green-600 flex items-center gap-1">
+                <CheckCircle className="h-3 w-3" /> Accepted {new Date(proposal.accepted_at).toLocaleDateString()}
+              </span>
+            )}
+          </div>
         </div>
         <div className="flex items-center gap-2 shrink-0 flex-wrap">
           {proposal.status === 'draft' && (
@@ -429,7 +451,7 @@ export function ProposalDetail() {
                     <Button
                       variant="ghost"
                       size="sm"
-                      onClick={() => regenerateSection(key)}
+                      onClick={() => setShowRegenerateDialog(key)}
                       disabled={regeneratingSection === key}
                       className="gap-1.5 text-xs"
                       data-testid={`button-regenerate-${key}`}
@@ -575,6 +597,42 @@ export function ProposalDetail() {
           </CardContent>
         </Card>
       )}
+
+      {/* Regenerate with instructions dialog */}
+      <Dialog open={!!showRegenerateDialog} onOpenChange={(open) => { if (!open) { setShowRegenerateDialog(null); setRegenerateInstructions('') } }}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Regenerate Section</DialogTitle>
+            <DialogDescription>
+              Optionally provide instructions to guide the AI when regenerating this section.
+            </DialogDescription>
+          </DialogHeader>
+          <div className="space-y-3 py-2">
+            <div className="space-y-2">
+              <Label>Instructions (optional)</Label>
+              <Textarea
+                placeholder="Make it more concise, focus on mobile development, use a more formal tone..."
+                value={regenerateInstructions}
+                onChange={e => setRegenerateInstructions(e.target.value)}
+                className="min-h-[80px]"
+                data-testid="textarea-regenerate-instructions"
+              />
+            </div>
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => { setShowRegenerateDialog(null); setRegenerateInstructions('') }}>Cancel</Button>
+            <Button
+              onClick={() => showRegenerateDialog && regenerateSection(showRegenerateDialog, regenerateInstructions)}
+              disabled={!!regeneratingSection}
+              className="gap-2"
+              data-testid="button-confirm-regenerate"
+            >
+              {regeneratingSection ? <Loader2 className="h-4 w-4 animate-spin" /> : <RotateCw className="h-4 w-4" />}
+              Regenerate
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
 
       {/* Send dialog */}
       <Dialog open={showSendDialog} onOpenChange={setShowSendDialog}>

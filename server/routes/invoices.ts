@@ -6,21 +6,23 @@ const router = Router()
 router.use(requireAuth)
 
 async function getNextInvoiceNumber(userId: string): Promise<string> {
-  const result = await query(
-    'SELECT COUNT(*) as count FROM invoices WHERE user_id = $1',
-    [userId]
-  )
-  const count = parseInt(result.rows[0].count) + 1
-  return `INV-${String(count).padStart(4, '0')}`
+  const [countResult, userResult] = await Promise.all([
+    query('SELECT COUNT(*) as count FROM invoices WHERE user_id = $1', [userId]),
+    query('SELECT invoice_prefix FROM users WHERE id = $1', [userId]),
+  ])
+  const count = parseInt(countResult.rows[0].count) + 1
+  const prefix = userResult.rows[0]?.invoice_prefix || 'INV'
+  return `${prefix}-${String(count).padStart(4, '0')}`
 }
 
 // List invoices
 router.get('/', async (req: AuthRequest, res) => {
   try {
-    const { status } = req.query
+    const { status, search } = req.query
     let sql = 'SELECT * FROM invoices WHERE user_id = $1'
     const params: unknown[] = [req.userId]
-    if (status) { sql += ` AND status = $${params.length + 1}`; params.push(status) }
+    if (status && status !== 'all') { sql += ` AND status = $${params.length + 1}`; params.push(status) }
+    if (search) { sql += ` AND (client_name ILIKE $${params.length + 1} OR invoice_number ILIKE $${params.length + 1})`; params.push(`%${search}%`) }
     sql += ' ORDER BY created_at DESC'
     const result = await query(sql, params)
     res.json({ invoices: result.rows })

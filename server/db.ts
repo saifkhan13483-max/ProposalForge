@@ -137,5 +137,7 @@ export async function initDB() {
   await query(`ALTER TABLE users ADD COLUMN IF NOT EXISTS onboarding_completed BOOLEAN DEFAULT FALSE`)
   await query(`ALTER TABLE proposals ADD COLUMN IF NOT EXISTS archived BOOLEAN DEFAULT FALSE`)
   await query(`ALTER TABLE acceptance_events ADD COLUMN IF NOT EXISTS commenter_name TEXT`)
+  await query(`ALTER TABLE users ADD COLUMN IF NOT EXISTS invoice_prefix TEXT DEFAULT 'INV'`)
+  await query(`ALTER TABLE users ADD COLUMN IF NOT EXISTS font_family TEXT DEFAULT 'inter'`)
   console.log('Database initialized')
 }

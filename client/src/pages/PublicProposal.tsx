@@ -20,6 +20,7 @@ interface PublicProposal {
   business_name: string
   logo_url: string
   accent_color: string
+  font_family: string
   plan: string
   content: Record<string, unknown>
   line_items: { description: string; quantity: number; unit_price: number }[]
@@ -49,6 +50,10 @@ export function PublicProposal() {
   const [accepting, setAccepting] = useState(false)
   const [commenting, setCommenting] = useState(false)
   const [accepted, setAccepted] = useState(false)
+  const [declined, setDeclined] = useState(false)
+  const [showDecline, setShowDecline] = useState(false)
+  const [declineReason, setDeclineReason] = useState('')
+  const [declining, setDeclining] = useState(false)
   const [comments, setComments] = useState<Comment[]>([])
 
   useEffect(() => {
@@ -59,6 +64,7 @@ export function PublicProposal() {
         if (data.error) { setError(data.error); return }
         setProposal(data.proposal)
         if (data.proposal.status === 'accepted') setAccepted(true)
+        if (data.proposal.status === 'declined') setDeclined(true)
       })
       .catch(() => setError('Failed to load proposal'))
       .finally(() => setLoading(false))
@@ -87,6 +93,27 @@ export function PublicProposal() {
       toast({ title: 'Error', description: (err as Error).message, variant: 'destructive' })
     } finally {
       setAccepting(false)
+    }
+  }
+
+  async function decline() {
+    if (!params?.token) return
+    setDeclining(true)
+    try {
+      const res = await fetch(`/api/public/proposal/${params.token}/decline`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ reason: declineReason.trim() || null }),
+      })
+      const data = await res.json()
+      if (!res.ok) throw new Error(data.error)
+      setDeclined(true)
+      setShowDecline(false)
+      toast({ title: 'Proposal declined', description: 'The freelancer has been notified.' })
+    } catch (err) {
+      toast({ title: 'Error', description: (err as Error).message, variant: 'destructive' })
+    } finally {
+      setDeclining(false)
     }
   }
 
@@ -139,6 +166,13 @@ export function PublicProposal() {
   const accentColor = proposal.accent_color || '#6366f1'
   const isFreeTier = proposal.plan === 'free'
 
+  const fontMap: Record<string, string> = {
+    inter: 'Inter, system-ui, sans-serif',
+    bricolage: 'Bricolage Grotesque, system-ui, sans-serif',
+    georgia: 'Georgia, Times New Roman, serif',
+  }
+  const bodyFont = fontMap[proposal.font_family as string] || fontMap.inter
+
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Free tier branding banner */}
@@ -173,13 +207,16 @@ export function PublicProposal() {
             >
               <Download className="h-4 w-4" /> Download PDF
             </a>
-            {!accepted && (
+            {!accepted && !declined && (
               <>
                 {proposal.plan === 'pro' && (
                   <Button variant="outline" size="sm" onClick={() => setShowComment(true)} className="gap-2">
                     <MessageSquare className="h-4 w-4" /> Request Changes
                   </Button>
                 )}
+                <Button variant="outline" size="sm" onClick={() => setShowDecline(true)} className="gap-2 text-red-600 border-red-200 hover:bg-red-50 hover:text-red-700">
+                  Decline
+                </Button>
                 <Button
                   size="sm"
                   onClick={() => setShowAccept(true)}
@@ -191,6 +228,11 @@ export function PublicProposal() {
                 </Button>
               </>
             )}
+            {declined && (
+              <span className="inline-flex items-center text-sm font-medium text-red-700 bg-red-100 px-3 py-1.5 rounded-full">
+                Declined
+              </span>
+            )}
             {accepted && (
               <span className="inline-flex items-center gap-2 text-sm font-medium text-green-700 bg-green-100 px-3 py-1.5 rounded-full">
                 <CheckCircle className="h-4 w-4" /> Accepted
@@ -201,7 +243,7 @@ export function PublicProposal() {
       </div>
 
       {/* Main content */}
-      <div className="max-w-4xl mx-auto px-6 py-10 space-y-8">
+      <div className="max-w-4xl mx-auto px-6 py-10 space-y-8" style={{ fontFamily: bodyFont }}>
         {/* Title */}
         <div className="bg-white rounded-2xl border p-8 shadow-sm">
           <div className="flex items-start justify-between gap-4">
@@ -332,16 +374,19 @@ export function PublicProposal() {
         )}
 
         {/* CTA */}
-        {!accepted && (
+        {!accepted && !declined && (
           <div className="bg-white rounded-2xl border p-8 shadow-sm text-center">
             <h2 className="text-xl font-bold mb-2" style={{ fontFamily: 'Bricolage Grotesque, sans-serif' }}>Ready to move forward?</h2>
             <p className="text-gray-500 mb-6">Accept this proposal to get started. An invoice will be generated automatically.</p>
-            <div className="flex items-center justify-center gap-3">
+            <div className="flex items-center justify-center gap-3 flex-wrap">
               {proposal.plan === 'pro' && (
                 <Button variant="outline" onClick={() => setShowComment(true)} className="gap-2">
                   <MessageSquare className="h-4 w-4" /> Request Changes
                 </Button>
               )}
+              <Button variant="outline" onClick={() => setShowDecline(true)} className="gap-2 text-red-600 border-red-200 hover:bg-red-50 hover:text-red-700">
+                Decline
+              </Button>
               <Button
                 onClick={() => setShowAccept(true)}
                 size="lg"
@@ -363,6 +408,13 @@ export function PublicProposal() {
           </div>
         )}
 
+        {declined && (
+          <div className="bg-red-50 border border-red-200 rounded-2xl p-8 text-center">
+            <h2 className="text-xl font-bold text-red-800 mb-2">Proposal Declined</h2>
+            <p className="text-red-700">You have declined this proposal. The freelancer has been notified.</p>
+          </div>
+        )}
+
         {/* Powered by — free tier only */}
         {isFreeTier && (
           <div className="text-center py-4 border-t">
@@ -375,6 +427,38 @@ export function PublicProposal() {
           </div>
         )}
       </div>
+
+      {/* Decline dialog */}
+      <Dialog open={showDecline} onOpenChange={setShowDecline}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Decline Proposal</DialogTitle>
+            <DialogDescription>Let the freelancer know you're not moving forward with this proposal.</DialogDescription>
+          </DialogHeader>
+          <div className="space-y-3 py-2">
+            <div className="space-y-2">
+              <Label>Reason (optional)</Label>
+              <Textarea
+                placeholder="The budget doesn't fit our current plans..."
+                value={declineReason}
+                onChange={e => setDeclineReason(e.target.value)}
+                className="min-h-[80px]"
+              />
+            </div>
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setShowDecline(false)}>Cancel</Button>
+            <Button
+              onClick={decline}
+              disabled={declining}
+              variant="destructive"
+              className="gap-2"
+            >
+              {declining ? <Loader2 className="h-4 w-4 animate-spin" /> : 'Decline Proposal'}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
 
       {/* Accept dialog */}
       <Dialog open={showAccept} onOpenChange={setShowAccept}>

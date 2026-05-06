@@ -87,7 +87,7 @@ router.post('/login', async (req, res) => {
 router.get('/me', requireAuth, async (req: AuthRequest, res) => {
   try {
     const result = await query(
-      'SELECT id, email, business_name, plan, logo_url, accent_color, default_currency, proposals_this_month, stripe_customer_id, stripe_subscription_id, onboarding_completed FROM users WHERE id = $1',
+      'SELECT id, email, business_name, plan, logo_url, accent_color, default_currency, proposals_this_month, stripe_customer_id, stripe_subscription_id, onboarding_completed, invoice_prefix, font_family FROM users WHERE id = $1',
       [req.userId]
     )
     if (result.rows.length === 0) {
@@ -103,16 +103,19 @@ router.get('/me', requireAuth, async (req: AuthRequest, res) => {
 // Update profile
 router.put('/me', requireAuth, async (req: AuthRequest, res) => {
   try {
-    const { businessName, accentColor, defaultCurrency } = req.body
+    const { businessName, accentColor, defaultCurrency, invoicePrefix, fontFamily } = req.body
     const result = await query(
       `UPDATE users SET 
         business_name = COALESCE($1, business_name),
         accent_color = COALESCE($2, accent_color),
         default_currency = COALESCE($3, default_currency),
+        invoice_prefix = COALESCE($4, invoice_prefix),
+        font_family = COALESCE($5, font_family),
         updated_at = NOW()
-       WHERE id = $4
-       RETURNING id, email, business_name, plan, logo_url, accent_color, default_currency`,
-      [businessName || null, accentColor || null, defaultCurrency || null, req.userId]
+       WHERE id = $6
+       RETURNING id, email, business_name, plan, logo_url, accent_color, default_currency, invoice_prefix, font_family`,
+      [businessName || null, accentColor || null, defaultCurrency || null,
+       invoicePrefix || null, fontFamily || null, req.userId]
     )
     res.json({ user: result.rows[0] })
   } catch (err) {

@@ -30,6 +30,8 @@ export function Settings() {
     businessName: user?.business_name || '',
     accentColor: user?.accent_color || '#6366f1',
     defaultCurrency: user?.default_currency || 'USD',
+    invoicePrefix: user?.invoice_prefix || 'INV',
+    fontFamily: user?.font_family || 'inter',
   })
   const logoInputRef = useRef<HTMLInputElement>(null)
 
@@ -45,7 +47,13 @@ export function Settings() {
   async function saveProfile() {
     setSaving(true)
     try {
-      await api.put('/auth/me', form)
+      await api.put('/auth/me', {
+        businessName: form.businessName,
+        accentColor: form.accentColor,
+        defaultCurrency: form.defaultCurrency,
+        invoicePrefix: form.invoicePrefix,
+        fontFamily: form.fontFamily,
+      })
       await refreshUser()
       toast({ title: 'Profile updated' })
     } catch (err) {
@@ -211,6 +219,55 @@ export function Settings() {
                     onChange={e => setForm(f => ({ ...f, defaultCurrency: e.target.value }))}
                     data-testid="input-currency"
                   />
+                </div>
+              </div>
+
+              <div className="grid grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <Label>Proposal Font</Label>
+                  <div className="grid grid-cols-1 gap-2">
+                    {[
+                      { value: 'inter', label: 'Inter', style: 'font-sans', preview: 'Modern & clean' },
+                      { value: 'bricolage', label: 'Bricolage Grotesque', style: '', preview: 'Bold & expressive' },
+                      { value: 'georgia', label: 'Georgia', style: 'font-serif', preview: 'Classic & professional' },
+                    ].map(font => (
+                      <button
+                        key={font.value}
+                        type="button"
+                        onClick={() => setForm(f => ({ ...f, fontFamily: font.value }))}
+                        className={cn(
+                          'flex items-center justify-between p-3 rounded-lg border text-left transition-all',
+                          form.fontFamily === font.value
+                            ? 'border-primary bg-primary/5 ring-1 ring-primary'
+                            : 'hover:border-border hover:bg-muted/50'
+                        )}
+                        data-testid={`font-${font.value}`}
+                      >
+                        <div>
+                          <p className={cn('text-sm font-medium', font.style)} style={font.value === 'bricolage' ? { fontFamily: 'Bricolage Grotesque, sans-serif' } : {}}>
+                            {font.label}
+                          </p>
+                          <p className="text-xs text-muted-foreground">{font.preview}</p>
+                        </div>
+                        {form.fontFamily === font.value && (
+                          <CheckCircle className="h-4 w-4 text-primary shrink-0" />
+                        )}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+                <div className="space-y-2">
+                  <Label>Invoice Number Prefix</Label>
+                  <Input
+                    placeholder="INV"
+                    value={form.invoicePrefix}
+                    onChange={e => setForm(f => ({ ...f, invoicePrefix: e.target.value.toUpperCase().replace(/[^A-Z0-9]/g, '') }))}
+                    maxLength={8}
+                    data-testid="input-invoice-prefix"
+                  />
+                  <p className="text-xs text-muted-foreground">
+                    Your invoices will be numbered: <span className="font-medium">{form.invoicePrefix || 'INV'}-0001</span>
+                  </p>
                 </div>
               </div>
               <Button onClick={saveProfile} disabled={saving} className="gap-2" data-testid="button-save-profile">
