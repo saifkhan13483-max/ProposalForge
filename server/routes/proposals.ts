@@ -31,7 +31,7 @@ async function checkProposalLimit(userId: string): Promise<{ allowed: boolean; c
 // List proposals
 router.get('/', async (req: AuthRequest, res) => {
   try {
-    const { status, search } = req.query
+    const { status, search, archived } = req.query
     let sql = `
       SELECT p.*, c.name as client_company,
         (SELECT COUNT(*) FROM quote_line_items WHERE proposal_id = p.id) as line_item_count
@@ -40,6 +40,11 @@ router.get('/', async (req: AuthRequest, res) => {
       WHERE p.user_id = $1
     `
     const params: unknown[] = [req.userId]
+    if (archived === 'true') {
+      sql += ` AND p.archived = TRUE`
+    } else {
+      sql += ` AND (p.archived = FALSE OR p.archived IS NULL)`
+    }
     if (status) { sql += ` AND p.status = $${params.length + 1}`; params.push(status) }
     if (search) { sql += ` AND (p.title ILIKE $${params.length + 1} OR p.client_name ILIKE $${params.length + 1})`; params.push(`%${search}%`) }
     sql += ' ORDER BY p.created_at DESC'
@@ -373,6 +378,36 @@ router.post('/:id/send', async (req: AuthRequest, res) => {
   } catch (err) {
     console.error('Send proposal error:', err)
     res.status(500).json({ error: 'Failed to send proposal' })
+  }
+})
+
+// Archive proposal
+router.post('/:id/archive', async (req: AuthRequest, res) => {
+  try {
+    const result = await query(
+      'UPDATE proposals SET archived = TRUE, updated_at = NOW() WHERE id = $1 AND user_id = $2 RETURNING id',
+      [req.params.id, req.userId]
+    )
+    if (result.rows.length === 0) return res.status(404).json({ error: 'Proposal not found' })
+    res.json({ success: true })
+  } catch (err) {
+    console.error('Archive proposal error:', err)
+    res.status(500).json({ error: 'Failed to archive proposal' })
+  }
+})
+
+// Unarchive proposal
+router.post('/:id/unarchive', async (req: AuthRequest, res) => {
+  try {
+    const result = await query(
+      'UPDATE proposals SET archived = FALSE, updated_at = NOW() WHERE id = $1 AND user_id = $2 RETURNING id',
+      [req.params.id, req.userId]
+    )
+    if (result.rows.length === 0) return res.status(404).json({ error: 'Proposal not found' })
+    res.json({ success: true })
+  } catch (err) {
+    console.error('Unarchive proposal error:', err)
+    res.status(500).json({ error: 'Failed to unarchive proposal' })
   }
 })
 

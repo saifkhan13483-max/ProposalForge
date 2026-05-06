@@ -5,6 +5,8 @@ import { Toaster } from '@/components/ui/toaster'
 import { Layout } from '@/components/Layout'
 import { Landing } from '@/pages/Landing'
 import { Auth } from '@/pages/Auth'
+import { AuthCallback } from '@/pages/AuthCallback'
+import { Onboarding } from '@/pages/Onboarding'
 import { ForgotPassword } from '@/pages/ForgotPassword'
 import { ResetPassword } from '@/pages/ResetPassword'
 import { Dashboard } from '@/pages/Dashboard'
@@ -16,6 +18,7 @@ import { InvoiceDetail } from '@/pages/InvoiceDetail'
 import { Clients } from '@/pages/Clients'
 import { Settings } from '@/pages/Settings'
 import { PublicProposal } from '@/pages/PublicProposal'
+import { Demo } from '@/pages/Demo'
 import { Loader2 } from 'lucide-react'
 
 const queryClient = new QueryClient({
@@ -59,6 +62,15 @@ function AppRoutes() {
       </Route>
       <Route path="/auth">
         {user ? <Redirect to="/dashboard" /> : <Auth />}
+      </Route>
+      <Route path="/auth/callback">
+        <AuthCallback />
+      </Route>
+      <Route path="/onboarding">
+        {!user ? <Redirect to="/auth" /> : <Onboarding />}
+      </Route>
+      <Route path="/demo">
+        <Demo />
       </Route>
       <Route path="/forgot-password">
         <ForgotPassword />

@@ -3,6 +3,7 @@ import cors from 'cors'
 import dotenv from 'dotenv'
 import { initDB } from './db.js'
 import authRoutes from './routes/auth.js'
+import oauthRoutes from './routes/oauth.js'
 import clientRoutes from './routes/clients.js'
 import proposalRoutes from './routes/proposals.js'
 import invoiceRoutes from './routes/invoices.js'
@@ -51,6 +52,7 @@ app.use(express.urlencoded({ extended: true }))
 
 // Routes
 app.use('/api/auth', authRoutes)
+app.use('/api/auth', oauthRoutes)
 app.use('/api/clients', clientRoutes)
 app.use('/api/proposals', proposalRoutes)
 app.use('/api/proposals', pdfRoutes)

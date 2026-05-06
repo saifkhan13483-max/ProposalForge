@@ -134,5 +134,8 @@ export async function initDB() {
   // Incremental migrations
   await query(`ALTER TABLE users ADD COLUMN IF NOT EXISTS reset_token TEXT`)
   await query(`ALTER TABLE users ADD COLUMN IF NOT EXISTS reset_token_expires TIMESTAMPTZ`)
+  await query(`ALTER TABLE users ADD COLUMN IF NOT EXISTS onboarding_completed BOOLEAN DEFAULT FALSE`)
+  await query(`ALTER TABLE proposals ADD COLUMN IF NOT EXISTS archived BOOLEAN DEFAULT FALSE`)
+  await query(`ALTER TABLE acceptance_events ADD COLUMN IF NOT EXISTS commenter_name TEXT`)
   console.log('Database initialized')
 }

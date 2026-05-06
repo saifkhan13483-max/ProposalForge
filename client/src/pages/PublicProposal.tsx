@@ -9,7 +9,7 @@ import { Textarea } from '@/components/ui/textarea'
 import { Card, CardContent } from '@/components/ui/card'
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogDescription } from '@/components/ui/dialog'
 import { useToast } from '@/hooks/use-toast'
-import { Loader2, CheckCircle, MessageSquare, FileText, Sparkles, Download } from 'lucide-react'
+import { Loader2, CheckCircle, MessageSquare, FileText, Sparkles, Download, Clock } from 'lucide-react'
 
 interface PublicProposal {
   id: string
@@ -20,11 +20,19 @@ interface PublicProposal {
   business_name: string
   logo_url: string
   accent_color: string
+  plan: string
   content: Record<string, unknown>
   line_items: { description: string; quantity: number; unit_price: number }[]
   total_amount: number
   accepted_at: string
   personal_message: string
+}
+
+interface Comment {
+  id: string
+  comment: string
+  commenter_name: string | null
+  created_at: string
 }
 
 export function PublicProposal() {
@@ -36,10 +44,12 @@ export function PublicProposal() {
   const [showAccept, setShowAccept] = useState(false)
   const [showComment, setShowComment] = useState(false)
   const [signerName, setSignerName] = useState('')
+  const [commenterName, setCommenterName] = useState('')
   const [comment, setComment] = useState('')
   const [accepting, setAccepting] = useState(false)
   const [commenting, setCommenting] = useState(false)
   const [accepted, setAccepted] = useState(false)
+  const [comments, setComments] = useState<Comment[]>([])
 
   useEffect(() => {
     if (!params?.token) return
@@ -52,6 +62,11 @@ export function PublicProposal() {
       })
       .catch(() => setError('Failed to load proposal'))
       .finally(() => setLoading(false))
+
+    fetch(`/api/public/proposal/${params.token}/comments`)
+      .then(r => r.json())
+      .then(data => { if (data.comments) setComments(data.comments) })
+      .catch(() => {})
   }, [params?.token])
 
   async function accept() {
@@ -82,10 +97,18 @@ export function PublicProposal() {
       await fetch(`/api/public/proposal/${params.token}/comment`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ comment }),
+        body: JSON.stringify({ comment, commenterName: commenterName.trim() || null }),
       })
+      const newComment: Comment = {
+        id: Date.now().toString(),
+        comment,
+        commenter_name: commenterName.trim() || null,
+        created_at: new Date().toISOString(),
+      }
+      setComments(prev => [...prev, newComment])
       setShowComment(false)
       setComment('')
+      setCommenterName('')
       toast({ title: 'Comment sent', description: 'The freelancer has been notified.' })
     } catch {
       toast({ title: 'Error', description: 'Failed to send comment', variant: 'destructive' })
@@ -114,9 +137,20 @@ export function PublicProposal() {
 
   const content = proposal.content || {}
   const accentColor = proposal.accent_color || '#6366f1'
+  const isFreeTier = proposal.plan === 'free'
 
   return (
     <div className="min-h-screen bg-gray-50">
+      {/* Free tier branding banner */}
+      {isFreeTier && (
+        <div className="bg-indigo-600 text-white text-center py-2 px-4 text-sm font-medium">
+          <span>This proposal was created with </span>
+          <a href="/" className="underline font-semibold hover:text-indigo-200">ProposalForge</a>
+          <span> — AI-powered proposals for freelancers. </span>
+          <a href="/auth" className="underline hover:text-indigo-200">Try it free →</a>
+        </div>
+      )}
+
       {/* Header bar */}
       <div className="border-b bg-white sticky top-0 z-10 shadow-sm">
         <div className="max-w-4xl mx-auto px-6 py-4 flex items-center justify-between">
@@ -264,6 +298,37 @@ export function PublicProposal() {
           </div>
         )}
 
+        {/* Comment Thread */}
+        {comments.length > 0 && (
+          <div className="bg-white rounded-2xl border p-8 shadow-sm">
+            <h2 className="text-xl font-bold mb-6 flex items-center gap-2" style={{ fontFamily: 'Bricolage Grotesque, sans-serif' }}>
+              <MessageSquare className="h-5 w-5 text-gray-500" />
+              Change Requests ({comments.length})
+            </h2>
+            <div className="space-y-4">
+              {comments.map((c) => (
+                <div key={c.id} className="flex gap-3">
+                  <div className="h-8 w-8 rounded-full bg-gray-100 flex items-center justify-center shrink-0 text-sm font-medium text-gray-600">
+                    {c.commenter_name ? c.commenter_name[0].toUpperCase() : '?'}
+                  </div>
+                  <div className="flex-1 bg-gray-50 rounded-xl p-4">
+                    <div className="flex items-center gap-2 mb-1">
+                      <span className="font-medium text-sm text-gray-900">
+                        {c.commenter_name || 'Anonymous'}
+                      </span>
+                      <span className="text-xs text-gray-400 flex items-center gap-1">
+                        <Clock className="h-3 w-3" />
+                        {formatDate(c.created_at)}
+                      </span>
+                    </div>
+                    <p className="text-gray-700 text-sm">{c.comment}</p>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
         {/* CTA */}
         {!accepted && (
           <div className="bg-white rounded-2xl border p-8 shadow-sm text-center">
@@ -294,13 +359,17 @@ export function PublicProposal() {
           </div>
         )}
 
-        {/* Powered by */}
-        <div className="text-center">
-          <p className="text-xs text-gray-400">
-            Powered by{' '}
-            <a href="/" className="text-gray-500 hover:text-gray-700 font-medium">ProposalForge</a>
-          </p>
-        </div>
+        {/* Powered by — free tier only */}
+        {isFreeTier && (
+          <div className="text-center py-4 border-t">
+            <p className="text-xs text-gray-400">
+              Powered by{' '}
+              <a href="/" className="text-gray-500 hover:text-gray-700 font-medium">ProposalForge</a>
+              {' '}— AI-powered proposals for freelancers.{' '}
+              <a href="/auth" className="text-indigo-600 hover:underline font-medium">Create your free account →</a>
+            </p>
+          </div>
+        )}
       </div>
 
       {/* Accept dialog */}
@@ -346,13 +415,24 @@ export function PublicProposal() {
             <DialogDescription>Send feedback to the freelancer. They'll review and update the proposal.</DialogDescription>
           </DialogHeader>
           <div className="space-y-3 py-2">
-            <Textarea
-              placeholder="Please clarify the timeline for Phase 2..."
-              value={comment}
-              onChange={e => setComment(e.target.value)}
-              className="min-h-[100px]"
-              data-testid="textarea-comment"
-            />
+            <div className="space-y-2">
+              <Label>Your name (optional)</Label>
+              <Input
+                placeholder="Jane Smith"
+                value={commenterName}
+                onChange={e => setCommenterName(e.target.value)}
+              />
+            </div>
+            <div className="space-y-2">
+              <Label>Feedback *</Label>
+              <Textarea
+                placeholder="Please clarify the timeline for Phase 2..."
+                value={comment}
+                onChange={e => setComment(e.target.value)}
+                className="min-h-[100px]"
+                data-testid="textarea-comment"
+              />
+            </div>
           </div>
           <DialogFooter>
             <Button variant="outline" onClick={() => setShowComment(false)}>Cancel</Button>

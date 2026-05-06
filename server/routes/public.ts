@@ -1,13 +1,17 @@
 import { Router } from 'express'
 import { query } from '../db.js'
+import { GoogleGenerativeAI } from '@google/generative-ai'
 
 const router = Router()
+
+// In-memory demo rate limit (IP → last used date string)
+const demoUsage = new Map<string, string>()
 
 // Get proposal by accept token (public)
 router.get('/proposal/:token', async (req, res) => {
   try {
     const result = await query(
-      `SELECT p.*, u.business_name, u.logo_url, u.accent_color,
+      `SELECT p.*, u.business_name, u.logo_url, u.accent_color, u.plan,
         (SELECT json_agg(json_build_object('description', description, 'quantity', quantity, 'unit_price', unit_price) ORDER BY sort_order) 
          FROM quote_line_items WHERE proposal_id = p.id) as line_items
        FROM proposals p
@@ -32,6 +36,29 @@ router.get('/proposal/:token', async (req, res) => {
   } catch (err) {
     console.error('Public proposal error:', err)
     res.status(500).json({ error: 'Failed to get proposal' })
+  }
+})
+
+// Get comments for a proposal (public)
+router.get('/proposal/:token/comments', async (req, res) => {
+  try {
+    const proposalResult = await query(
+      'SELECT id FROM proposals WHERE accept_token = $1',
+      [req.params.token]
+    )
+    if (proposalResult.rows.length === 0) return res.status(404).json({ error: 'Proposal not found' })
+
+    const comments = await query(
+      `SELECT id, comment, commenter_name, created_at
+       FROM acceptance_events
+       WHERE proposal_id = $1 AND event_type = 'comment' AND comment IS NOT NULL
+       ORDER BY created_at ASC`,
+      [proposalResult.rows[0].id]
+    )
+    res.json({ comments: comments.rows })
+  } catch (err) {
+    console.error('Get comments error:', err)
+    res.status(500).json({ error: 'Failed to get comments' })
   }
 })
 
@@ -61,7 +88,6 @@ router.post('/proposal/:token/accept', async (req, res) => {
 
     // Auto-create invoice from proposal
     const proposalFull = await query('SELECT * FROM proposals WHERE id = $1', [proposal.id])
-    const userResult = await query('SELECT default_currency FROM users WHERE id = $1', [proposal.user_id])
     const p = proposalFull.rows[0]
     const lineItemsResult = await query('SELECT * FROM quote_line_items WHERE proposal_id = $1 ORDER BY sort_order', [proposal.id])
 
@@ -90,21 +116,81 @@ router.post('/proposal/:token/accept', async (req, res) => {
 // Add comment to proposal
 router.post('/proposal/:token/comment', async (req, res) => {
   try {
-    const { comment } = req.body
+    const { comment, commenterName } = req.body
     if (!comment) return res.status(400).json({ error: 'Comment is required' })
 
     const result = await query('SELECT id FROM proposals WHERE accept_token = $1', [req.params.token])
     if (result.rows.length === 0) return res.status(404).json({ error: 'Proposal not found' })
 
     await query(
-      'INSERT INTO acceptance_events (proposal_id, event_type, comment, ip_address) VALUES ($1, $2, $3, $4)',
-      [result.rows[0].id, 'comment', comment, req.ip]
+      'INSERT INTO acceptance_events (proposal_id, event_type, comment, commenter_name, ip_address) VALUES ($1, $2, $3, $4, $5)',
+      [result.rows[0].id, 'comment', comment, commenterName || null, req.ip]
     )
 
     res.json({ success: true })
   } catch (err) {
     console.error('Comment error:', err)
     res.status(500).json({ error: 'Failed to add comment' })
+  }
+})
+
+// Anonymous demo generation
+router.post('/demo/generate', async (req, res) => {
+  const ip = (req.ip || '').replace(/^::ffff:/, '')
+  const today = new Date().toISOString().slice(0, 10)
+
+  if (demoUsage.get(ip) === today) {
+    return res.status(429).json({ error: 'Demo limit reached. Sign up for a free account to generate more proposals.' })
+  }
+
+  const { projectDescription, clientName, projectType, budget, timeline } = req.body
+  if (!projectDescription?.trim()) {
+    return res.status(400).json({ error: 'Project description is required' })
+  }
+
+  const apiKey = process.env.GEMINI_API_KEY
+  if (!apiKey) {
+    return res.status(503).json({ error: 'AI generation not configured' })
+  }
+
+  try {
+    const genAI = new GoogleGenerativeAI(apiKey)
+    const model = genAI.getGenerativeModel({ model: 'gemini-1.5-flash' })
+
+    const prompt = `You are a senior proposal writer for freelancers and agencies. Generate a professional client proposal.
+
+Client: ${clientName || 'Client'}
+Project Type: ${projectType || 'other'}
+Project Description: ${projectDescription}
+Budget Range: ${budget || 'To be discussed'}
+Timeline: ${timeline || 'To be discussed'}
+Currency: USD
+
+Return ONLY valid JSON with this exact structure:
+{
+  "executiveSummary": "2-3 paragraph executive summary as plain text",
+  "scopeOfWork": "Detailed scope of work",
+  "deliverables": ["deliverable 1", "deliverable 2", "deliverable 3"],
+  "timeline": "Project timeline description",
+  "terms": "Standard terms and conditions",
+  "lineItems": [
+    {"description": "Service name", "quantity": 1, "unitPrice": 1000}
+  ],
+  "totalEstimate": 1500
+}`
+
+    const result = await model.generateContent(prompt)
+    const text = result.response.text()
+    const jsonMatch = text.match(/\{[\s\S]*\}/)
+    if (!jsonMatch) throw new Error('No JSON in response')
+    const proposal = JSON.parse(jsonMatch[0])
+
+    demoUsage.set(ip, today)
+
+    res.json({ proposal })
+  } catch (err) {
+    console.error('Demo generate error:', err)
+    res.status(500).json({ error: 'Generation failed. Please try again.' })
   }
 })
 

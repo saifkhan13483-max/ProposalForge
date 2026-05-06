@@ -87,7 +87,7 @@ router.post('/login', async (req, res) => {
 router.get('/me', requireAuth, async (req: AuthRequest, res) => {
   try {
     const result = await query(
-      'SELECT id, email, business_name, plan, logo_url, accent_color, default_currency, proposals_this_month, stripe_customer_id, stripe_subscription_id FROM users WHERE id = $1',
+      'SELECT id, email, business_name, plan, logo_url, accent_color, default_currency, proposals_this_month, stripe_customer_id, stripe_subscription_id, onboarding_completed FROM users WHERE id = $1',
       [req.userId]
     )
     if (result.rows.length === 0) {
@@ -226,6 +226,17 @@ router.get('/reset-password/validate', async (req, res) => {
   } catch (err) {
     console.error('Validate token error:', err)
     res.json({ valid: false })
+  }
+})
+
+// Complete onboarding
+router.post('/complete-onboarding', requireAuth, async (req: AuthRequest, res) => {
+  try {
+    await query('UPDATE users SET onboarding_completed = TRUE, updated_at = NOW() WHERE id = $1', [req.userId])
+    res.json({ success: true })
+  } catch (err) {
+    console.error('Complete onboarding error:', err)
+    res.status(500).json({ error: 'Failed to complete onboarding' })
   }
 })
 

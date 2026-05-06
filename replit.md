@@ -13,6 +13,7 @@ AI-powered client proposal and invoice generator SaaS for freelancers — turns 
 - `JWT_SECRET` — Set via env vars
 - `SERVER_PORT` — 3000
 - `GEMINI_API_KEY` — For AI proposal generation (optional; shows error if missing)
+- `GOOGLE_CLIENT_ID` + `GOOGLE_CLIENT_SECRET` — For Google OAuth (optional; falls back to email/password)
 - Stripe — Connected via Replit Integrations tab (optional)
 - `RESEND_API_KEY` — For email sending + password reset (optional)
 
@@ -21,7 +22,7 @@ AI-powered client proposal and invoice generator SaaS for freelancers — turns 
 - **Frontend**: React 18 + Vite 6 + TypeScript + TailwindCSS v3 + shadcn/ui (Radix) + Wouter routing + TanStack Query + Tiptap editor
 - **Backend**: Node.js + Express + TypeScript + `tsx` watch mode
 - **Database**: PostgreSQL via raw `pg` pool (no ORM)
-- **Auth**: JWT in localStorage (`pf_token`), Bearer token headers
+- **Auth**: JWT in localStorage (`pf_token`), Bearer token headers; Google OAuth via manual redirect flow
 - **AI**: Google Gemini 1.5 Flash (`@google/generative-ai`)
 - **Payments**: Stripe via `stripe-replit-sync` connector
 - **Email**: Resend API
@@ -34,6 +35,7 @@ AI-powered client proposal and invoice generator SaaS for freelancers — turns 
 - `client/src/contexts/AuthContext.tsx` — Auth state
 - `client/src/lib/api.ts` — Typed fetch wrapper
 - `server/routes/` — All API route handlers
+- `server/routes/oauth.ts` — Google OAuth redirect + callback
 - `server/routes/pdf.ts` — Puppeteer PDF generation (auth + public)
 - `server/db.ts` — PostgreSQL schema + init
 - `server/middleware/auth.ts` — JWT middleware
@@ -50,17 +52,22 @@ AI-powered client proposal and invoice generator SaaS for freelancers — turns 
 - **Free tier**: 3 AI-generated proposals/month tracked via `proposals_this_month` counter on user row
 - **Logo storage**: Logo stored as base64 data URL in `logo_url` column (avoids file system complexity)
 - **PDF**: Puppeteer launched with `--no-sandbox` for Replit Linux compatibility; returns binary PDF buffer
+- **Google OAuth**: Manual redirect flow (`/api/auth/google` → Google → `/api/auth/google/callback` → `/auth/callback`); no Passport.js
+- **Demo rate limiting**: In-memory Map (IP → date string) limits anonymous demo to 1 per IP per day
+- **Archive**: Soft-delete via `archived` boolean on proposals; excluded from default list queries
 
 ## Product
 
-- **Landing page**: Marketing page at `/` for unauthenticated visitors (redirects to dashboard if logged in)
-- **Auth**: Email/password registration + login + forgot/reset password flow
+- **Landing page**: Marketing page at `/` with "Try the live demo" CTA linking to `/demo`
+- **Auth**: Email/password + Google OAuth; registration triggers 3-step onboarding wizard
+- **Onboarding**: 3-step wizard (business name → logo + accent color → default currency) at `/onboarding`
 - **Dashboard**: Revenue, acceptance rate, outstanding invoices, activity feed
-- **Proposals**: Create → AI-generate → edit with Tiptap → regenerate sections → download PDF → send via email → client accepts with e-signature
+- **Proposals**: Create → AI-generate → edit with Tiptap → regenerate sections → download PDF → send via email → client accepts with e-signature; archive/unarchive support
 - **Invoices**: Manual creation or auto-generated on proposal acceptance; Stripe checkout links
 - **Clients**: Contact book with proposal/invoice counts
 - **Settings**: Logo upload, business profile (name, color, currency) + Pro upgrade (Stripe)
-- **Public page**: Branded proposal view with accept/decline/comment flow + PDF download
+- **Public page**: Branded proposal view with accept/e-signature + comment thread + PDF download; free-tier branding banner for non-Pro users
+- **Demo**: `/demo` — anonymous try-without-signup experience (1 proposal per IP/day)
 
 ## User preferences
 
@@ -75,6 +82,8 @@ _Populate as you build_
 - Puppeteer needs `--no-sandbox`, `--disable-setuid-sandbox`, `--disable-dev-shm-usage` on Replit
 - Line items: frontend sends `unit_price` (snake_case); routes handle both `unit_price` and `unitPrice` for compatibility
 - Password reset: token stored in `reset_token` + `reset_token_expires` columns (added via `ALTER TABLE IF NOT EXISTS`)
+- Google OAuth callback URL must be registered in Google Cloud Console: `https://<domain>/api/auth/google/callback`
+- Demo rate limiting uses in-memory Map; resets on server restart (acceptable for demo purposes)
 
 ## Pointers
 
@@ -82,3 +91,4 @@ _Populate as you build_
 - Database skill: `.local/skills/database/SKILL.md`
 - Gemini API: `server/routes/proposals.ts` → `generate` endpoint
 - PDF generation: `server/routes/pdf.ts`
+- Google OAuth: `server/routes/oauth.ts`
