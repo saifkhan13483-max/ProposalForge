@@ -1,14 +1,14 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useRef } from 'react'
 import { useSearch } from 'wouter'
 import { useAuth } from '@/contexts/AuthContext'
-import { api } from '@/lib/api'
+import { api, getAuthToken } from '@/lib/api'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { useToast } from '@/hooks/use-toast'
-import { Loader2, Save, Crown, CheckCircle, ExternalLink, Sparkles } from 'lucide-react'
+import { Loader2, Save, Crown, CheckCircle, ExternalLink, Sparkles, Upload, X } from 'lucide-react'
 import { cn } from '@/lib/utils'
 
 interface Subscription {
@@ -24,12 +24,14 @@ export function Settings() {
   const { toast } = useToast()
   const [saving, setSaving] = useState(false)
   const [upgrading, setUpgrading] = useState(false)
+  const [uploadingLogo, setUploadingLogo] = useState(false)
   const [sub, setSub] = useState<Subscription | null>(null)
   const [form, setForm] = useState({
     businessName: user?.business_name || '',
     accentColor: user?.accent_color || '#6366f1',
     defaultCurrency: user?.default_currency || 'USD',
   })
+  const logoInputRef = useRef<HTMLInputElement>(null)
 
   useEffect(() => {
     api.get<Subscription>('/subscription').then(setSub).catch(console.error)
@@ -50,6 +52,43 @@ export function Settings() {
       toast({ title: 'Error', description: (err as Error).message, variant: 'destructive' })
     } finally {
       setSaving(false)
+    }
+  }
+
+  async function uploadLogo(e: React.ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0]
+    if (!file) return
+    setUploadingLogo(true)
+    try {
+      const formData = new FormData()
+      formData.append('logo', file)
+      const token = getAuthToken()
+      const res = await fetch('/api/auth/upload-logo', {
+        method: 'POST',
+        headers: token ? { Authorization: `Bearer ${token}` } : {},
+        body: formData,
+      })
+      if (!res.ok) {
+        const err = await res.json()
+        throw new Error(err.error || 'Upload failed')
+      }
+      await refreshUser()
+      toast({ title: 'Logo uploaded' })
+    } catch (err) {
+      toast({ title: 'Error', description: (err as Error).message, variant: 'destructive' })
+    } finally {
+      setUploadingLogo(false)
+      if (logoInputRef.current) logoInputRef.current.value = ''
+    }
+  }
+
+  async function removeLogo() {
+    try {
+      await api.delete('/auth/logo')
+      await refreshUser()
+      toast({ title: 'Logo removed' })
+    } catch (err) {
+      toast({ title: 'Error', description: (err as Error).message, variant: 'destructive' })
     }
   }
 
@@ -93,6 +132,45 @@ export function Settings() {
               <CardDescription>This information appears on your proposals and invoices.</CardDescription>
             </CardHeader>
             <CardContent className="space-y-5">
+              {/* Logo upload */}
+              <div className="space-y-2">
+                <Label>Business Logo</Label>
+                <div className="flex items-center gap-4">
+                  <div className="h-16 w-16 rounded-xl border-2 border-dashed flex items-center justify-center overflow-hidden bg-muted/50 shrink-0">
+                    {user?.logo_url ? (
+                      <img src={user.logo_url} alt="Logo" className="h-full w-full object-contain p-1" />
+                    ) : (
+                      <Upload className="h-6 w-6 text-muted-foreground" />
+                    )}
+                  </div>
+                  <div className="flex flex-col gap-2">
+                    <input
+                      ref={logoInputRef}
+                      type="file"
+                      accept="image/*"
+                      className="hidden"
+                      onChange={uploadLogo}
+                    />
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => logoInputRef.current?.click()}
+                      disabled={uploadingLogo}
+                      className="gap-2"
+                    >
+                      {uploadingLogo ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Upload className="h-3.5 w-3.5" />}
+                      {user?.logo_url ? 'Replace logo' : 'Upload logo'}
+                    </Button>
+                    {user?.logo_url && (
+                      <Button variant="ghost" size="sm" onClick={removeLogo} className="gap-2 text-destructive hover:text-destructive">
+                        <X className="h-3.5 w-3.5" /> Remove
+                      </Button>
+                    )}
+                    <p className="text-xs text-muted-foreground">PNG, JPG up to 5 MB</p>
+                  </div>
+                </div>
+              </div>
+
               <div className="space-y-2">
                 <Label>Email</Label>
                 <Input value={user?.email || ''} disabled className="bg-muted" />

@@ -306,11 +306,12 @@ router.put('/:id/line-items', async (req: AuthRequest, res) => {
     let total = 0
     for (let i = 0; i < lineItems.length; i++) {
       const item = lineItems[i]
-      const lineTotal = (item.quantity || 1) * (item.unitPrice || 0)
+      const unitPrice = item.unit_price ?? item.unitPrice ?? 0
+      const lineTotal = (item.quantity || 1) * unitPrice
       total += lineTotal
       await query(
         'INSERT INTO quote_line_items (proposal_id, description, quantity, unit_price, sort_order) VALUES ($1, $2, $3, $4, $5)',
-        [req.params.id, item.description, item.quantity || 1, item.unitPrice || 0, i]
+        [req.params.id, item.description, item.quantity || 1, unitPrice, i]
       )
     }
 

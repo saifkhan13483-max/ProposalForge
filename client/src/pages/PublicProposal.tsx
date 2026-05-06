@@ -9,7 +9,7 @@ import { Textarea } from '@/components/ui/textarea'
 import { Card, CardContent } from '@/components/ui/card'
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogDescription } from '@/components/ui/dialog'
 import { useToast } from '@/hooks/use-toast'
-import { Loader2, CheckCircle, MessageSquare, FileText, Download, Sparkles } from 'lucide-react'
+import { Loader2, CheckCircle, MessageSquare, FileText, Sparkles, Download } from 'lucide-react'
 
 interface PublicProposal {
   id: string
@@ -130,7 +130,15 @@ export function PublicProposal() {
             )}
             <span className="font-semibold text-gray-900">{proposal.business_name || 'Proposal'}</span>
           </div>
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2 flex-wrap">
+            <a
+              href={`/api/public/proposal/${params?.token}/pdf`}
+              download
+              className="inline-flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium rounded-md border bg-white hover:bg-gray-50 transition-colors text-gray-700"
+              data-testid="button-download-pdf"
+            >
+              <Download className="h-4 w-4" /> Download PDF
+            </a>
             {!accepted && (
               <>
                 <Button variant="outline" size="sm" onClick={() => setShowComment(true)} className="gap-2">

@@ -3,7 +3,10 @@ import { Route, Switch, Redirect } from 'wouter'
 import { AuthProvider, useAuth } from '@/contexts/AuthContext'
 import { Toaster } from '@/components/ui/toaster'
 import { Layout } from '@/components/Layout'
+import { Landing } from '@/pages/Landing'
 import { Auth } from '@/pages/Auth'
+import { ForgotPassword } from '@/pages/ForgotPassword'
+import { ResetPassword } from '@/pages/ResetPassword'
 import { Dashboard } from '@/pages/Dashboard'
 import { Proposals } from '@/pages/Proposals'
 import { NewProposal } from '@/pages/NewProposal'
@@ -51,8 +54,17 @@ function AppRoutes() {
   return (
     <Switch>
       {/* Public routes */}
+      <Route path="/">
+        {user ? <Redirect to="/dashboard" /> : <Landing />}
+      </Route>
       <Route path="/auth">
         {user ? <Redirect to="/dashboard" /> : <Auth />}
+      </Route>
+      <Route path="/forgot-password">
+        <ForgotPassword />
+      </Route>
+      <Route path="/reset-password">
+        <ResetPassword />
       </Route>
       <Route path="/proposal/:token">
         <PublicProposal />
@@ -85,11 +97,8 @@ function AppRoutes() {
       </Route>
 
       {/* Default redirect */}
-      <Route path="/">
-        {user ? <Redirect to="/dashboard" /> : <Redirect to="/auth" />}
-      </Route>
       <Route>
-        {user ? <Redirect to="/dashboard" /> : <Redirect to="/auth" />}
+        {user ? <Redirect to="/dashboard" /> : <Redirect to="/" />}
       </Route>
     </Switch>
   )

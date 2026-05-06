@@ -130,5 +130,9 @@ export async function initDB() {
     CREATE INDEX IF NOT EXISTS invoices_user_id_idx ON invoices(user_id);
     CREATE INDEX IF NOT EXISTS sessions_expire_idx ON sessions(expire);
   `)
+
+  // Incremental migrations
+  await query(`ALTER TABLE users ADD COLUMN IF NOT EXISTS reset_token TEXT`)
+  await query(`ALTER TABLE users ADD COLUMN IF NOT EXISTS reset_token_expires TIMESTAMPTZ`)
   console.log('Database initialized')
 }

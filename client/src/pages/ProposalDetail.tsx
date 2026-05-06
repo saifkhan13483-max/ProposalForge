@@ -15,7 +15,7 @@ import { useToast } from '@/hooks/use-toast'
 import { cn } from '@/lib/utils'
 import {
   ArrowLeft, Sparkles, Send, Loader2, Plus, Trash2, RotateCw,
-  RefreshCw, Save, ExternalLink, Copy, CheckCircle
+  RefreshCw, Save, ExternalLink, Copy, CheckCircle, Download
 } from 'lucide-react'
 import { useEditor, EditorContent } from '@tiptap/react'
 import StarterKit from '@tiptap/starter-kit'
@@ -197,6 +197,26 @@ export function ProposalDetail() {
     }
   }
 
+  async function downloadPdf() {
+    if (!proposal) return
+    try {
+      const token = localStorage.getItem('pf_token')
+      const res = await fetch(`/api/proposals/${proposal.id}/pdf`, {
+        headers: token ? { Authorization: `Bearer ${token}` } : {},
+      })
+      if (!res.ok) throw new Error('Failed to generate PDF')
+      const blob = await res.blob()
+      const url = URL.createObjectURL(blob)
+      const a = document.createElement('a')
+      a.href = url
+      a.download = `${proposal.title.replace(/[^a-z0-9]/gi, '-').toLowerCase()}-proposal.pdf`
+      a.click()
+      URL.revokeObjectURL(url)
+    } catch (err) {
+      toast({ title: 'Error', description: (err as Error).message, variant: 'destructive' })
+    }
+  }
+
   async function sendProposal() {
     if (!proposal) return
     setSending(true)
@@ -257,7 +277,7 @@ export function ProposalDetail() {
             <p className="text-sm text-muted-foreground mt-0.5">{proposal.client_name}</p>
           )}
         </div>
-        <div className="flex items-center gap-2 shrink-0">
+        <div className="flex items-center gap-2 shrink-0 flex-wrap">
           {proposal.status === 'draft' && (
             <Button
               onClick={generateAI}
@@ -267,6 +287,16 @@ export function ProposalDetail() {
             >
               {generating ? <Loader2 className="h-4 w-4 animate-spin" /> : <Sparkles className="h-4 w-4" />}
               {generating ? 'Generating...' : 'Generate with AI'}
+            </Button>
+          )}
+          {proposal.content && Object.keys(proposal.content).length > 0 && (
+            <Button
+              variant="outline"
+              className="gap-2"
+              onClick={downloadPdf}
+              data-testid="button-download-pdf"
+            >
+              <Download className="h-4 w-4" /> PDF
             </Button>
           )}
           {proposal.status !== 'accepted' && (

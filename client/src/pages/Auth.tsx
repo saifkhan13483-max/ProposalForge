@@ -160,7 +160,7 @@ export function Auth() {
                 </Button>
               </form>
 
-              <div className="mt-6 text-center">
+              <div className="mt-6 space-y-3 text-center">
                 <p className="text-sm text-muted-foreground">
                   {mode === 'login' ? "Don't have an account? " : "Already have an account? "}
                   <button
@@ -171,6 +171,13 @@ export function Auth() {
                     {mode === 'login' ? 'Sign up free' : 'Sign in'}
                   </button>
                 </p>
+                {mode === 'login' && (
+                  <p className="text-sm">
+                    <a href="/forgot-password" className="text-muted-foreground hover:text-primary hover:underline">
+                      Forgot your password?
+                    </a>
+                  </p>
+                )}
               </div>
             </CardContent>
           </Card>

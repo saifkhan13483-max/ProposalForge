@@ -9,6 +9,7 @@ import invoiceRoutes from './routes/invoices.js'
 import dashboardRoutes from './routes/dashboard.js'
 import publicRoutes from './routes/public.js'
 import subscriptionRoutes from './routes/subscription.js'
+import pdfRoutes, { handlePublicPdf } from './routes/pdf.js'
 
 dotenv.config()
 
@@ -52,9 +53,11 @@ app.use(express.urlencoded({ extended: true }))
 app.use('/api/auth', authRoutes)
 app.use('/api/clients', clientRoutes)
 app.use('/api/proposals', proposalRoutes)
+app.use('/api/proposals', pdfRoutes)
 app.use('/api/invoices', invoiceRoutes)
 app.use('/api/dashboard', dashboardRoutes)
 app.use('/api/public', publicRoutes)
+app.get('/api/public/proposal/:token/pdf', handlePublicPdf)
 app.use('/api', subscriptionRoutes)
 
 // Health check
