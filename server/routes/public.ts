@@ -62,6 +62,23 @@ router.get('/proposal/:token/comments', async (req, res) => {
   }
 })
 
+async function sendFreelancerEmail(to: string, subject: string, html: string) {
+  const resendKey = process.env.RESEND_API_KEY
+  if (!resendKey) return
+  try {
+    const { Resend } = await import('resend')
+    const resend = new Resend(resendKey)
+    await resend.emails.send({
+      from: 'ProposalForge <noreply@proposalforge.app>',
+      to,
+      subject,
+      html,
+    })
+  } catch (err) {
+    console.error('Notification email failed:', err)
+  }
+}
+
 // Accept proposal
 router.post('/proposal/:token/accept', async (req, res) => {
   try {
@@ -69,7 +86,10 @@ router.post('/proposal/:token/accept', async (req, res) => {
     if (!signerName) return res.status(400).json({ error: 'Signer name is required' })
 
     const result = await query(
-      'SELECT id, status, user_id FROM proposals WHERE accept_token = $1',
+      `SELECT p.id, p.status, p.user_id, p.title, p.client_name,
+        u.email as owner_email, u.business_name
+       FROM proposals p JOIN users u ON u.id = p.user_id
+       WHERE p.accept_token = $1`,
       [req.params.token]
     )
     if (result.rows.length === 0) return res.status(404).json({ error: 'Proposal not found' })
@@ -106,6 +126,16 @@ router.post('/proposal/:token/accept', async (req, res) => {
        JSON.stringify(lineItems), subtotal, subtotal]
     )
 
+    // Notify the freelancer
+    sendFreelancerEmail(
+      proposal.owner_email,
+      `🎉 Proposal accepted: ${proposal.title}`,
+      `<h2>Great news! Your proposal was accepted.</h2>
+       <p><strong>${signerName}</strong> (${proposal.client_name || 'your client'}) has accepted your proposal: <strong>${proposal.title}</strong>.</p>
+       <p>An invoice has been automatically generated. Log in to your dashboard to view it.</p>
+       <a href="${process.env.REPLIT_DOMAINS ? `https://${process.env.REPLIT_DOMAINS.split(',')[0]}` : 'http://localhost:5000'}/dashboard" style="background:#6366f1;color:white;padding:12px 24px;border-radius:6px;text-decoration:none;display:inline-block;margin-top:16px;">View Dashboard</a>`
+    )
+
     res.json({ success: true, message: 'Proposal accepted!' })
   } catch (err) {
     console.error('Accept proposal error:', err)
@@ -119,12 +149,31 @@ router.post('/proposal/:token/comment', async (req, res) => {
     const { comment, commenterName } = req.body
     if (!comment) return res.status(400).json({ error: 'Comment is required' })
 
-    const result = await query('SELECT id FROM proposals WHERE accept_token = $1', [req.params.token])
+    const result = await query(
+      `SELECT p.id, p.title, p.client_name, u.email as owner_email, u.business_name
+       FROM proposals p JOIN users u ON u.id = p.user_id
+       WHERE p.accept_token = $1`,
+      [req.params.token]
+    )
     if (result.rows.length === 0) return res.status(404).json({ error: 'Proposal not found' })
+    const proposal = result.rows[0]
 
     await query(
       'INSERT INTO acceptance_events (proposal_id, event_type, comment, commenter_name, ip_address) VALUES ($1, $2, $3, $4, $5)',
-      [result.rows[0].id, 'comment', comment, commenterName || null, req.ip]
+      [proposal.id, 'comment', comment, commenterName || null, req.ip]
+    )
+
+    // Notify the freelancer
+    const baseUrl = process.env.REPLIT_DOMAINS
+      ? `https://${process.env.REPLIT_DOMAINS.split(',')[0]}`
+      : 'http://localhost:5000'
+    sendFreelancerEmail(
+      proposal.owner_email,
+      `💬 Change request on: ${proposal.title}`,
+      `<h2>Your client has requested changes.</h2>
+       <p><strong>${commenterName || proposal.client_name || 'Your client'}</strong> has left feedback on your proposal: <strong>${proposal.title}</strong>.</p>
+       <blockquote style="border-left:3px solid #6366f1;padding:12px 16px;background:#f5f3ff;margin:16px 0;border-radius:0 8px 8px 0;">${comment}</blockquote>
+       <a href="${baseUrl}/proposals" style="background:#6366f1;color:white;padding:12px 24px;border-radius:6px;text-decoration:none;display:inline-block;margin-top:8px;">View Proposals</a>`
     )
 
     res.json({ success: true })

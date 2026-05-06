@@ -177,6 +177,55 @@ router.post('/:id/checkout', async (req: AuthRequest, res) => {
   }
 })
 
+// Send invoice to client via email
+router.post('/:id/send', async (req: AuthRequest, res) => {
+  try {
+    const invoiceResult = await query(
+      'SELECT * FROM invoices WHERE id = $1 AND user_id = $2',
+      [req.params.id, req.userId]
+    )
+    if (invoiceResult.rows.length === 0) return res.status(404).json({ error: 'Invoice not found' })
+    const invoice = invoiceResult.rows[0]
+    if (!invoice.client_email) return res.status(400).json({ error: 'Client email is required to send invoice' })
+
+    const userResult = await query('SELECT business_name, email FROM users WHERE id = $1', [req.userId])
+    const user = userResult.rows[0]
+
+    const baseUrl = process.env.REPLIT_DOMAINS
+      ? `https://${process.env.REPLIT_DOMAINS.split(',')[0]}`
+      : 'http://localhost:5000'
+
+    const resendKey = process.env.RESEND_API_KEY
+    if (!resendKey) return res.status(503).json({ error: 'Email not configured. Please add RESEND_API_KEY.' })
+
+    const { Resend } = await import('resend')
+    const resend = new Resend(resendKey)
+    await resend.emails.send({
+      from: 'ProposalForge <noreply@proposalforge.app>',
+      to: invoice.client_email,
+      subject: `Invoice ${invoice.invoice_number} from ${user.business_name || 'Your Freelancer'}`,
+      html: `
+        <h2>Invoice ${invoice.invoice_number}</h2>
+        <p>${user.business_name || 'Your freelancer'} has sent you an invoice for <strong>${new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(parseFloat(invoice.total))}</strong>.</p>
+        ${invoice.due_date ? `<p>Due date: <strong>${new Date(invoice.due_date).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}</strong></p>` : ''}
+        ${invoice.notes ? `<p>${invoice.notes}</p>` : ''}
+        <a href="${baseUrl}/invoices/${invoice.id}" style="background:#6366f1;color:white;padding:12px 24px;border-radius:6px;text-decoration:none;display:inline-block;margin-top:16px;">View & Pay Invoice</a>
+      `,
+    })
+
+    await query(
+      `UPDATE invoices SET status = CASE WHEN status = 'draft' THEN 'sent' ELSE status END, updated_at = NOW() WHERE id = $1`,
+      [req.params.id]
+    )
+
+    const updated = await query('SELECT * FROM invoices WHERE id = $1', [req.params.id])
+    res.json({ success: true, invoice: updated.rows[0] })
+  } catch (err) {
+    console.error('Send invoice error:', err)
+    res.status(500).json({ error: 'Failed to send invoice' })
+  }
+})
+
 // Delete invoice
 router.delete('/:id', async (req: AuthRequest, res) => {
   try {

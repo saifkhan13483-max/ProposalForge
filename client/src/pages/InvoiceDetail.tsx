@@ -9,7 +9,7 @@ import { Textarea } from '@/components/ui/textarea'
 import { Card, CardContent } from '@/components/ui/card'
 import { useToast } from '@/hooks/use-toast'
 import { cn } from '@/lib/utils'
-import { ArrowLeft, Plus, Trash2, Save, CheckCircle, CreditCard, Loader2 } from 'lucide-react'
+import { ArrowLeft, Plus, Trash2, Save, CheckCircle, CreditCard, Loader2, Download, Send } from 'lucide-react'
 
 interface Invoice {
   id: string
@@ -93,6 +93,37 @@ export function InvoiceDetail() {
     }
   }
 
+  async function downloadPdf() {
+    if (!invoice) return
+    try {
+      const token = localStorage.getItem('pf_token')
+      const res = await fetch(`/api/invoices/${invoice.id}/pdf`, {
+        headers: token ? { Authorization: `Bearer ${token}` } : {},
+      })
+      if (!res.ok) throw new Error('Failed to generate PDF')
+      const blob = await res.blob()
+      const url = URL.createObjectURL(blob)
+      const a = document.createElement('a')
+      a.href = url
+      a.download = `invoice-${invoice.invoice_number}.pdf`
+      a.click()
+      URL.revokeObjectURL(url)
+    } catch (err) {
+      toast({ title: 'Error', description: (err as Error).message, variant: 'destructive' })
+    }
+  }
+
+  async function sendInvoice() {
+    if (!invoice) return
+    try {
+      await api.post(`/invoices/${invoice.id}/send`, {})
+      toast({ title: 'Invoice sent!', description: `Invoice emailed to ${invoice.client_email}` })
+      setInvoice(prev => prev ? { ...prev, status: prev.status === 'draft' ? 'sent' : prev.status } : prev)
+    } catch (err) {
+      toast({ title: 'Error', description: (err as Error).message, variant: 'destructive' })
+    }
+  }
+
   function addItem() { setForm(f => ({ ...f, lineItems: [...f.lineItems, { description: '', quantity: 1, unitPrice: 0 }] })) }
   function removeItem(i: number) { setForm(f => ({ ...f, lineItems: f.lineItems.filter((_, idx) => idx !== i) })) }
   function updateItem(i: number, field: string, value: string | number) {
@@ -119,9 +150,17 @@ export function InvoiceDetail() {
           </div>
           <p className="text-sm text-muted-foreground">Created {formatDate(invoice.created_at)}</p>
         </div>
-        <div className="flex gap-2">
+        <div className="flex gap-2 flex-wrap">
+          <Button variant="outline" onClick={downloadPdf} className="gap-2" data-testid="button-download-pdf">
+            <Download className="h-4 w-4" /> PDF
+          </Button>
           {invoice.status !== 'paid' && (
             <>
+              {invoice.client_email && (
+                <Button variant="outline" onClick={sendInvoice} className="gap-2" data-testid="button-send-invoice">
+                  <Send className="h-4 w-4" /> Send
+                </Button>
+              )}
               <Button variant="outline" onClick={markPaid} className="gap-2" data-testid="button-mark-paid">
                 <CheckCircle className="h-4 w-4" /> Mark Paid
               </Button>

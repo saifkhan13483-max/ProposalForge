@@ -27,6 +27,12 @@ interface Invoice {
   paid_at: string
 }
 
+function getEffectiveStatus(invoice: Invoice): string {
+  if (invoice.status === 'paid') return 'paid'
+  if (invoice.due_date && new Date(invoice.due_date) < new Date() && invoice.status !== 'paid') return 'overdue'
+  return invoice.status
+}
+
 interface NewInvoiceForm {
   clientName: string
   clientEmail: string
@@ -178,8 +184,8 @@ export function Invoices() {
                 </p>
               </div>
               <div className="hidden sm:flex items-center gap-3">
-                <span className={cn('text-xs px-2.5 py-1 rounded-full font-medium capitalize', getStatusColor(invoice.status))}>
-                  {invoice.status}
+                <span className={cn('text-xs px-2.5 py-1 rounded-full font-medium capitalize', getStatusColor(getEffectiveStatus(invoice)))}>
+                  {getEffectiveStatus(invoice)}
                 </span>
                 <span className="text-sm font-semibold w-24 text-right">{formatCurrency(invoice.total || 0)}</span>
               </div>

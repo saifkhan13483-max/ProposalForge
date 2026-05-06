@@ -175,9 +175,11 @@ export function PublicProposal() {
             </a>
             {!accepted && (
               <>
-                <Button variant="outline" size="sm" onClick={() => setShowComment(true)} className="gap-2">
-                  <MessageSquare className="h-4 w-4" /> Request Changes
-                </Button>
+                {proposal.plan === 'pro' && (
+                  <Button variant="outline" size="sm" onClick={() => setShowComment(true)} className="gap-2">
+                    <MessageSquare className="h-4 w-4" /> Request Changes
+                  </Button>
+                )}
                 <Button
                   size="sm"
                   onClick={() => setShowAccept(true)}
@@ -298,8 +300,8 @@ export function PublicProposal() {
           </div>
         )}
 
-        {/* Comment Thread */}
-        {comments.length > 0 && (
+        {/* Comment Thread — Pro only */}
+        {proposal.plan === 'pro' && comments.length > 0 && (
           <div className="bg-white rounded-2xl border p-8 shadow-sm">
             <h2 className="text-xl font-bold mb-6 flex items-center gap-2" style={{ fontFamily: 'Bricolage Grotesque, sans-serif' }}>
               <MessageSquare className="h-5 w-5 text-gray-500" />
@@ -335,9 +337,11 @@ export function PublicProposal() {
             <h2 className="text-xl font-bold mb-2" style={{ fontFamily: 'Bricolage Grotesque, sans-serif' }}>Ready to move forward?</h2>
             <p className="text-gray-500 mb-6">Accept this proposal to get started. An invoice will be generated automatically.</p>
             <div className="flex items-center justify-center gap-3">
-              <Button variant="outline" onClick={() => setShowComment(true)} className="gap-2">
-                <MessageSquare className="h-4 w-4" /> Request Changes
-              </Button>
+              {proposal.plan === 'pro' && (
+                <Button variant="outline" onClick={() => setShowComment(true)} className="gap-2">
+                  <MessageSquare className="h-4 w-4" /> Request Changes
+                </Button>
+              )}
               <Button
                 onClick={() => setShowAccept(true)}
                 size="lg"

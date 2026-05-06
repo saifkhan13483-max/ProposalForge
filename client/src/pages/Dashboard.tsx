@@ -97,7 +97,7 @@ export function Dashboard() {
       <div className="flex items-start justify-between gap-4">
         <div>
           <h1 className="text-2xl font-bold" style={{ fontFamily: 'Bricolage Grotesque, sans-serif' }}>
-            Good morning{user?.business_name ? `, ${user.business_name}` : ''}
+            {(() => { const h = new Date().getHours(); return h < 12 ? 'Good morning' : h < 17 ? 'Good afternoon' : 'Good evening' })()}{user?.business_name ? `, ${user.business_name}` : ''}
           </h1>
           <p className="text-muted-foreground mt-1">Here's what's happening with your business.</p>
         </div>

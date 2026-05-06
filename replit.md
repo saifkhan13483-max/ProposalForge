@@ -61,13 +61,14 @@ AI-powered client proposal and invoice generator SaaS for freelancers — turns 
 - **Landing page**: Marketing page at `/` with "Try the live demo" CTA linking to `/demo`
 - **Auth**: Email/password + Google OAuth; registration triggers 3-step onboarding wizard
 - **Onboarding**: 3-step wizard (business name → logo + accent color → default currency) at `/onboarding`
-- **Dashboard**: Revenue, acceptance rate, outstanding invoices, activity feed
-- **Proposals**: Create → AI-generate → edit with Tiptap → regenerate sections → download PDF → send via email → client accepts with e-signature; archive/unarchive support
-- **Invoices**: Manual creation or auto-generated on proposal acceptance; Stripe checkout links
+- **Dashboard**: Revenue, acceptance rate, outstanding invoices, activity feed; time-aware greeting
+- **Proposals**: Create → AI-generate → edit with Tiptap → regenerate sections → download PDF → send via email → client accepts with e-signature; archive/unarchive support; PDF download in list dropdown; client feedback panel shows change requests from clients
+- **Invoices**: Manual creation or auto-generated on proposal acceptance; Stripe checkout links; PDF download; "Send" button emails invoice to client; overdue auto-detection in list
 - **Clients**: Contact book with proposal/invoice counts
 - **Settings**: Logo upload, business profile (name, color, currency) + Pro upgrade (Stripe)
-- **Public page**: Branded proposal view with accept/e-signature + comment thread + PDF download; free-tier branding banner for non-Pro users
+- **Public page**: Branded proposal view with accept/e-signature + PDF download; comment thread (Pro only); free-tier branding banner for non-Pro users
 - **Demo**: `/demo` — anonymous try-without-signup experience (1 proposal per IP/day)
+- **Email notifications**: Freelancer receives email (via Resend) when client accepts proposal or submits change request
 
 ## User preferences
 

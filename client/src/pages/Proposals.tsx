@@ -98,6 +98,25 @@ export function Proposals() {
     }
   }
 
+  async function downloadPdf(proposal: Proposal) {
+    try {
+      const token = localStorage.getItem('pf_token')
+      const res = await fetch(`/api/proposals/${proposal.id}/pdf`, {
+        headers: token ? { Authorization: `Bearer ${token}` } : {},
+      })
+      if (!res.ok) throw new Error('Failed to generate PDF')
+      const blob = await res.blob()
+      const url = URL.createObjectURL(blob)
+      const a = document.createElement('a')
+      a.href = url
+      a.download = `${proposal.title.replace(/[^a-z0-9]/gi, '-').toLowerCase()}-proposal.pdf`
+      a.click()
+      URL.revokeObjectURL(url)
+    } catch (err) {
+      toast({ title: 'Error', description: (err as Error).message, variant: 'destructive' })
+    }
+  }
+
   return (
     <div className="p-6 lg:p-8 space-y-6 max-w-7xl mx-auto">
       {/* Header */}
@@ -235,6 +254,11 @@ export function Proposals() {
                   {!showArchived && proposal.status === 'draft' && (
                     <DropdownMenuItem onClick={() => setLocation(`/proposals/${proposal.id}?action=send`)}>
                       <Send className="h-4 w-4" /> Send to Client
+                    </DropdownMenuItem>
+                  )}
+                  {!showArchived && (proposal.total_amount || 0) > 0 && (
+                    <DropdownMenuItem onClick={() => downloadPdf(proposal)}>
+                      <Download className="h-4 w-4" /> Download PDF
                     </DropdownMenuItem>
                   )}
                   {!showArchived && (

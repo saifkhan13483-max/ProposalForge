@@ -411,6 +411,26 @@ router.post('/:id/unarchive', async (req: AuthRequest, res) => {
   }
 })
 
+// Get client comments (change requests) for a proposal
+router.get('/:id/comments', async (req: AuthRequest, res) => {
+  try {
+    const proposal = await query('SELECT id FROM proposals WHERE id = $1 AND user_id = $2', [req.params.id, req.userId])
+    if (proposal.rows.length === 0) return res.status(404).json({ error: 'Proposal not found' })
+
+    const comments = await query(
+      `SELECT id, comment, commenter_name, created_at
+       FROM acceptance_events
+       WHERE proposal_id = $1 AND event_type = 'comment' AND comment IS NOT NULL
+       ORDER BY created_at ASC`,
+      [req.params.id]
+    )
+    res.json({ comments: comments.rows })
+  } catch (err) {
+    console.error('Get comments error:', err)
+    res.status(500).json({ error: 'Failed to get comments' })
+  }
+})
+
 // Duplicate proposal
 router.post('/:id/duplicate', async (req: AuthRequest, res) => {
   try {

@@ -15,7 +15,7 @@ import { useToast } from '@/hooks/use-toast'
 import { cn } from '@/lib/utils'
 import {
   ArrowLeft, Sparkles, Send, Loader2, Plus, Trash2, RotateCw,
-  RefreshCw, Save, ExternalLink, Copy, CheckCircle, Download
+  RefreshCw, Save, ExternalLink, Copy, CheckCircle, Download, MessageSquare, Clock
 } from 'lucide-react'
 import { useEditor, EditorContent } from '@tiptap/react'
 import StarterKit from '@tiptap/starter-kit'
@@ -62,6 +62,7 @@ export function ProposalDetail() {
   const [sentUrl, setSentUrl] = useState('')
   const [activeTab, setActiveTab] = useState('intake')
   const [regeneratingSection, setRegeneratingSection] = useState<string | null>(null)
+  const [comments, setComments] = useState<{ id: string; comment: string; commenter_name: string | null; created_at: string }[]>([])
 
   const [form, setForm] = useState({
     title: '',
@@ -116,6 +117,10 @@ export function ProposalDetail() {
       })
       .catch(() => toast({ title: 'Error', description: 'Failed to load proposal', variant: 'destructive' }))
       .finally(() => setLoading(false))
+
+    api.get<{ comments: { id: string; comment: string; commenter_name: string | null; created_at: string }[] }>(`/proposals/${params.id}/comments`)
+      .then(data => setComments(data.comments || []))
+      .catch(() => {})
   }, [params?.id])
 
   async function saveBasics() {
@@ -540,6 +545,36 @@ export function ProposalDetail() {
           </Card>
         </TabsContent>
       </Tabs>
+
+      {/* Client change requests */}
+      {comments.length > 0 && (
+        <Card className="border-amber-200 bg-amber-50/50 dark:bg-amber-900/10">
+          <CardHeader className="pb-3">
+            <CardTitle className="text-sm font-semibold flex items-center gap-2 text-amber-800 dark:text-amber-300">
+              <MessageSquare className="h-4 w-4" />
+              Client Feedback ({comments.length})
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-3">
+            {comments.map(c => (
+              <div key={c.id} className="flex gap-3">
+                <div className="h-8 w-8 rounded-full bg-amber-100 dark:bg-amber-800 flex items-center justify-center shrink-0 text-sm font-medium text-amber-700 dark:text-amber-200">
+                  {c.commenter_name ? c.commenter_name[0].toUpperCase() : '?'}
+                </div>
+                <div className="flex-1 bg-white dark:bg-muted rounded-xl p-3 border">
+                  <div className="flex items-center gap-2 mb-1">
+                    <span className="text-sm font-medium">{c.commenter_name || 'Anonymous'}</span>
+                    <span className="text-xs text-muted-foreground flex items-center gap-1">
+                      <Clock className="h-3 w-3" />{new Date(c.created_at).toLocaleDateString()}
+                    </span>
+                  </div>
+                  <p className="text-sm text-muted-foreground">{c.comment}</p>
+                </div>
+              </div>
+            ))}
+          </CardContent>
+        </Card>
+      )}
 
       {/* Send dialog */}
       <Dialog open={showSendDialog} onOpenChange={setShowSendDialog}>

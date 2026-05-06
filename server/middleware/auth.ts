@@ -12,6 +12,14 @@ export function generateToken(userId: string, plan: string = 'free'): string {
   return jwt.sign({ userId, plan }, JWT_SECRET, { expiresIn: '7d' })
 }
 
+export function verifyToken(token: string): { userId: string; plan: string } | null {
+  try {
+    return jwt.verify(token, JWT_SECRET) as { userId: string; plan: string }
+  } catch {
+    return null
+  }
+}
+
 export function requireAuth(req: AuthRequest, res: Response, next: NextFunction) {
   const authHeader = req.headers.authorization
   const token = authHeader?.startsWith('Bearer ') ? authHeader.slice(7) : null

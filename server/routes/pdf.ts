@@ -207,6 +207,145 @@ router.get('/:id/pdf', requireAuth, async (req: AuthRequest, res) => {
   }
 })
 
+function buildInvoiceHtml(invoice: Record<string, unknown>, businessName: string, logoUrl: string | null, accentColor: string): string {
+  const color = accentColor || '#6366f1'
+  const lineItems = (invoice.line_items as { description: string; quantity: number; unitPrice: number }[]) || []
+  const subtotal = parseFloat(String(invoice.subtotal || 0))
+  const taxRate = parseFloat(String(invoice.tax_rate || 0))
+  const taxAmount = parseFloat(String(invoice.tax_amount || 0))
+  const total = parseFloat(String(invoice.total || 0))
+  const formatCurrency = (n: number) => new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(n)
+  const formatDate = (d: string) => d ? new Date(d).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' }) : ''
+
+  return `<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Invoice ${invoice.invoice_number}</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; color: #111827; background: #fff; font-size: 14px; line-height: 1.6; }
+  .page { max-width: 800px; margin: 0 auto; padding: 48px 40px; }
+  .header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 48px; padding-bottom: 24px; border-bottom: 2px solid ${color}; }
+  .brand { display: flex; align-items: center; gap: 12px; }
+  .brand-icon { width: 40px; height: 40px; border-radius: 10px; background: ${color}; display: flex; align-items: center; justify-content: center; color: white; font-size: 18px; font-weight: bold; }
+  .brand-name { font-size: 18px; font-weight: 700; }
+  .invoice-meta { text-align: right; }
+  .invoice-meta h1 { font-size: 28px; font-weight: 800; color: ${color}; }
+  .invoice-meta p { font-size: 12px; color: #6b7280; margin-top: 4px; }
+  .bill-section { display: flex; justify-content: space-between; margin-bottom: 40px; }
+  .bill-to h3 { font-size: 11px; text-transform: uppercase; letter-spacing: 0.05em; color: #9ca3af; font-weight: 600; margin-bottom: 6px; }
+  .bill-to p { color: #374151; }
+  table { width: 100%; border-collapse: collapse; margin-bottom: 24px; }
+  thead th { text-align: left; font-size: 12px; font-weight: 600; color: #6b7280; text-transform: uppercase; letter-spacing: 0.04em; padding: 8px 12px; background: #f9fafb; border-bottom: 1px solid #e5e7eb; }
+  thead th:last-child { text-align: right; }
+  tbody td { padding: 12px; border-bottom: 1px solid #f3f4f6; color: #374151; }
+  tbody td:not(:first-child) { text-align: right; white-space: nowrap; }
+  .totals { margin-left: auto; width: 280px; }
+  .totals-row { display: flex; justify-content: space-between; padding: 6px 0; font-size: 14px; }
+  .totals-row.total { border-top: 2px solid #e5e7eb; margin-top: 8px; padding-top: 12px; font-size: 18px; font-weight: 700; color: ${color}; }
+  .status-badge { display: inline-block; padding: 4px 12px; border-radius: 20px; font-size: 12px; font-weight: 600; }
+  .paid { background: #dcfce7; color: #16a34a; }
+  .due { background: #fef9c3; color: #a16207; }
+  .notes { margin-top: 32px; padding: 16px; background: #f9fafb; border-radius: 8px; font-size: 13px; color: #6b7280; }
+  .footer { margin-top: 48px; padding-top: 16px; border-top: 1px solid #e5e7eb; font-size: 11px; color: #9ca3af; text-align: center; }
+</style>
+</head>
+<body>
+<div class="page">
+  <div class="header">
+    <div class="brand">
+      ${logoUrl
+        ? `<img src="${logoUrl}" alt="${businessName}" style="height:40px;max-width:160px;object-fit:contain;">`
+        : `<div class="brand-icon">${(businessName || 'P')[0].toUpperCase()}</div>`
+      }
+      <span class="brand-name">${businessName || 'ProposalForge'}</span>
+    </div>
+    <div class="invoice-meta">
+      <h1>INVOICE</h1>
+      <p><strong>${invoice.invoice_number}</strong></p>
+      <p>Issued: ${formatDate(invoice.created_at as string)}</p>
+      ${invoice.due_date ? `<p>Due: ${formatDate(invoice.due_date as string)}</p>` : ''}
+      <span class="status-badge ${invoice.status === 'paid' ? 'paid' : 'due'}">${String(invoice.status).toUpperCase()}</span>
+    </div>
+  </div>
+
+  <div class="bill-section">
+    <div class="bill-to">
+      <h3>Bill To</h3>
+      <p><strong>${invoice.client_name || 'Client'}</strong></p>
+      ${invoice.client_email ? `<p>${invoice.client_email}</p>` : ''}
+    </div>
+  </div>
+
+  <table>
+    <thead>
+      <tr>
+        <th>Description</th>
+        <th>Qty</th>
+        <th>Unit Price</th>
+        <th>Total</th>
+      </tr>
+    </thead>
+    <tbody>
+      ${lineItems.map(item => `
+      <tr>
+        <td>${item.description}</td>
+        <td>${item.quantity}</td>
+        <td>${formatCurrency(item.unitPrice)}</td>
+        <td>${formatCurrency(item.quantity * item.unitPrice)}</td>
+      </tr>`).join('')}
+    </tbody>
+  </table>
+
+  <div class="totals">
+    <div class="totals-row"><span>Subtotal</span><span>${formatCurrency(subtotal)}</span></div>
+    ${taxRate > 0 ? `<div class="totals-row"><span>Tax (${taxRate}%)</span><span>${formatCurrency(taxAmount)}</span></div>` : ''}
+    <div class="totals-row total"><span>Total</span><span>${formatCurrency(total)}</span></div>
+    ${invoice.paid_at ? `<div class="totals-row" style="color:#16a34a;font-weight:600;margin-top:8px;"><span>✓ Paid</span><span>${formatDate(invoice.paid_at as string)}</span></div>` : ''}
+  </div>
+
+  ${invoice.notes ? `<div class="notes"><strong>Notes:</strong> ${invoice.notes}</div>` : ''}
+
+  <div class="footer">Generated by ProposalForge · ${new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}</div>
+</div>
+</body>
+</html>`
+}
+
+// Download invoice PDF — exported for direct mounting in index.ts
+export async function handleInvoicePdf(req: import('express').Request & { userId?: string }, res: import('express').Response) {
+  // Verify auth
+  const authHeader = req.headers.authorization
+  const token = authHeader?.startsWith('Bearer ') ? authHeader.slice(7) : null
+  if (!token) return res.status(401).json({ error: 'Unauthorized' })
+
+  try {
+    const { verifyToken } = await import('../middleware/auth.js')
+    const payload = verifyToken(token)
+    if (!payload?.userId) return res.status(401).json({ error: 'Unauthorized' })
+
+    const invoiceResult = await query(
+      'SELECT i.*, u.business_name, u.logo_url, u.accent_color FROM invoices i JOIN users u ON u.id = i.user_id WHERE i.id = $1 AND i.user_id = $2',
+      [req.params.id, payload.userId]
+    )
+    if (invoiceResult.rows.length === 0) return res.status(404).json({ error: 'Invoice not found' })
+    const invoice = invoiceResult.rows[0]
+
+    const html = buildInvoiceHtml(invoice, invoice.business_name, invoice.logo_url, invoice.accent_color)
+    const pdf = await generatePdf(html)
+
+    const filename = `invoice-${String(invoice.invoice_number).replace(/[^a-z0-9]/gi, '-').toLowerCase()}.pdf`
+    res.setHeader('Content-Type', 'application/pdf')
+    res.setHeader('Content-Disposition', `attachment; filename="${filename}"`)
+    res.setHeader('Content-Length', pdf.length)
+    res.send(pdf)
+  } catch (err) {
+    console.error('Invoice PDF error:', err)
+    res.status(500).json({ error: 'Failed to generate invoice PDF' })
+  }
+}
+
 // Download PDF for public proposal (client-facing)
 export async function handlePublicPdf(req: import('express').Request, res: import('express').Response) {
   try {
