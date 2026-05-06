@@ -61,7 +61,7 @@ export function Landing() {
               </Button>
             </Link>
             <Link href="/demo">
-              <Button size="lg" variant="outline" className="h-12 px-8 text-base border-white/20 text-white hover:bg-white/10 hover:text-white gap-2">
+              <Button size="lg" className="h-12 px-8 text-base bg-white/10 border border-white/20 text-white hover:bg-white/20 hover:text-white gap-2">
                 <ArrowRight className="h-4 w-4" />
                 Try the live demo
               </Button>
