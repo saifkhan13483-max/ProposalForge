@@ -1,0 +1,105 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,500;12..96,600;12..96,700&display=swap');
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 0 0% 98%;
+    --foreground: 224 20% 14%;
+    --card: 0 0% 100%;
+    --card-foreground: 224 20% 14%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 224 20% 14%;
+    --primary: 243 75% 59%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 220 14% 96%;
+    --secondary-foreground: 224 20% 14%;
+    --muted: 220 14% 96%;
+    --muted-foreground: 220 9% 46%;
+    --accent: 243 75% 96%;
+    --accent-foreground: 243 75% 30%;
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 0 0% 100%;
+    --border: 220 13% 91%;
+    --input: 220 13% 91%;
+    --ring: 243 75% 59%;
+    --radius: 0.625rem;
+    --chart-1: 243 75% 59%;
+    --chart-2: 160 60% 45%;
+    --chart-3: 30 80% 55%;
+    --chart-4: 280 65% 60%;
+    --chart-5: 340 75% 55%;
+    --sidebar-background: 224 30% 10%;
+    --sidebar-foreground: 220 14% 80%;
+    --sidebar-primary: 243 75% 65%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 224 25% 16%;
+    --sidebar-accent-foreground: 220 14% 90%;
+    --sidebar-border: 224 20% 18%;
+    --sidebar-ring: 243 75% 59%;
+  }
+
+  .dark {
+    --background: 224 28% 7%;
+    --foreground: 220 14% 92%;
+    --card: 224 25% 10%;
+    --card-foreground: 220 14% 92%;
+    --popover: 224 25% 10%;
+    --popover-foreground: 220 14% 92%;
+    --primary: 243 75% 65%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 224 20% 16%;
+    --secondary-foreground: 220 14% 92%;
+    --muted: 224 20% 16%;
+    --muted-foreground: 220 9% 55%;
+    --accent: 243 50% 18%;
+    --accent-foreground: 243 75% 80%;
+    --destructive: 0 62% 50%;
+    --destructive-foreground: 0 0% 100%;
+    --border: 224 20% 18%;
+    --input: 224 20% 18%;
+    --ring: 243 75% 65%;
+    --sidebar-background: 224 30% 7%;
+    --sidebar-foreground: 220 14% 80%;
+    --sidebar-primary: 243 75% 65%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 224 25% 13%;
+    --sidebar-accent-foreground: 220 14% 90%;
+    --sidebar-border: 224 20% 14%;
+    --sidebar-ring: 243 75% 59%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground;
+    font-family: 'Inter', sans-serif;
+    font-feature-settings: 'rlig' 1, 'calt' 1;
+    -webkit-font-smoothing: antialiased;
+  }
+  h1, h2, h3, h4, h5, h6 {
+    font-family: 'Bricolage Grotesque', sans-serif;
+  }
+}
+
+/* Tiptap editor styles */
+.tiptap {
+  @apply outline-none min-h-[120px] text-sm leading-relaxed;
+}
+.tiptap p { @apply mb-2; }
+.tiptap h1 { @apply text-2xl font-bold mb-3; }
+.tiptap h2 { @apply text-xl font-semibold mb-2; }
+.tiptap h3 { @apply text-lg font-semibold mb-2; }
+.tiptap ul { @apply list-disc pl-5 mb-2; }
+.tiptap ol { @apply list-decimal pl-5 mb-2; }
+.tiptap li { @apply mb-1; }
+
+/* Scrollbar */
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { @apply bg-transparent; }
+::-webkit-scrollbar-thumb { @apply bg-border rounded-full; }
+::-webkit-scrollbar-thumb:hover { @apply bg-muted-foreground; }
