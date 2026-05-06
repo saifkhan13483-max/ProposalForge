@@ -66,15 +66,15 @@ export function Auth() {
 
   return (
     <div className="min-h-screen flex">
-      {/* Left panel */}
+      {/* Left panel — dark side: light text, bright accents */}
       <div className="hidden lg:flex flex-col w-1/2 bg-gradient-to-br from-slate-900 via-indigo-950 to-slate-900 p-12 relative overflow-hidden">
         <div className="absolute inset-0 overflow-hidden">
-          <div className="absolute -top-40 -right-40 w-80 h-80 bg-indigo-500/10 rounded-full blur-3xl" />
-          <div className="absolute -bottom-40 -left-40 w-80 h-80 bg-purple-500/10 rounded-full blur-3xl" />
+          <div className="absolute -top-40 -right-40 w-80 h-80 bg-indigo-400/20 rounded-full blur-3xl" />
+          <div className="absolute -bottom-40 -left-40 w-80 h-80 bg-violet-400/20 rounded-full blur-3xl" />
         </div>
 
         <div className="relative z-10 flex items-center gap-3 mb-16">
-          <div className="h-10 w-10 rounded-xl bg-indigo-600 flex items-center justify-center">
+          <div className="h-10 w-10 rounded-xl bg-indigo-500 flex items-center justify-center shadow-lg shadow-indigo-500/40">
             <Sparkles className="h-5 w-5 text-white" />
           </div>
           <span className="text-white font-bold text-xl" style={{ fontFamily: 'Bricolage Grotesque, sans-serif' }}>ProposalForge</span>
@@ -84,7 +84,7 @@ export function Auth() {
           <h1 className="text-4xl font-bold text-white mb-4 leading-tight" style={{ fontFamily: 'Bricolage Grotesque, sans-serif' }}>
             Turn descriptions<br />into deals.
           </h1>
-          <p className="text-slate-400 text-lg mb-12 leading-relaxed">
+          <p className="text-slate-200 text-lg mb-12 leading-relaxed">
             AI-powered proposals, quotes, and invoices — from idea to client-ready in under 60 seconds.
           </p>
 
@@ -95,38 +95,38 @@ export function Auth() {
               { icon: CheckCircle, text: 'Auto-create invoices when proposals are accepted' },
             ].map(({ icon: Icon, text }) => (
               <div key={text} className="flex items-start gap-3">
-                <div className="h-8 w-8 rounded-lg bg-indigo-500/20 flex items-center justify-center shrink-0 mt-0.5">
-                  <Icon className="h-4 w-4 text-indigo-400" />
+                <div className="h-8 w-8 rounded-lg bg-indigo-400/25 border border-indigo-300/20 flex items-center justify-center shrink-0 mt-0.5">
+                  <Icon className="h-4 w-4 text-indigo-200" />
                 </div>
-                <p className="text-slate-300 text-sm leading-relaxed">{text}</p>
+                <p className="text-slate-100 text-sm leading-relaxed">{text}</p>
               </div>
             ))}
           </div>
         </div>
 
-        <div className="relative z-10 pt-8 border-t border-white/10">
-          <p className="text-slate-500 text-sm">
+        <div className="relative z-10 pt-8 border-t border-white/15">
+          <p className="text-slate-300 text-sm">
             Join thousands of freelancers winning more clients.
           </p>
         </div>
       </div>
 
-      {/* Right panel */}
-      <div className="flex-1 flex items-center justify-center p-8 bg-background">
+      {/* Right panel — light side: dark text, bold labels, deep accents */}
+      <div className="flex-1 flex items-center justify-center p-8 bg-white">
         <div className="w-full max-w-md">
           <div className="flex items-center gap-2 mb-8 lg:hidden">
-            <div className="h-9 w-9 rounded-xl bg-primary flex items-center justify-center">
+            <div className="h-9 w-9 rounded-xl bg-indigo-600 flex items-center justify-center">
               <Sparkles className="h-4 w-4 text-white" />
             </div>
-            <span className="font-bold text-xl" style={{ fontFamily: 'Bricolage Grotesque, sans-serif' }}>ProposalForge</span>
+            <span className="font-bold text-xl text-slate-900" style={{ fontFamily: 'Bricolage Grotesque, sans-serif' }}>ProposalForge</span>
           </div>
 
           <Card className="border-0 shadow-none">
             <CardHeader className="px-0 pb-6">
-              <CardTitle className="text-2xl" style={{ fontFamily: 'Bricolage Grotesque, sans-serif' }}>
+              <CardTitle className="text-2xl text-slate-900" style={{ fontFamily: 'Bricolage Grotesque, sans-serif' }}>
                 {mode === 'login' ? 'Welcome back' : 'Create your account'}
               </CardTitle>
-              <CardDescription className="text-base">
+              <CardDescription className="text-base text-slate-600">
                 {mode === 'login' ? "Sign in to your ProposalForge account" : "Start winning more clients today — free forever"}
               </CardDescription>
             </CardHeader>
@@ -134,7 +134,7 @@ export function Auth() {
               <Button
                 type="button"
                 variant="outline"
-                className="w-full h-10 gap-2 mb-4"
+                className="w-full h-10 gap-2 mb-4 border-slate-300 text-slate-800 font-medium hover:bg-slate-50 hover:border-slate-400"
                 onClick={handleGoogleLogin}
               >
                 <GoogleIcon />
@@ -143,28 +143,29 @@ export function Auth() {
 
               <div className="relative mb-4">
                 <div className="absolute inset-0 flex items-center">
-                  <span className="w-full border-t" />
+                  <span className="w-full border-t border-slate-200" />
                 </div>
                 <div className="relative flex justify-center text-xs uppercase">
-                  <span className="bg-background px-2 text-muted-foreground">or</span>
+                  <span className="bg-white px-2 text-slate-400 font-medium tracking-wider">or</span>
                 </div>
               </div>
 
               <form onSubmit={handleSubmit} className="space-y-4">
                 {mode === 'register' && (
                   <div className="space-y-2">
-                    <Label htmlFor="business-name">Business name</Label>
+                    <Label htmlFor="business-name" className="text-slate-800 font-semibold text-sm">Business name</Label>
                     <Input
                       id="business-name"
                       data-testid="input-business-name"
                       placeholder="Acme Studio"
                       value={businessName}
                       onChange={e => setBusinessName(e.target.value)}
+                      className="border-slate-300 text-slate-900 placeholder:text-slate-400 focus-visible:ring-indigo-500"
                     />
                   </div>
                 )}
                 <div className="space-y-2">
-                  <Label htmlFor="email">Email</Label>
+                  <Label htmlFor="email" className="text-slate-800 font-semibold text-sm">Email</Label>
                   <Input
                     id="email"
                     data-testid="input-email"
@@ -173,10 +174,11 @@ export function Auth() {
                     value={email}
                     onChange={e => setEmail(e.target.value)}
                     required
+                    className="border-slate-300 text-slate-900 placeholder:text-slate-400 focus-visible:ring-indigo-500"
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="password">Password</Label>
+                  <Label htmlFor="password" className="text-slate-800 font-semibold text-sm">Password</Label>
                   <Input
                     id="password"
                     data-testid="input-password"
@@ -186,12 +188,13 @@ export function Auth() {
                     onChange={e => setPassword(e.target.value)}
                     required
                     minLength={8}
+                    className="border-slate-300 text-slate-900 placeholder:text-slate-400 focus-visible:ring-indigo-500"
                   />
                 </div>
 
                 <Button
                   type="submit"
-                  className="w-full h-10 gap-2"
+                  className="w-full h-10 gap-2 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold shadow-sm shadow-indigo-200"
                   disabled={loading}
                   data-testid="button-submit"
                 >
@@ -207,11 +210,11 @@ export function Auth() {
               </form>
 
               <div className="mt-6 space-y-3 text-center">
-                <p className="text-sm text-muted-foreground">
+                <p className="text-sm text-slate-500">
                   {mode === 'login' ? "Don't have an account? " : "Already have an account? "}
                   <button
                     onClick={() => setMode(mode === 'login' ? 'register' : 'login')}
-                    className="text-primary font-medium hover:underline"
+                    className="text-indigo-600 font-semibold hover:text-indigo-700 hover:underline"
                     data-testid="link-toggle-mode"
                   >
                     {mode === 'login' ? 'Sign up free' : 'Sign in'}
@@ -219,7 +222,7 @@ export function Auth() {
                 </p>
                 {mode === 'login' && (
                   <p className="text-sm">
-                    <a href="/forgot-password" className="text-muted-foreground hover:text-primary hover:underline">
+                    <a href="/forgot-password" className="text-slate-400 hover:text-slate-700 hover:underline">
                       Forgot your password?
                     </a>
                   </p>
