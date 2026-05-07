@@ -430,23 +430,40 @@ export function Landing() {
       </section>
 
       {/* Social proof strip */}
-      <section className="bg-slate-50 border-y border-slate-200 py-3 sm:py-4">
-        <div className="max-w-5xl mx-auto px-4 sm:px-6">
-          <div className="flex flex-wrap items-center justify-center gap-2 sm:gap-3">
-            {[
-              { icon: Users,        label: 'Trusted by freelancers worldwide' },
-              { icon: Zap,          label: '60-second generation' },
-              { icon: DollarSign,   label: 'Stripe-powered payments' },
-              { icon: CheckCircle,  label: 'Electronic signatures' },
-            ].map(({ icon: Icon, label }) => (
-              <div key={label} className="inline-flex items-center gap-1.5 bg-white border border-slate-200 rounded-full px-3 py-1.5 shadow-sm">
-                <Icon className="h-3.5 w-3.5 text-indigo-500 shrink-0" />
-                <span className="text-xs sm:text-[13px] font-medium text-slate-600 whitespace-nowrap">{label}</span>
-              </div>
-            ))}
+      {(() => {
+        const items = [
+          { icon: Users,       label: 'Trusted by freelancers worldwide' },
+          { icon: Zap,         label: '60-second generation' },
+          { icon: DollarSign,  label: 'Stripe-powered payments' },
+          { icon: CheckCircle, label: 'Electronic signatures' },
+          { icon: Shield,      label: 'Secure & private' },
+          { icon: TrendingUp,  label: '68% acceptance rate' },
+        ]
+        const Pill = ({ icon: Icon, label }: { icon: typeof Users; label: string }) => (
+          <div className="inline-flex items-center gap-1.5 bg-white border border-slate-200 rounded-full px-3 py-1.5 shadow-sm mx-2 shrink-0">
+            <Icon className="h-3.5 w-3.5 text-indigo-500 shrink-0" />
+            <span className="text-xs font-medium text-slate-600 whitespace-nowrap">{label}</span>
           </div>
-        </div>
-      </section>
+        )
+        return (
+          <section className="bg-slate-50 border-y border-slate-200 py-3 overflow-hidden">
+            {/* Mobile: marquee */}
+            <div className="sm:hidden">
+              <div className="animate-marquee">
+                {[...items, ...items].map((item, i) => (
+                  <Pill key={i} icon={item.icon} label={item.label} />
+                ))}
+              </div>
+            </div>
+            {/* Desktop: static centred row */}
+            <div className="hidden sm:flex max-w-5xl mx-auto px-6 items-center justify-center gap-3">
+              {items.map((item) => (
+                <Pill key={item.label} icon={item.icon} label={item.label} />
+              ))}
+            </div>
+          </section>
+        )
+      })()}
 
       {/* How it works */}
       <section id="how-it-works" className="bg-white py-14 sm:py-28">
