@@ -12,6 +12,10 @@ channel = "stable-25_05"
 SERVER_PORT = "3000"
 JWT_SECRET = "proposalforge-jwt-secret-kyht4d57be"
 GEMINI_API_KEY = "AIzaSyCp3O3rjNfRetYF0U0Vpk7jw5cmZxUyYDQ"
+GEMINI_API_KEY_B = "AIzaSyB3dtTWL0u8uENaC--uQYeRToToW-j-j40"
+GEMINI_API_KEY_C = "AIzaSyBeHRUKTYWi2O1CunpYGD1d1b0Jj-Sv2oQ"
+GEMINI_API_KEY_D = "AIzaSyBVWhsdZ8qfZ5NA_wplcP7uG6NL3uPnVmI"
+GEMINI_API_KEY_E = "AIzaSyBNgrxSHXGUNbdvFGlpry763cd_z3NZMYY"
 
 [workflows]
 runButton = "Project"
