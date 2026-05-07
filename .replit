@@ -11,6 +11,7 @@ channel = "stable-25_05"
 [userenv.shared]
 SERVER_PORT = "3000"
 JWT_SECRET = "proposalforge-jwt-secret-kyht4d57be"
+GEMINI_API_KEY = "AIzaSyCp3O3rjNfRetYF0U0Vpk7jw5cmZxUyYDQ"
 
 [workflows]
 runButton = "Project"
