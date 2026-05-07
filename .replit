@@ -11,10 +11,7 @@ channel = "stable-25_05"
 [userenv.shared]
 SERVER_PORT = "3000"
 JWT_SECRET = "proposalforge-jwt-k9x2mQvL8pNwR4hT7jYcZ3eFbA6dUs1X"
-GEMINI_API_KEY = "AIzaSyB3dtTWL0u8uENaC--uQYeRToToW-j-j40"
-GEMINI_API_KEY_B = "AIzaSyBeHRUKTYWi2O1CunpYGD1d1b0Jj-Sv2oQ"
-GEMINI_API_KEY_C = "AIzaSyBVWhsdZ8qfZ5NA_wplcP7uG6NL3uPnVmI"
-GEMINI_API_KEY_D = "AIzaSyBNgrxSHXGUNbdvFGlpry763cd_z3NZMYY"
+GROQ_API_KEY = "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"
 
 [workflows]
 runButton = "Project"
