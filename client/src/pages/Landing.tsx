@@ -8,10 +8,10 @@ import {
 import { useState } from 'react'
 
 const stats = [
-  { value: '2,400+', label: 'Freelancers' },
-  { value: '$4.2M', label: 'Proposals sent' },
-  { value: '68%', label: 'Acceptance rate' },
-  { value: '58s', label: 'Avg. generation' },
+  { value: '2,400+', label: 'Freelancers',  color: 'from-indigo-400 to-violet-400' },
+  { value: '$4.2M',  label: 'Proposals',    color: 'from-violet-400 to-fuchsia-400' },
+  { value: '68%',    label: 'Accepted',     color: 'from-emerald-400 to-teal-400' },
+  { value: '58s',    label: 'Generation',   color: 'from-amber-400 to-orange-400' },
 ]
 
 const testimonials = [
@@ -420,9 +420,9 @@ export function Landing() {
         <div className="max-w-5xl mx-auto px-4 sm:px-6">
           <div className="grid grid-cols-4 gap-px bg-white/5 rounded-xl sm:rounded-2xl overflow-hidden">
             {stats.map((s) => (
-              <div key={s.label} className="group flex flex-col items-center justify-center text-center px-2 py-3 sm:py-5 bg-[#0d0d1a] hover:bg-[#111127] transition-colors">
-                <p className="text-lg sm:text-2xl font-extrabold text-white mb-0.5 group-hover:text-indigo-400 transition-colors leading-none" style={{ fontFamily: 'Bricolage Grotesque, sans-serif' }}>{s.value}</p>
-                <p className="text-[9px] sm:text-xs text-slate-500 leading-tight">{s.label}</p>
+              <div key={s.label} className="flex flex-col items-center justify-center text-center px-2 py-3 sm:py-5 bg-[#0d0d1a] hover:bg-[#0f0f22] transition-colors">
+                <p className={`text-lg sm:text-2xl font-extrabold bg-gradient-to-r ${s.color} bg-clip-text text-transparent leading-none mb-1`} style={{ fontFamily: 'Bricolage Grotesque, sans-serif' }}>{s.value}</p>
+                <p className="text-[9px] sm:text-xs text-slate-500 leading-none whitespace-nowrap">{s.label}</p>
               </div>
             ))}
           </div>
