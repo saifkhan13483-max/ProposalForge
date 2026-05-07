@@ -140,39 +140,176 @@ export function Landing() {
       </header>
 
       {/* Hero */}
-      <section className="relative overflow-hidden bg-gradient-to-b from-indigo-950 via-slate-900 to-slate-900 text-white">
-        <div className="absolute inset-0 overflow-hidden pointer-events-none">
-          <div className="absolute -top-1/2 left-1/2 -translate-x-1/2 w-[600px] sm:w-[900px] h-[600px] sm:h-[900px] bg-indigo-600/20 rounded-full blur-3xl" />
-          <div className="absolute top-1/4 -left-40 w-96 h-96 bg-purple-600/10 rounded-full blur-3xl" />
-          <div className="absolute top-1/3 -right-40 w-96 h-96 bg-blue-600/10 rounded-full blur-3xl" />
-          <div className="absolute inset-0" style={{
-            backgroundImage: 'linear-gradient(rgba(255,255,255,0.03) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.03) 1px, transparent 1px)',
-            backgroundSize: '60px 60px'
+      <section className="relative overflow-hidden bg-[#0a0a14] text-white min-h-[90vh] flex items-center">
+        {/* Background effects */}
+        <div className="absolute inset-0 pointer-events-none">
+          <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[500px] bg-indigo-600/20 rounded-full blur-[120px]" />
+          <div className="absolute bottom-0 left-0 w-72 h-72 bg-purple-700/15 rounded-full blur-[80px]" />
+          <div className="absolute top-1/3 right-0 w-72 h-72 bg-blue-700/15 rounded-full blur-[80px]" />
+          {/* Dot grid */}
+          <div className="absolute inset-0 opacity-[0.07]" style={{
+            backgroundImage: 'radial-gradient(circle, #ffffff 1px, transparent 1px)',
+            backgroundSize: '32px 32px'
           }} />
         </div>
-        <div className="relative max-w-5xl mx-auto px-4 sm:px-6 py-20 sm:py-28 md:py-40 text-center">
-          <div className="inline-flex items-center gap-2 bg-white/10 backdrop-blur-sm border border-white/20 text-white/90 rounded-full px-3 sm:px-4 py-1.5 text-xs sm:text-sm font-medium mb-6 sm:mb-8">
-            <Sparkles className="h-3 w-3 sm:h-3.5 sm:w-3.5 text-indigo-300 shrink-0" />
-            AI-powered in under 60 seconds
+
+        <div className="relative w-full max-w-6xl mx-auto px-4 sm:px-6 py-20 md:py-0">
+          <div className="flex flex-col lg:flex-row items-center gap-12 lg:gap-16">
+
+            {/* Left: Copy */}
+            <div className="flex-1 text-center lg:text-left">
+              {/* Badge */}
+              <div className="inline-flex items-center gap-2 bg-indigo-500/10 border border-indigo-500/30 text-indigo-300 rounded-full px-4 py-1.5 text-xs sm:text-sm font-medium mb-6">
+                <Sparkles className="h-3.5 w-3.5 shrink-0" />
+                AI-powered · Ready in 60 seconds
+              </div>
+
+              <h1 className="text-4xl sm:text-5xl lg:text-6xl xl:text-7xl font-extrabold tracking-tight leading-[1.06] mb-6" style={{ fontFamily: 'Bricolage Grotesque, sans-serif' }}>
+                Close more clients<br />
+                with{' '}
+                <span className="relative inline-block">
+                  <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 via-violet-400 to-fuchsia-400">
+                    AI proposals
+                  </span>
+                  <span className="absolute -bottom-1 left-0 right-0 h-px bg-gradient-to-r from-indigo-400/60 via-violet-400/60 to-fuchsia-400/0" />
+                </span>
+              </h1>
+
+              <p className="text-base sm:text-lg text-slate-400 max-w-lg mx-auto lg:mx-0 mb-8 leading-relaxed">
+                Describe your project and get a fully written, branded proposal with scope, deliverables, and pricing — in under a minute.
+              </p>
+
+              {/* CTA */}
+              <div className="flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-3 mb-8">
+                <Link href="/auth">
+                  <Button size="lg" className="h-12 px-8 gap-2 text-base bg-indigo-600 hover:bg-indigo-500 border-0 shadow-xl shadow-indigo-900/60 font-semibold">
+                    <Sparkles className="h-4 w-4" />
+                    Start for free
+                  </Button>
+                </Link>
+                <a href="#how-it-works" className="text-sm text-slate-400 hover:text-white transition-colors flex items-center gap-1.5 group">
+                  See how it works
+                  <ArrowRight className="h-3.5 w-3.5 group-hover:translate-x-0.5 transition-transform" />
+                </a>
+              </div>
+
+              {/* Trust row */}
+              <div className="flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-4 sm:gap-6">
+                <div className="flex items-center gap-2">
+                  <div className="flex -space-x-2">
+                    {['SC', 'MR', 'PN', 'JK'].map((initials, i) => (
+                      <div key={i} className={`h-7 w-7 rounded-full flex items-center justify-center text-[10px] font-bold text-white ring-2 ring-[#0a0a14] ${['bg-purple-500','bg-blue-500','bg-emerald-500','bg-rose-500'][i]}`}>
+                        {initials}
+                      </div>
+                    ))}
+                  </div>
+                  <span className="text-xs text-slate-400">2,400+ freelancers</span>
+                </div>
+                <div className="hidden sm:block h-4 w-px bg-slate-700" />
+                <div className="flex items-center gap-1">
+                  {[...Array(5)].map((_, i) => (
+                    <Star key={i} className="h-3.5 w-3.5 fill-amber-400 text-amber-400" />
+                  ))}
+                  <span className="text-xs text-slate-400 ml-1">4.9 / 5 rating</span>
+                </div>
+                <div className="hidden sm:block h-4 w-px bg-slate-700" />
+                <span className="text-xs text-slate-400">No credit card required</span>
+              </div>
+            </div>
+
+            {/* Right: Proposal card mockup */}
+            <div className="flex-1 w-full max-w-md lg:max-w-none relative">
+              {/* Glow behind card */}
+              <div className="absolute inset-0 bg-indigo-600/20 blur-3xl rounded-3xl scale-90" />
+
+              <div className="relative bg-white/5 backdrop-blur-sm border border-white/10 rounded-2xl overflow-hidden shadow-2xl">
+                {/* Card header */}
+                <div className="flex items-center gap-2 px-4 py-3 border-b border-white/10 bg-white/5">
+                  <div className="flex gap-1.5">
+                    <div className="h-2.5 w-2.5 rounded-full bg-red-500/70" />
+                    <div className="h-2.5 w-2.5 rounded-full bg-yellow-500/70" />
+                    <div className="h-2.5 w-2.5 rounded-full bg-green-500/70" />
+                  </div>
+                  <div className="flex-1 text-center">
+                    <span className="text-xs text-slate-500">Proposal Preview</span>
+                  </div>
+                </div>
+
+                {/* Card body */}
+                <div className="p-5 space-y-4">
+                  {/* Logo + Title */}
+                  <div className="flex items-start justify-between">
+                    <div>
+                      <div className="h-7 w-7 rounded-lg bg-indigo-600 flex items-center justify-center mb-3">
+                        <Sparkles className="h-3.5 w-3.5 text-white" />
+                      </div>
+                      <div className="h-2.5 w-44 bg-white/20 rounded-full mb-2" />
+                      <div className="h-2 w-28 bg-white/10 rounded-full" />
+                    </div>
+                    <div className="text-right">
+                      <div className="inline-flex items-center gap-1.5 bg-emerald-500/20 border border-emerald-500/30 text-emerald-400 rounded-full px-2.5 py-0.5 text-xs font-medium">
+                        <CheckCircle className="h-3 w-3" /> Accepted
+                      </div>
+                      <div className="h-2 w-16 bg-white/10 rounded-full mt-2 ml-auto" />
+                    </div>
+                  </div>
+
+                  {/* Section blocks */}
+                  <div className="space-y-3">
+                    {[
+                      { label: 'Project Overview', lines: [20, 28, 16] },
+                      { label: 'Scope of Work', lines: [24, 20, 26, 14] },
+                    ].map((section) => (
+                      <div key={section.label} className="bg-white/5 rounded-xl p-3.5">
+                        <div className="text-[10px] font-semibold text-indigo-300 uppercase tracking-widest mb-2.5">{section.label}</div>
+                        <div className="space-y-1.5">
+                          {section.lines.map((w, i) => (
+                            <div key={i} className="h-1.5 bg-white/15 rounded-full" style={{ width: `${w * 3}%` }} />
+                          ))}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+
+                  {/* Quote table */}
+                  <div className="bg-indigo-600/20 border border-indigo-500/30 rounded-xl p-3.5">
+                    <div className="text-[10px] font-semibold text-indigo-300 uppercase tracking-widest mb-3">Pricing</div>
+                    <div className="space-y-2">
+                      {[
+                        { item: 'Discovery & Planning', price: '$1,200' },
+                        { item: 'Design & Development', price: '$6,500' },
+                        { item: 'QA & Launch', price: '$800' },
+                      ].map((row) => (
+                        <div key={row.item} className="flex items-center justify-between">
+                          <div className="h-1.5 bg-white/20 rounded-full w-32" />
+                          <span className="text-xs font-semibold text-white/80">{row.price}</span>
+                        </div>
+                      ))}
+                      <div className="border-t border-white/10 pt-2 flex items-center justify-between">
+                        <span className="text-xs font-bold text-white/60">Total</span>
+                        <span className="text-sm font-bold text-indigo-300">$8,500</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Generation status bar */}
+                <div className="px-5 pb-4">
+                  <div className="flex items-center gap-2 bg-white/5 border border-white/10 rounded-lg px-3 py-2">
+                    <div className="h-2 w-2 rounded-full bg-indigo-400 animate-pulse" />
+                    <span className="text-xs text-slate-400 flex-1">Generated by AI in <span className="text-indigo-300 font-medium">47 seconds</span></span>
+                    <Sparkles className="h-3 w-3 text-indigo-400" />
+                  </div>
+                </div>
+              </div>
+
+              {/* Floating badge */}
+              <div className="absolute -top-3 -right-3 bg-emerald-500 text-white text-[10px] font-bold rounded-full px-2.5 py-1 shadow-lg shadow-emerald-900/50 flex items-center gap-1">
+                <CheckCircle className="h-3 w-3" /> Client signed
+              </div>
+            </div>
+
           </div>
-          <h1 className="text-4xl sm:text-5xl md:text-7xl font-extrabold tracking-tight mb-5 sm:mb-6 leading-[1.05]" style={{ fontFamily: 'Bricolage Grotesque, sans-serif' }}>
-            Win clients with<br />
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-300 via-purple-300 to-pink-300">
-              proposals that close.
-            </span>
-          </h1>
-          <p className="text-base sm:text-xl text-slate-300 max-w-2xl mx-auto mb-8 sm:mb-10 leading-relaxed px-2 sm:px-0">
-            Describe your project and let AI generate a polished, branded proposal with a quote and invoice — ready to send in under 60 seconds.
-          </p>
-          <div className="flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-4">
-            <Link href="/auth" className="w-full sm:w-auto">
-              <Button size="lg" className="w-full sm:w-auto h-12 px-8 gap-2 text-base bg-indigo-500 hover:bg-indigo-400 border-0 shadow-lg shadow-indigo-900/50">
-                <Sparkles className="h-5 w-5" />
-                Start for free
-              </Button>
-            </Link>
-          </div>
-          <p className="mt-5 text-xs sm:text-sm text-slate-500">Free forever · No credit card required · 3 proposals/month on free tier</p>
         </div>
       </section>
 
