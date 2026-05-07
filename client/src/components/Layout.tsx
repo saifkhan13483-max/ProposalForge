@@ -4,7 +4,7 @@ import { Button } from '@/components/ui/button'
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from '@/components/ui/dropdown-menu'
 import {
   LayoutDashboard, FileText, Receipt, Users, Settings, LogOut, ChevronDown,
-  Sparkles, Menu, X, Crown
+  Sparkles, Menu, X, Crown, BarChart3
 } from 'lucide-react'
 import { useState } from 'react'
 import { cn } from '@/lib/utils'
@@ -14,6 +14,7 @@ const navItems = [
   { href: '/proposals', label: 'Proposals', icon: FileText },
   { href: '/invoices', label: 'Invoices', icon: Receipt },
   { href: '/clients', label: 'Clients', icon: Users },
+  { href: '/analytics', label: 'Analytics', icon: BarChart3 },
 ]
 
 export function Layout({ children }: { children: React.ReactNode }) {

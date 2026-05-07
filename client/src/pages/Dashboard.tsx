@@ -7,9 +7,12 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import {
   DollarSign, FileText, TrendingUp, Users, Plus, ArrowRight,
-  Loader2, Sparkles, Receipt, Clock
+  Loader2, Sparkles, Receipt, Clock, BarChart3
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
+import {
+  AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer
+} from 'recharts'
 
 interface Stats {
   monthlyRevenue: number
@@ -31,19 +34,39 @@ interface ActivityItem {
   date: string
 }
 
+interface ChartPoint {
+  month: string
+  revenue: number
+}
+
+const RevenueTooltip = ({ active, payload, label }: any) => {
+  if (active && payload && payload.length) {
+    return (
+      <div className="bg-white border rounded-lg shadow-md px-3 py-2 text-xs">
+        <p className="font-semibold text-slate-500 mb-1">{label}</p>
+        <p className="font-bold text-indigo-600">{formatCurrency(payload[0].value)}</p>
+      </div>
+    )
+  }
+  return null
+}
+
 export function Dashboard() {
   const { user } = useAuth()
   const [stats, setStats] = useState<Stats | null>(null)
   const [activity, setActivity] = useState<ActivityItem[]>([])
+  const [chartData, setChartData] = useState<ChartPoint[]>([])
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
     Promise.all([
       api.get<{ stats: Stats }>('/dashboard/stats'),
       api.get<{ activity: ActivityItem[] }>('/dashboard/activity'),
-    ]).then(([s, a]) => {
+      api.get<{ chartData: ChartPoint[] }>('/dashboard/analytics'),
+    ]).then(([s, a, an]) => {
       setStats(s.stats)
       setActivity(a.activity)
+      setChartData(an.chartData)
     }).catch(console.error).finally(() => setLoading(false))
   }, [])
 
@@ -61,7 +84,7 @@ export function Dashboard() {
       value: formatCurrency(stats?.monthlyRevenue || 0),
       icon: DollarSign,
       color: 'text-emerald-600',
-      bg: 'bg-emerald-50 dark:bg-emerald-900/20',
+      bg: 'bg-emerald-50',
       sub: 'Paid this month',
     },
     {
@@ -69,7 +92,7 @@ export function Dashboard() {
       value: formatCurrency(stats?.outstandingInvoices || 0),
       icon: Clock,
       color: 'text-orange-600',
-      bg: 'bg-orange-50 dark:bg-orange-900/20',
+      bg: 'bg-orange-50',
       sub: 'Awaiting payment',
     },
     {
@@ -77,7 +100,7 @@ export function Dashboard() {
       value: `${stats?.acceptanceRate || 0}%`,
       icon: TrendingUp,
       color: 'text-blue-600',
-      bg: 'bg-blue-50 dark:bg-blue-900/20',
+      bg: 'bg-blue-50',
       sub: `${stats?.proposals?.accepted || 0} proposals accepted`,
     },
     {
@@ -85,10 +108,12 @@ export function Dashboard() {
       value: stats?.totalClients || 0,
       icon: Users,
       color: 'text-purple-600',
-      bg: 'bg-purple-50 dark:bg-purple-900/20',
+      bg: 'bg-purple-50',
       sub: `${stats?.totalProposals || 0} total proposals`,
     },
   ]
+
+  const hasRevenueData = chartData.some(d => d.revenue > 0)
 
   return (
     <div className="p-6 lg:p-8 space-y-8 max-w-7xl mx-auto">
@@ -128,6 +153,58 @@ export function Dashboard() {
         ))}
       </div>
 
+      {/* Revenue chart */}
+      <Card>
+        <CardHeader className="flex flex-row items-center justify-between pb-2">
+          <div>
+            <CardTitle className="text-base font-semibold">Revenue Trend</CardTitle>
+            <p className="text-xs text-muted-foreground mt-0.5">Monthly paid invoices — last 6 months</p>
+          </div>
+          <Link href="/analytics" className="text-xs text-primary hover:underline flex items-center gap-1">
+            <BarChart3 className="h-3.5 w-3.5" />
+            Full analytics
+          </Link>
+        </CardHeader>
+        <CardContent>
+          {!hasRevenueData ? (
+            <div className="flex flex-col items-center justify-center h-36 text-center">
+              <DollarSign className="h-7 w-7 text-muted-foreground/30 mb-2" />
+              <p className="text-sm text-muted-foreground">Revenue will appear here once invoices are paid.</p>
+            </div>
+          ) : (
+            <ResponsiveContainer width="100%" height={180}>
+              <AreaChart data={chartData} margin={{ top: 5, right: 5, left: 0, bottom: 0 }}>
+                <defs>
+                  <linearGradient id="dashRevGrad" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="5%" stopColor="#6366f1" stopOpacity={0.18} />
+                    <stop offset="95%" stopColor="#6366f1" stopOpacity={0} />
+                  </linearGradient>
+                </defs>
+                <CartesianGrid strokeDasharray="3 3" stroke="#f1f5f9" />
+                <XAxis dataKey="month" tick={{ fontSize: 11, fill: '#94a3b8' }} axisLine={false} tickLine={false} />
+                <YAxis
+                  tick={{ fontSize: 11, fill: '#94a3b8' }}
+                  axisLine={false}
+                  tickLine={false}
+                  tickFormatter={(v) => `$${v >= 1000 ? `${(v / 1000).toFixed(0)}k` : v}`}
+                  width={40}
+                />
+                <Tooltip content={<RevenueTooltip />} />
+                <Area
+                  type="monotone"
+                  dataKey="revenue"
+                  stroke="#6366f1"
+                  strokeWidth={2}
+                  fill="url(#dashRevGrad)"
+                  dot={{ fill: '#6366f1', strokeWidth: 0, r: 3 }}
+                  activeDot={{ r: 5, fill: '#6366f1' }}
+                />
+              </AreaChart>
+            </ResponsiveContainer>
+          )}
+        </CardContent>
+      </Card>
+
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Recent Activity */}
         <Card className="lg:col-span-2">
@@ -159,7 +236,7 @@ export function Dashboard() {
                     <div className="flex items-center gap-3">
                       <div className={cn(
                         'h-8 w-8 rounded-lg flex items-center justify-center',
-                        item.type === 'proposal' ? 'bg-blue-50 dark:bg-blue-900/20' : 'bg-green-50 dark:bg-green-900/20'
+                        item.type === 'proposal' ? 'bg-blue-50' : 'bg-green-50'
                       )}>
                         {item.type === 'proposal'
                           ? <FileText className="h-4 w-4 text-blue-600" />
@@ -184,7 +261,7 @@ export function Dashboard() {
           </CardContent>
         </Card>
 
-        {/* Quick actions */}
+        {/* Quick actions + Pipeline */}
         <div className="space-y-4">
           <Card>
             <CardHeader className="pb-3">
@@ -195,6 +272,7 @@ export function Dashboard() {
                 { href: '/proposals/new', icon: FileText, label: 'New Proposal', desc: 'AI-powered in 60s' },
                 { href: '/invoices', icon: Receipt, label: 'New Invoice', desc: 'Manual invoice' },
                 { href: '/clients', icon: Users, label: 'Add Client', desc: 'Save client info' },
+                { href: '/analytics', icon: BarChart3, label: 'View Analytics', desc: 'Revenue & trends' },
               ].map(({ href, icon: Icon, label, desc }) => (
                 <Link
                   key={href}

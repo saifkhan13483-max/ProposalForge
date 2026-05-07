@@ -20,6 +20,7 @@ import { ClientDetail } from '@/pages/ClientDetail'
 import { Settings } from '@/pages/Settings'
 import { PublicProposal } from '@/pages/PublicProposal'
 import { Demo } from '@/pages/Demo'
+import { Analytics } from '@/pages/Analytics'
 import { Loader2 } from 'lucide-react'
 
 const queryClient = new QueryClient({
@@ -116,6 +117,9 @@ function AppRoutes() {
       </Route>
       <Route path="/settings">
         <ProtectedRoute><Settings /></ProtectedRoute>
+      </Route>
+      <Route path="/analytics">
+        <ProtectedRoute><Analytics /></ProtectedRoute>
       </Route>
 
       {/* Default redirect */}

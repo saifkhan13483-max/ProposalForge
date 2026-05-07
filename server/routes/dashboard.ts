@@ -118,4 +118,81 @@ router.get('/activity', async (req: AuthRequest, res) => {
   }
 })
 
+// Analytics: monthly revenue for last 6 months
+router.get('/analytics', async (req: AuthRequest, res) => {
+  try {
+    const [monthlyRevenue, proposalTrend, topClients] = await Promise.all([
+      // Revenue per month for last 6 months
+      query(
+        `SELECT 
+          TO_CHAR(DATE_TRUNC('month', paid_at), 'Mon') as month,
+          DATE_TRUNC('month', paid_at) as month_date,
+          COALESCE(SUM(total), 0) as revenue,
+          COUNT(*) as count
+         FROM invoices 
+         WHERE user_id = $1 AND status = 'paid' AND paid_at >= NOW() - INTERVAL '6 months'
+         GROUP BY DATE_TRUNC('month', paid_at)
+         ORDER BY month_date ASC`,
+        [req.userId]
+      ),
+      // Proposals created per month for last 6 months
+      query(
+        `SELECT 
+          TO_CHAR(DATE_TRUNC('month', created_at), 'Mon') as month,
+          DATE_TRUNC('month', created_at) as month_date,
+          COUNT(*) as count,
+          COUNT(*) FILTER (WHERE status = 'accepted') as accepted
+         FROM proposals 
+         WHERE user_id = $1 AND created_at >= NOW() - INTERVAL '6 months'
+         GROUP BY DATE_TRUNC('month', created_at)
+         ORDER BY month_date ASC`,
+        [req.userId]
+      ),
+      // Top clients by proposal value
+      query(
+        `SELECT client_name, COUNT(*) as proposals, COALESCE(SUM(total_amount), 0) as total_value
+         FROM proposals WHERE user_id = $1 AND client_name IS NOT NULL
+         GROUP BY client_name ORDER BY total_value DESC LIMIT 5`,
+        [req.userId]
+      ),
+    ])
+
+    // Fill in months with 0 if no data for that month
+    const months: string[] = []
+    for (let i = 5; i >= 0; i--) {
+      const d = new Date()
+      d.setMonth(d.getMonth() - i)
+      months.push(d.toLocaleString('default', { month: 'short' }))
+    }
+
+    const revenueMap: Record<string, number> = {}
+    const proposalMap: Record<string, { count: number; accepted: number }> = {}
+    for (const row of monthlyRevenue.rows) {
+      revenueMap[row.month] = parseFloat(row.revenue)
+    }
+    for (const row of proposalTrend.rows) {
+      proposalMap[row.month] = { count: parseInt(row.count), accepted: parseInt(row.accepted) }
+    }
+
+    const chartData = months.map(month => ({
+      month,
+      revenue: revenueMap[month] || 0,
+      proposals: proposalMap[month]?.count || 0,
+      accepted: proposalMap[month]?.accepted || 0,
+    }))
+
+    res.json({
+      chartData,
+      topClients: topClients.rows.map(r => ({
+        name: r.client_name,
+        proposals: parseInt(r.proposals),
+        totalValue: parseFloat(r.total_value),
+      })),
+    })
+  } catch (err) {
+    console.error('Analytics error:', err)
+    res.status(500).json({ error: 'Failed to get analytics' })
+  }
+})
+
 export default router
