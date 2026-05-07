@@ -42,15 +42,69 @@ const testimonials = [
 ]
 
 const features = [
-  { icon: Sparkles, title: 'AI Proposal Writing', desc: 'Gemini AI generates complete, professional proposals tailored to your project type and scope.', color: 'bg-indigo-50 text-indigo-600' },
-  { icon: FileText, title: 'Rich Text Editor', desc: 'Customize every section with an inline editor. Regenerate individual sections with one click.', color: 'bg-purple-50 text-purple-600' },
-  { icon: DollarSign, title: 'Auto Invoicing', desc: 'When a client accepts, an invoice is created automatically. Collect payment via Stripe Checkout.', color: 'bg-emerald-50 text-emerald-600' },
-  { icon: CheckCircle, title: 'E-Signature Acceptance', desc: 'Clients accept proposals with a typed signature on a branded acceptance page — no DocuSign needed.', color: 'bg-green-50 text-green-600' },
-  { icon: Clock, title: 'Real-time Tracking', desc: 'Know when your client views the proposal. Get notified on view, accept, and comment events.', color: 'bg-orange-50 text-orange-600' },
-  { icon: Shield, title: 'Branding Controls', desc: 'Upload your logo, set your accent color, and make every proposal look like it came from a top agency.', color: 'bg-blue-50 text-blue-600' },
-  { icon: Zap, title: 'PDF Export', desc: 'Download a print-ready PDF of any proposal for offline sharing or record keeping.', color: 'bg-yellow-50 text-yellow-600' },
-  { icon: BarChart3, title: 'Analytics Dashboard', desc: 'Track revenue trends, proposal pipeline, acceptance rates, and outstanding invoices at a glance.', color: 'bg-cyan-50 text-cyan-600' },
-  { icon: Send, title: 'Email Delivery', desc: 'Send proposals directly to clients via email with a personal message and one-click accept link.', color: 'bg-rose-50 text-rose-600' },
+  {
+    icon: Sparkles,
+    title: 'AI Proposal Writing',
+    desc: 'AI generates complete, professional proposals tailored to your project type and scope — in under 60 seconds.',
+    gradient: 'from-indigo-500 to-violet-600',
+    glow: 'group-hover:shadow-indigo-500/20',
+  },
+  {
+    icon: FileText,
+    title: 'Rich Text Editor',
+    desc: 'Customize every section with an inline editor. Regenerate individual sections with a single click.',
+    gradient: 'from-violet-500 to-purple-600',
+    glow: 'group-hover:shadow-violet-500/20',
+  },
+  {
+    icon: DollarSign,
+    title: 'Auto Invoicing',
+    desc: 'When a client accepts, an invoice is created automatically. Collect payment via Stripe Checkout.',
+    gradient: 'from-emerald-500 to-teal-600',
+    glow: 'group-hover:shadow-emerald-500/20',
+  },
+  {
+    icon: CheckCircle,
+    title: 'E-Signature Acceptance',
+    desc: 'Clients accept proposals with a typed signature on a branded page — no DocuSign or extra tools needed.',
+    gradient: 'from-blue-500 to-cyan-600',
+    glow: 'group-hover:shadow-blue-500/20',
+  },
+  {
+    icon: Clock,
+    title: 'Real-time Tracking',
+    desc: 'Know the moment your client views the proposal. Get notified on every view, accept, and comment.',
+    gradient: 'from-orange-500 to-amber-500',
+    glow: 'group-hover:shadow-orange-500/20',
+  },
+  {
+    icon: Shield,
+    title: 'Branding Controls',
+    desc: 'Upload your logo, set your accent color, and make every proposal look like it came from a top agency.',
+    gradient: 'from-rose-500 to-pink-600',
+    glow: 'group-hover:shadow-rose-500/20',
+  },
+  {
+    icon: Zap,
+    title: 'PDF Export',
+    desc: 'Download a print-ready PDF of any proposal or invoice for offline sharing or record keeping.',
+    gradient: 'from-yellow-500 to-orange-500',
+    glow: 'group-hover:shadow-yellow-500/20',
+  },
+  {
+    icon: BarChart3,
+    title: 'Analytics Dashboard',
+    desc: 'Track revenue trends, proposal pipeline, acceptance rates, and outstanding invoices at a glance.',
+    gradient: 'from-cyan-500 to-sky-600',
+    glow: 'group-hover:shadow-cyan-500/20',
+  },
+  {
+    icon: Send,
+    title: 'Email Delivery',
+    desc: 'Send proposals directly to clients via email with a personal message and one-click accept link.',
+    gradient: 'from-pink-500 to-rose-600',
+    glow: 'group-hover:shadow-pink-500/20',
+  },
 ]
 
 export function Landing() {
@@ -406,49 +460,58 @@ export function Landing() {
       </section>
 
       {/* Features */}
-      <section id="features" className="bg-[#0a0a14] py-20 sm:py-28">
-        <div className="max-w-5xl mx-auto px-4 sm:px-6">
-          <div className="text-center mb-14">
-            <span className="inline-block text-xs font-bold tracking-widest text-indigo-400 uppercase bg-indigo-500/10 border border-indigo-500/20 px-3 py-1 rounded-full mb-4">Features</span>
-            <h2 className="text-3xl sm:text-4xl font-extrabold text-white mb-4" style={{ fontFamily: 'Bricolage Grotesque, sans-serif' }}>
-              Everything a freelancer needs
+      <section id="features" className="bg-[#07070f] py-20 sm:py-28 overflow-hidden relative">
+        {/* Ambient background glow */}
+        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[400px] bg-indigo-600/10 rounded-full blur-[120px] pointer-events-none" />
+
+        <div className="relative max-w-6xl mx-auto px-4 sm:px-6">
+          {/* Header */}
+          <div className="text-center mb-16">
+            <span className="inline-flex items-center gap-1.5 text-xs font-bold tracking-widest text-indigo-400 uppercase bg-indigo-500/10 border border-indigo-500/20 px-3 py-1.5 rounded-full mb-5">
+              <Sparkles className="h-3 w-3" /> Features
+            </span>
+            <h2 className="text-3xl sm:text-5xl font-extrabold text-white mb-5 leading-tight" style={{ fontFamily: 'Bricolage Grotesque, sans-serif' }}>
+              Everything you need to<br className="hidden sm:block" />
+              <span className="bg-gradient-to-r from-indigo-400 to-violet-400 bg-clip-text text-transparent"> win more clients</span>
             </h2>
-            <p className="text-slate-400 text-base sm:text-lg max-w-md mx-auto">One tool for proposals, invoices, clients, and payments.</p>
+            <p className="text-slate-400 text-base sm:text-lg max-w-lg mx-auto leading-relaxed">
+              One focused tool that handles proposals, invoices, clients, and payments — so you never lose a deal to slow paperwork.
+            </p>
           </div>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-            {features.map(({ icon: Icon, title, desc }, i) => {
-              const accents = [
-                'border-indigo-500/20 hover:border-indigo-500/50',
-                'border-violet-500/20 hover:border-violet-500/50',
-                'border-emerald-500/20 hover:border-emerald-500/50',
-                'border-blue-500/20 hover:border-blue-500/50',
-                'border-orange-500/20 hover:border-orange-500/50',
-                'border-rose-500/20 hover:border-rose-500/50',
-                'border-yellow-500/20 hover:border-yellow-500/50',
-                'border-cyan-500/20 hover:border-cyan-500/50',
-                'border-pink-500/20 hover:border-pink-500/50',
-              ]
-              const iconColors = [
-                'text-indigo-400 bg-indigo-500/10',
-                'text-violet-400 bg-violet-500/10',
-                'text-emerald-400 bg-emerald-500/10',
-                'text-blue-400 bg-blue-500/10',
-                'text-orange-400 bg-orange-500/10',
-                'text-rose-400 bg-rose-500/10',
-                'text-yellow-400 bg-yellow-500/10',
-                'text-cyan-400 bg-cyan-500/10',
-                'text-pink-400 bg-pink-500/10',
-              ]
-              return (
-                <div key={title} className={`bg-white/5 border rounded-xl p-5 transition-all duration-200 group ${accents[i % accents.length]}`}>
-                  <div className={`h-10 w-10 rounded-xl flex items-center justify-center mb-3 ${iconColors[i % iconColors.length]} shrink-0`}>
-                    <Icon className="h-5 w-5" />
-                  </div>
-                  <h3 className="font-semibold text-sm text-white mb-1.5">{title}</h3>
-                  <p className="text-slate-400 text-xs leading-relaxed">{desc}</p>
+
+          {/* Feature grid — shared-border mosaic */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-px bg-white/[0.06] rounded-2xl overflow-hidden border border-white/[0.06]">
+            {features.map(({ icon: Icon, title, desc, gradient, glow }) => (
+              <div
+                key={title}
+                className={`group relative bg-[#0d0d1a] hover:bg-[#111127] p-7 transition-all duration-300 cursor-default overflow-hidden`}
+              >
+                {/* Card hover glow */}
+                <div className={`absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none bg-gradient-to-br ${gradient} opacity-0 group-hover:opacity-[0.04]`} />
+
+                {/* Top accent line */}
+                <div className={`absolute top-0 left-0 right-0 h-px bg-gradient-to-r ${gradient} opacity-0 group-hover:opacity-60 transition-opacity duration-300`} />
+
+                {/* Icon */}
+                <div className={`relative h-12 w-12 rounded-xl bg-gradient-to-br ${gradient} flex items-center justify-center mb-5 shadow-lg ${glow} group-hover:shadow-xl transition-shadow duration-300`}>
+                  <Icon className="h-5 w-5 text-white" strokeWidth={1.75} />
                 </div>
-              )
-            })}
+
+                {/* Text */}
+                <h3 className="font-bold text-[15px] text-white mb-2 leading-snug">{title}</h3>
+                <p className="text-slate-400 text-sm leading-relaxed">{desc}</p>
+              </div>
+            ))}
+          </div>
+
+          {/* Bottom CTA nudge */}
+          <div className="text-center mt-12">
+            <p className="text-slate-500 text-sm">
+              All features included on the free plan.{' '}
+              <Link href="/auth" className="text-indigo-400 hover:text-indigo-300 underline underline-offset-2 transition-colors">
+                Start building today →
+              </Link>
+            </p>
           </div>
         </div>
       </section>
