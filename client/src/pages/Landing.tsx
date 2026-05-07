@@ -313,12 +313,12 @@ export function Landing() {
       </section>
 
       {/* Stats strip */}
-      <section className="border-b bg-slate-50 py-10 sm:py-12">
+      <section className="bg-[#0d0d1a] border-t border-white/5 py-10 sm:py-14">
         <div className="max-w-5xl mx-auto px-4 sm:px-6">
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-6 sm:gap-8 text-center">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
             {stats.map((s) => (
-              <div key={s.label}>
-                <p className="text-2xl sm:text-3xl font-extrabold text-slate-900 mb-1" style={{ fontFamily: 'Bricolage Grotesque, sans-serif' }}>{s.value}</p>
+              <div key={s.label} className="group">
+                <p className="text-3xl sm:text-4xl font-extrabold text-white mb-1 group-hover:text-indigo-400 transition-colors" style={{ fontFamily: 'Bricolage Grotesque, sans-serif' }}>{s.value}</p>
                 <p className="text-xs sm:text-sm text-slate-500">{s.label}</p>
               </div>
             ))}
@@ -327,16 +327,16 @@ export function Landing() {
       </section>
 
       {/* Social proof strip */}
-      <section className="border-b bg-white py-4 sm:py-5">
-        <div className="max-w-5xl mx-auto px-4 sm:px-6 flex flex-wrap items-center justify-center gap-x-6 sm:gap-x-10 gap-y-3">
+      <section className="bg-white border-b py-4 sm:py-5">
+        <div className="max-w-5xl mx-auto px-4 sm:px-6 flex flex-wrap items-center justify-center gap-x-8 gap-y-3">
           {[
             'Trusted by freelancers worldwide',
             '60-second proposal generation',
             'Stripe-powered payments',
             'Electronic signatures',
           ].map((text, i) => (
-            <div key={i} className="flex items-center gap-1.5 sm:gap-2 text-xs sm:text-sm text-slate-600 font-medium">
-              <CheckCircle className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-indigo-500 shrink-0" />
+            <div key={i} className="flex items-center gap-2 text-xs sm:text-sm text-slate-500 font-medium">
+              <div className="h-1.5 w-1.5 rounded-full bg-indigo-500 shrink-0" />
               {text}
             </div>
           ))}
@@ -344,108 +344,141 @@ export function Landing() {
       </section>
 
       {/* How it works */}
-      <section id="how-it-works" className="max-w-5xl mx-auto px-4 sm:px-6 py-16 sm:py-24">
-        <div className="text-center mb-10 sm:mb-16">
-          <span className="text-xs font-bold tracking-widest text-indigo-600 uppercase mb-3 sm:mb-4 block">How it works</span>
-          <h2 className="text-3xl sm:text-4xl font-bold mb-3 sm:mb-4" style={{ fontFamily: 'Bricolage Grotesque, sans-serif' }}>
-            From idea to signed deal in minutes
-          </h2>
-          <p className="text-slate-500 text-base sm:text-lg max-w-xl mx-auto px-2 sm:px-0">
-            ProposalForge handles the writing so you can focus on winning the work.
-          </p>
-        </div>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-5 sm:gap-8">
-          {[
-            {
-              step: '01',
-              icon: FileText,
-              title: 'Describe your project',
-              desc: 'Fill in a short intake form — project type, scope, budget, and timeline. The more detail, the better the output.',
-              color: 'bg-indigo-50 text-indigo-600',
-              border: 'border-indigo-100',
-            },
-            {
-              step: '02',
-              icon: Sparkles,
-              title: 'AI generates your proposal',
-              desc: 'Gemini AI writes a polished executive summary, scope of work, deliverables list, and itemized quote — in seconds.',
-              color: 'bg-purple-50 text-purple-600',
-              border: 'border-purple-100',
-            },
-            {
-              step: '03',
-              icon: Send,
-              title: 'Send and get paid',
-              desc: 'Email the proposal link to your client. They accept with an e-signature, and an invoice is auto-generated for Stripe payment.',
-              color: 'bg-emerald-50 text-emerald-600',
-              border: 'border-emerald-100',
-            },
-          ].map(({ step, icon: Icon, title, desc, color, border }) => (
-            <div key={step} className={`relative flex flex-col h-full p-5 sm:p-7 rounded-2xl border-2 ${border} bg-white hover:shadow-lg transition-all duration-200 group`}>
-              <div className="flex items-center gap-3 mb-4 sm:mb-5">
-                <div className={`h-10 w-10 sm:h-11 sm:w-11 rounded-xl flex items-center justify-center ${color} shadow-sm shrink-0`}>
-                  <Icon className="h-5 w-5" />
-                </div>
-                <span className="text-xs font-bold text-slate-400 tracking-widest">STEP {step}</span>
-              </div>
-              <h3 className="text-base sm:text-lg font-semibold mb-2">{title}</h3>
-              <p className="text-slate-500 text-sm leading-relaxed">{desc}</p>
-            </div>
-          ))}
-        </div>
-      </section>
-
-      {/* Features */}
-      <section id="features" className="bg-slate-50 py-16 sm:py-24">
+      <section id="how-it-works" className="bg-white py-20 sm:py-28">
         <div className="max-w-5xl mx-auto px-4 sm:px-6">
-          <div className="text-center mb-10 sm:mb-16">
-            <span className="text-xs font-bold tracking-widest text-indigo-600 uppercase mb-3 sm:mb-4 block">Features</span>
-            <h2 className="text-3xl sm:text-4xl font-bold mb-3 sm:mb-4" style={{ fontFamily: 'Bricolage Grotesque, sans-serif' }}>
-              Everything a freelancer needs
+          <div className="text-center mb-14">
+            <span className="inline-block text-xs font-bold tracking-widest text-indigo-600 uppercase bg-indigo-50 px-3 py-1 rounded-full mb-4">How it works</span>
+            <h2 className="text-3xl sm:text-4xl font-extrabold text-slate-900 mb-4" style={{ fontFamily: 'Bricolage Grotesque, sans-serif' }}>
+              From idea to signed deal<br className="hidden sm:block" /> in minutes
             </h2>
-            <p className="text-slate-500 text-base sm:text-lg">One tool for proposals, invoices, clients, and payments.</p>
+            <p className="text-slate-400 text-base sm:text-lg max-w-lg mx-auto">
+              ProposalForge handles the writing so you can focus on winning the work.
+            </p>
           </div>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-5">
-            {features.map(({ icon: Icon, title, desc, color }) => (
-              <div key={title} className="bg-white rounded-xl border p-4 sm:p-5 hover:shadow-md transition-all duration-200 hover:-translate-y-0.5 group">
-                <div className={`h-10 w-10 rounded-xl flex items-center justify-center mb-3 ${color} shrink-0`}>
-                  <Icon className="h-5 w-5" />
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            {[
+              {
+                step: '01',
+                icon: FileText,
+                title: 'Describe your project',
+                desc: 'Fill in a short form — project type, scope, budget, and timeline. The more detail, the better the output.',
+                accent: 'from-indigo-500 to-violet-500',
+                bg: 'bg-indigo-50',
+                text: 'text-indigo-600',
+              },
+              {
+                step: '02',
+                icon: Sparkles,
+                title: 'AI writes your proposal',
+                desc: 'AI generates a polished executive summary, scope of work, deliverables list, and itemized quote in seconds.',
+                accent: 'from-violet-500 to-fuchsia-500',
+                bg: 'bg-violet-50',
+                text: 'text-violet-600',
+              },
+              {
+                step: '03',
+                icon: Send,
+                title: 'Send and get paid',
+                desc: 'Email the proposal link. Your client accepts with an e-signature, and an invoice is auto-generated for payment.',
+                accent: 'from-emerald-500 to-teal-500',
+                bg: 'bg-emerald-50',
+                text: 'text-emerald-600',
+              },
+            ].map(({ step, icon: Icon, title, desc, accent, bg, text }, idx) => (
+              <div key={step} className="relative flex flex-col p-7 rounded-2xl border border-slate-100 bg-white shadow-sm hover:shadow-md transition-shadow group">
+                <div className="flex items-center gap-3 mb-5">
+                  <div className={`h-11 w-11 rounded-xl ${bg} flex items-center justify-center shrink-0`}>
+                    <Icon className={`h-5 w-5 ${text}`} />
+                  </div>
+                  <span className={`text-xs font-bold tracking-widest bg-gradient-to-r ${accent} bg-clip-text text-transparent`}>STEP {step}</span>
                 </div>
-                <h3 className="font-semibold text-sm mb-1.5 group-hover:text-indigo-600 transition-colors">{title}</h3>
-                <p className="text-slate-500 text-xs leading-relaxed">{desc}</p>
+                <h3 className="text-base font-bold text-slate-900 mb-2">{title}</h3>
+                <p className="text-slate-500 text-sm leading-relaxed">{desc}</p>
+                {idx < 2 && (
+                  <div className="hidden md:block absolute top-10 -right-4 z-10">
+                    <ArrowRight className="h-5 w-5 text-slate-200" />
+                  </div>
+                )}
               </div>
             ))}
           </div>
         </div>
       </section>
 
-      {/* Testimonials */}
-      <section className="py-16 sm:py-24 bg-white">
+      {/* Features */}
+      <section id="features" className="bg-[#0a0a14] py-20 sm:py-28">
         <div className="max-w-5xl mx-auto px-4 sm:px-6">
-          <div className="text-center mb-10 sm:mb-16">
-            <span className="text-xs font-bold tracking-widest text-indigo-600 uppercase mb-3 sm:mb-4 block">Testimonials</span>
-            <h2 className="text-3xl sm:text-4xl font-bold mb-3 sm:mb-4" style={{ fontFamily: 'Bricolage Grotesque, sans-serif' }}>
+          <div className="text-center mb-14">
+            <span className="inline-block text-xs font-bold tracking-widest text-indigo-400 uppercase bg-indigo-500/10 border border-indigo-500/20 px-3 py-1 rounded-full mb-4">Features</span>
+            <h2 className="text-3xl sm:text-4xl font-extrabold text-white mb-4" style={{ fontFamily: 'Bricolage Grotesque, sans-serif' }}>
+              Everything a freelancer needs
+            </h2>
+            <p className="text-slate-400 text-base sm:text-lg max-w-md mx-auto">One tool for proposals, invoices, clients, and payments.</p>
+          </div>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+            {features.map(({ icon: Icon, title, desc }, i) => {
+              const accents = [
+                'border-indigo-500/20 hover:border-indigo-500/50',
+                'border-violet-500/20 hover:border-violet-500/50',
+                'border-emerald-500/20 hover:border-emerald-500/50',
+                'border-blue-500/20 hover:border-blue-500/50',
+                'border-orange-500/20 hover:border-orange-500/50',
+                'border-rose-500/20 hover:border-rose-500/50',
+                'border-yellow-500/20 hover:border-yellow-500/50',
+                'border-cyan-500/20 hover:border-cyan-500/50',
+                'border-pink-500/20 hover:border-pink-500/50',
+              ]
+              const iconColors = [
+                'text-indigo-400 bg-indigo-500/10',
+                'text-violet-400 bg-violet-500/10',
+                'text-emerald-400 bg-emerald-500/10',
+                'text-blue-400 bg-blue-500/10',
+                'text-orange-400 bg-orange-500/10',
+                'text-rose-400 bg-rose-500/10',
+                'text-yellow-400 bg-yellow-500/10',
+                'text-cyan-400 bg-cyan-500/10',
+                'text-pink-400 bg-pink-500/10',
+              ]
+              return (
+                <div key={title} className={`bg-white/5 border rounded-xl p-5 transition-all duration-200 group ${accents[i % accents.length]}`}>
+                  <div className={`h-10 w-10 rounded-xl flex items-center justify-center mb-3 ${iconColors[i % iconColors.length]} shrink-0`}>
+                    <Icon className="h-5 w-5" />
+                  </div>
+                  <h3 className="font-semibold text-sm text-white mb-1.5">{title}</h3>
+                  <p className="text-slate-400 text-xs leading-relaxed">{desc}</p>
+                </div>
+              )
+            })}
+          </div>
+        </div>
+      </section>
+
+      {/* Testimonials */}
+      <section className="bg-white py-20 sm:py-28">
+        <div className="max-w-5xl mx-auto px-4 sm:px-6">
+          <div className="text-center mb-14">
+            <span className="inline-block text-xs font-bold tracking-widest text-indigo-600 uppercase bg-indigo-50 px-3 py-1 rounded-full mb-4">Testimonials</span>
+            <h2 className="text-3xl sm:text-4xl font-extrabold text-slate-900 mb-4" style={{ fontFamily: 'Bricolage Grotesque, sans-serif' }}>
               Freelancers love ProposalForge
             </h2>
-            <p className="text-slate-500 text-base sm:text-lg">Don't take our word for it.</p>
+            <p className="text-slate-400 text-base sm:text-lg">Real results from real users.</p>
           </div>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-5 sm:gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
             {testimonials.map((t) => (
-              <div key={t.name} className="relative bg-white border rounded-2xl p-5 sm:p-6 hover:shadow-lg transition-all duration-200 flex flex-col">
-                <Quote className="h-6 w-6 text-indigo-200 mb-3" />
-                <p className="text-slate-600 text-sm leading-relaxed flex-1 mb-5">"{t.quote}"</p>
-                <div className="flex items-center gap-3 pt-4 border-t">
+              <div key={t.name} className="flex flex-col bg-slate-50 border border-slate-100 rounded-2xl p-6 hover:shadow-md transition-shadow">
+                <div className="flex gap-0.5 mb-4">
+                  {Array.from({ length: t.stars }).map((_, i) => (
+                    <Star key={i} className="h-4 w-4 fill-amber-400 text-amber-400" />
+                  ))}
+                </div>
+                <p className="text-slate-700 text-sm leading-relaxed flex-1 mb-6">"{t.quote}"</p>
+                <div className="flex items-center gap-3">
                   <div className={`h-9 w-9 rounded-full ${t.color} flex items-center justify-center text-white font-bold text-xs shrink-0`}>
                     {t.avatar}
                   </div>
-                  <div className="min-w-0">
-                    <p className="text-sm font-semibold text-slate-900 truncate">{t.name}</p>
-                    <p className="text-xs text-slate-500">{t.role}</p>
-                  </div>
-                  <div className="ml-auto flex gap-0.5 shrink-0">
-                    {Array.from({ length: t.stars }).map((_, i) => (
-                      <Star key={i} className="h-3 w-3 fill-amber-400 text-amber-400" />
-                    ))}
+                  <div>
+                    <p className="text-sm font-semibold text-slate-900">{t.name}</p>
+                    <p className="text-xs text-slate-400">{t.role}</p>
                   </div>
                 </div>
               </div>
@@ -455,16 +488,16 @@ export function Landing() {
       </section>
 
       {/* Pricing */}
-      <section id="pricing" className="bg-slate-50 py-16 sm:py-24">
-        <div className="max-w-5xl mx-auto px-4 sm:px-6">
-          <div className="text-center mb-10 sm:mb-16">
-            <span className="text-xs font-bold tracking-widest text-indigo-600 uppercase mb-3 sm:mb-4 block">Pricing</span>
-            <h2 className="text-3xl sm:text-4xl font-bold mb-3 sm:mb-4" style={{ fontFamily: 'Bricolage Grotesque, sans-serif' }}>
+      <section id="pricing" className="bg-slate-50 py-20 sm:py-28">
+        <div className="max-w-4xl mx-auto px-4 sm:px-6">
+          <div className="text-center mb-14">
+            <span className="inline-block text-xs font-bold tracking-widest text-indigo-600 uppercase bg-indigo-50 px-3 py-1 rounded-full mb-4">Pricing</span>
+            <h2 className="text-3xl sm:text-4xl font-extrabold text-slate-900 mb-4" style={{ fontFamily: 'Bricolage Grotesque, sans-serif' }}>
               Simple, transparent pricing
             </h2>
-            <p className="text-slate-500 text-base sm:text-lg">Start free. Upgrade when you're ready.</p>
+            <p className="text-slate-400 text-base sm:text-lg">Start free. Upgrade when you're ready.</p>
           </div>
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-5 sm:gap-6 max-w-3xl mx-auto">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-5 max-w-3xl mx-auto">
             {[
               {
                 name: 'Free',
@@ -485,33 +518,30 @@ export function Landing() {
                 highlight: true,
               },
             ].map(plan => (
-              <div key={plan.name} className={`relative rounded-2xl border p-6 sm:p-8 bg-white ${plan.highlight ? 'border-indigo-500 ring-2 ring-indigo-500/20 shadow-xl shadow-indigo-100' : 'shadow-sm'}`}>
+              <div key={plan.name} className={`relative rounded-2xl p-7 flex flex-col ${plan.highlight ? 'bg-[#0a0a14] border border-indigo-500/40 shadow-2xl shadow-indigo-900/30' : 'bg-white border border-slate-200 shadow-sm'}`}>
                 {plan.highlight && (
                   <div className="absolute -top-3.5 left-1/2 -translate-x-1/2">
-                    <span className="bg-indigo-600 text-white text-xs font-semibold px-3 py-1 rounded-full shadow">Most Popular</span>
+                    <span className="bg-indigo-600 text-white text-xs font-bold px-3 py-1 rounded-full shadow-lg">Most Popular</span>
                   </div>
                 )}
-                <div className="mb-5 sm:mb-6">
-                  <h3 className="text-lg font-bold mb-1">{plan.name}</h3>
+                <div className="mb-6">
+                  <h3 className={`text-lg font-bold mb-1 ${plan.highlight ? 'text-white' : 'text-slate-900'}`}>{plan.name}</h3>
                   <div className="flex items-baseline gap-1 mb-2">
-                    <span className="text-3xl sm:text-4xl font-extrabold">{plan.price}</span>
-                    <span className="text-slate-500 text-sm">/ {plan.period}</span>
+                    <span className={`text-4xl font-extrabold ${plan.highlight ? 'text-white' : 'text-slate-900'}`}>{plan.price}</span>
+                    <span className={`text-sm ${plan.highlight ? 'text-slate-400' : 'text-slate-500'}`}>/ {plan.period}</span>
                   </div>
-                  <p className="text-sm text-slate-500">{plan.desc}</p>
+                  <p className={`text-sm ${plan.highlight ? 'text-slate-400' : 'text-slate-500'}`}>{plan.desc}</p>
                 </div>
-                <ul className="space-y-2.5 sm:space-y-3 mb-6 sm:mb-8">
+                <ul className="space-y-3 mb-8 flex-1">
                   {plan.features.map(f => (
-                    <li key={f} className="flex items-center gap-2.5 text-sm">
-                      <CheckCircle className="h-4 w-4 text-indigo-500 shrink-0" />
+                    <li key={f} className={`flex items-center gap-2.5 text-sm ${plan.highlight ? 'text-slate-300' : 'text-slate-600'}`}>
+                      <CheckCircle className={`h-4 w-4 shrink-0 ${plan.highlight ? 'text-indigo-400' : 'text-indigo-500'}`} />
                       {f}
                     </li>
                   ))}
                 </ul>
                 <Link href="/auth">
-                  <Button
-                    className="w-full"
-                    variant={plan.highlight ? 'default' : 'outline'}
-                  >
+                  <Button className={`w-full h-11 font-semibold ${plan.highlight ? 'bg-indigo-600 hover:bg-indigo-500 text-white border-0' : 'bg-white border border-slate-200 text-slate-800 hover:bg-slate-50'}`}>
                     {plan.cta}
                   </Button>
                 </Link>
@@ -522,44 +552,45 @@ export function Landing() {
       </section>
 
       {/* CTA */}
-      <section className="bg-gradient-to-br from-indigo-950 via-slate-900 to-slate-900 text-white py-16 sm:py-24">
-        <div className="max-w-3xl mx-auto px-4 sm:px-6 text-center">
-          <div className="h-14 w-14 sm:h-16 sm:w-16 rounded-2xl bg-indigo-500/20 border border-indigo-400/30 flex items-center justify-center mx-auto mb-5 sm:mb-6">
-            <Sparkles className="h-7 w-7 sm:h-8 sm:w-8 text-indigo-300" />
+      <section className="bg-[#0a0a14] relative overflow-hidden py-20 sm:py-28">
+        <div className="absolute inset-0 pointer-events-none">
+          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[300px] bg-indigo-600/20 rounded-full blur-[100px]" />
+        </div>
+        <div className="relative max-w-2xl mx-auto px-4 sm:px-6 text-center">
+          <div className="inline-flex h-14 w-14 rounded-2xl bg-indigo-500/10 border border-indigo-500/30 items-center justify-center mx-auto mb-6">
+            <Sparkles className="h-7 w-7 text-indigo-400" />
           </div>
-          <h2 className="text-3xl sm:text-4xl font-bold mb-3 sm:mb-4" style={{ fontFamily: 'Bricolage Grotesque, sans-serif' }}>
+          <h2 className="text-3xl sm:text-4xl font-extrabold text-white mb-4" style={{ fontFamily: 'Bricolage Grotesque, sans-serif' }}>
             Start winning more clients today
           </h2>
-          <p className="text-slate-300 text-base sm:text-lg mb-7 sm:mb-8 max-w-xl mx-auto px-2 sm:px-0">
-            Join 2,400+ freelancers who use ProposalForge to generate professional proposals in under 60 seconds.
+          <p className="text-slate-400 text-base sm:text-lg mb-8 max-w-md mx-auto">
+            Join 2,400+ freelancers who send polished proposals in under 60 seconds.
           </p>
-          <div className="flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-4">
-            <Link href="/auth" className="w-full sm:w-auto">
-              <Button size="lg" className="w-full sm:w-auto h-12 px-8 gap-2 text-base bg-indigo-500 hover:bg-indigo-400 border-0 shadow-lg">
-                <Sparkles className="h-5 w-5" />
-                Get started for free
-              </Button>
-            </Link>
-          </div>
-          <p className="mt-4 text-xs sm:text-sm text-slate-500">No credit card required · Cancel anytime</p>
+          <Link href="/auth">
+            <Button size="lg" className="h-12 px-10 gap-2 text-base bg-indigo-600 hover:bg-indigo-500 border-0 shadow-xl shadow-indigo-900/50 font-semibold">
+              <Sparkles className="h-4 w-4" />
+              Get started for free
+            </Button>
+          </Link>
+          <p className="mt-4 text-xs text-slate-600">No credit card required · 3 proposals free every month</p>
         </div>
       </section>
 
       {/* Footer */}
-      <footer className="border-t bg-white py-8 sm:py-10">
+      <footer className="bg-[#07070f] border-t border-white/5 py-8">
         <div className="max-w-5xl mx-auto px-4 sm:px-6">
           <div className="flex flex-col items-center gap-4 md:flex-row md:justify-between">
             <div className="flex items-center gap-2">
               <div className="h-7 w-7 rounded-lg bg-indigo-600 flex items-center justify-center shrink-0">
                 <Sparkles className="h-3.5 w-3.5 text-white" />
               </div>
-              <span className="font-bold text-slate-800">ProposalForge</span>
+              <span className="font-bold text-white">ProposalForge</span>
             </div>
-            <div className="flex items-center gap-5 sm:gap-6 text-sm text-slate-500">
-              <a href="#features" className="hover:text-slate-800 transition-colors">Features</a>
-              <a href="#pricing" className="hover:text-slate-800 transition-colors">Pricing</a>
+            <div className="flex items-center gap-6 text-sm text-slate-500">
+              <a href="#features" className="hover:text-slate-300 transition-colors">Features</a>
+              <a href="#pricing" className="hover:text-slate-300 transition-colors">Pricing</a>
             </div>
-            <p className="text-xs sm:text-sm text-slate-400 text-center md:text-right">© {new Date().getFullYear()} ProposalForge. All rights reserved.</p>
+            <p className="text-xs text-slate-600">© {new Date().getFullYear()} ProposalForge. All rights reserved.</p>
           </div>
         </div>
       </footer>
