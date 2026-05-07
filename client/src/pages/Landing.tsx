@@ -367,13 +367,13 @@ export function Landing() {
       </section>
 
       {/* Stats strip */}
-      <section className="bg-[#0d0d1a] border-t border-white/5 py-10 sm:py-14">
+      <section className="bg-[#0d0d1a] border-t border-white/5 py-8 sm:py-14">
         <div className="max-w-5xl mx-auto px-4 sm:px-6">
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-px bg-white/5 rounded-2xl overflow-hidden">
             {stats.map((s) => (
-              <div key={s.label} className="group">
-                <p className="text-3xl sm:text-4xl font-extrabold text-white mb-1 group-hover:text-indigo-400 transition-colors" style={{ fontFamily: 'Bricolage Grotesque, sans-serif' }}>{s.value}</p>
-                <p className="text-xs sm:text-sm text-slate-500">{s.label}</p>
+              <div key={s.label} className="group flex flex-col items-center justify-center text-center px-4 py-6 sm:py-8 bg-[#0d0d1a] hover:bg-[#111127] transition-colors">
+                <p className="text-3xl sm:text-4xl font-extrabold text-white mb-1.5 group-hover:text-indigo-400 transition-colors leading-none" style={{ fontFamily: 'Bricolage Grotesque, sans-serif' }}>{s.value}</p>
+                <p className="text-xs sm:text-sm text-slate-500 leading-snug max-w-[120px]">{s.label}</p>
               </div>
             ))}
           </div>
