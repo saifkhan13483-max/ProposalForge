@@ -1,6 +1,10 @@
 import express from 'express'
 import cors from 'cors'
+import helmet from 'helmet'
+import { rateLimit } from 'express-rate-limit'
 import dotenv from 'dotenv'
+import path from 'path'
+import { fileURLToPath } from 'url'
 import { initDB } from './db.js'
 import authRoutes from './routes/auth.js'
 import oauthRoutes from './routes/oauth.js'
@@ -14,8 +18,43 @@ import pdfRoutes, { handlePublicPdf, handleInvoicePdf } from './routes/pdf.js'
 
 dotenv.config()
 
+const __dirname = path.dirname(fileURLToPath(import.meta.url))
 const app = express()
 const PORT = parseInt(process.env.SERVER_PORT || process.env.PORT || '3000')
+const isProd = process.env.NODE_ENV === 'production'
+
+// Security headers
+app.use(helmet({
+  contentSecurityPolicy: false, // Allow inline scripts in React app
+  crossOriginEmbedderPolicy: false,
+}))
+
+// Rate limiting — general API
+const apiLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  max: 200,
+  standardHeaders: true,
+  legacyHeaders: false,
+  message: { error: 'Too many requests, please try again later.' },
+})
+
+// Stricter limit for auth endpoints
+const authLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  max: 20,
+  standardHeaders: true,
+  legacyHeaders: false,
+  message: { error: 'Too many login attempts, please try again later.' },
+})
+
+// Stricter limit for AI generation
+const genLimiter = rateLimit({
+  windowMs: 60 * 1000, // 1 minute
+  max: 10,
+  standardHeaders: true,
+  legacyHeaders: false,
+  message: { error: 'Too many generation requests, please slow down.' },
+})
 
 // Stripe webhook MUST be before express.json()
 app.post(
@@ -32,8 +71,6 @@ app.post(
         return res.status(400).json({ error: 'Body must be raw buffer' })
       }
       await sync.processWebhook(req.body, sig)
-
-      // Sync subscription status to user
       res.json({ received: true })
     } catch (err) {
       console.error('Webhook error:', err)
@@ -44,18 +81,21 @@ app.post(
 
 // Middleware
 app.use(cors({
-  origin: true,
+  origin: isProd ? false : true,
   credentials: true,
 }))
 app.use(express.json({ limit: '10mb' }))
 app.use(express.urlencoded({ extended: true }))
 
+// Apply general rate limit to all API routes
+app.use('/api', apiLimiter)
+
 // Routes
-app.use('/api/auth', authRoutes)
-app.use('/api/auth', oauthRoutes)
+app.use('/api/auth', authLimiter, authRoutes)
+app.use('/api/auth', authLimiter, oauthRoutes)
 app.use('/api/clients', clientRoutes)
 app.use('/api/proposals', proposalRoutes)
-app.use('/api/proposals', pdfRoutes)
+app.use('/api/proposals', genLimiter, pdfRoutes)
 app.use('/api/invoices', invoiceRoutes)
 app.use('/api/dashboard', dashboardRoutes)
 app.use('/api/public', publicRoutes)
@@ -68,6 +108,25 @@ app.get('/api/health', (_req, res) => {
   res.json({ status: 'ok', timestamp: new Date().toISOString() })
 })
 
+// Serve React client in production
+if (isProd) {
+  const clientDist = path.join(__dirname, '../../client/dist')
+  app.use(express.static(clientDist, { maxAge: '1y', etag: true }))
+  // SPA fallback — serve index.html for all non-API routes
+  app.get('*', (req, res) => {
+    if (req.path.startsWith('/api')) {
+      return res.status(404).json({ error: 'Not found' })
+    }
+    res.sendFile(path.join(clientDist, 'index.html'))
+  })
+}
+
+// Global error handler
+app.use((err: Error, _req: express.Request, res: express.Response, _next: express.NextFunction) => {
+  console.error('Unhandled error:', err)
+  res.status(500).json({ error: 'Internal server error' })
+})
+
 async function main() {
   try {
     await initDB()
@@ -76,7 +135,7 @@ async function main() {
     // Try to initialize Stripe (non-fatal if not connected)
     try {
       const { runMigrations } = await import('stripe-replit-sync')
-      await runMigrations({ databaseUrl: process.env.DATABASE_URL!, schema: 'stripe' })
+      await runMigrations({ databaseUrl: process.env.DATABASE_URL! })
       console.log('Stripe schema ready')
 
       const { getStripeSync } = await import('./stripeClient.js')
