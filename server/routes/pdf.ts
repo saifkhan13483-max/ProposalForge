@@ -156,10 +156,34 @@ function buildProposalHtml(proposal: Record<string, unknown>, lineItems: Record<
 </html>`
 }
 
+async function findChromiumExecutable(): Promise<string | undefined> {
+  const { execSync } = await import('child_process')
+  const candidates = [
+    '/home/runner/.cache/puppeteer/chrome/linux-127.0.6533.88/chrome-linux64/chrome',
+    '/usr/bin/chromium-browser',
+    '/usr/bin/chromium',
+    '/usr/bin/google-chrome',
+  ]
+  for (const p of candidates) {
+    try {
+      const { existsSync } = await import('fs')
+      if (existsSync(p)) return p
+    } catch {}
+  }
+  try {
+    const result = execSync('find /home/runner/.cache/puppeteer -name "chrome" -type f 2>/dev/null | head -1', { timeout: 5000 }).toString().trim()
+    if (result) return result
+  } catch {}
+  return undefined
+}
+
 async function generatePdf(html: string): Promise<Buffer> {
-  const puppeteer = await import('puppeteer')
+  const puppeteer = await import('puppeteer-core')
+  const executablePath = await findChromiumExecutable()
+  if (!executablePath) throw new Error('No Chromium executable found')
   const browser = await puppeteer.default.launch({
-    args: ['--no-sandbox', '--disable-setuid-sandbox', '--disable-dev-shm-usage', '--disable-gpu'],
+    executablePath,
+    args: ['--no-sandbox', '--disable-setuid-sandbox', '--disable-dev-shm-usage', '--disable-gpu', '--single-process'],
     headless: true,
   })
   try {
