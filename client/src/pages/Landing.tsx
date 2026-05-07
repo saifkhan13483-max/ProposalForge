@@ -194,7 +194,7 @@ export function Landing() {
       </header>
 
       {/* Hero */}
-      <section className="relative overflow-hidden bg-[#0a0a14] text-white min-h-[85vh] sm:min-h-[90vh] flex items-center">
+      <section className="relative overflow-hidden bg-[#0a0a14] text-white sm:min-h-[90vh] flex items-center">
         {/* Background effects */}
         <div className="absolute inset-0 pointer-events-none">
           <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[500px] bg-indigo-600/20 rounded-full blur-[120px]" />
@@ -207,18 +207,18 @@ export function Landing() {
           }} />
         </div>
 
-        <div className="relative w-full max-w-6xl mx-auto px-4 sm:px-6 py-12 sm:py-20 md:py-0">
-          <div className="flex flex-col lg:flex-row items-center gap-12 lg:gap-16">
+        <div className="relative w-full max-w-6xl mx-auto px-4 sm:px-6 py-8 sm:py-20 md:py-0">
+          <div className="flex flex-col lg:flex-row items-center gap-8 lg:gap-16">
 
             {/* Left: Copy */}
             <div className="flex-1 text-center lg:text-left">
               {/* Badge */}
-              <div className="inline-flex items-center gap-2 bg-indigo-500/10 border border-indigo-500/30 text-indigo-300 rounded-full px-3 py-1 sm:px-4 sm:py-1.5 text-xs font-medium mb-4 sm:mb-6">
-                <Sparkles className="h-3 w-3 sm:h-3.5 sm:w-3.5 shrink-0" />
+              <div className="inline-flex items-center gap-1.5 bg-indigo-500/10 border border-indigo-500/30 text-indigo-300 rounded-full px-3 py-1 text-xs font-medium mb-3 sm:mb-6">
+                <Sparkles className="h-3 w-3 shrink-0" />
                 AI-powered · Ready in 60 seconds
               </div>
 
-              <h1 className="text-3xl sm:text-4xl lg:text-5xl xl:text-6xl font-extrabold tracking-tight leading-[1.1] mb-4 sm:mb-6" style={{ fontFamily: 'Bricolage Grotesque, sans-serif' }}>
+              <h1 className="text-3xl sm:text-4xl lg:text-5xl xl:text-6xl font-extrabold tracking-tight leading-[1.1] mb-3 sm:mb-6" style={{ fontFamily: 'Bricolage Grotesque, sans-serif' }}>
                 Close more clients with{' '}
                 <span className="relative inline-block">
                   <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 via-violet-400 to-fuchsia-400">
@@ -228,47 +228,98 @@ export function Landing() {
                 </span>
               </h1>
 
-              <p className="text-sm sm:text-lg text-slate-400 max-w-lg mx-auto lg:mx-0 mb-6 sm:mb-8 leading-relaxed">
+              <p className="text-sm sm:text-lg text-slate-400 max-w-lg mx-auto lg:mx-0 mb-4 sm:mb-8 leading-relaxed">
                 Describe your project and get a fully written, branded proposal with scope, deliverables, and pricing — in under a minute.
               </p>
 
               {/* CTA */}
-              <div className="flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-3 mb-6 sm:mb-8">
+              <div className="flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-2.5 sm:gap-3 mb-4 sm:mb-8">
                 <Link href="/auth" className="w-full sm:w-auto">
-                  <Button size="lg" className="w-full sm:w-auto h-11 sm:h-12 px-8 gap-2 text-base bg-indigo-600 hover:bg-indigo-500 border-0 shadow-xl shadow-indigo-900/60 font-semibold">
-                    <Sparkles className="h-4 w-4" />
+                  <Button size="lg" className="w-full sm:w-auto h-10 sm:h-12 px-8 gap-2 text-sm sm:text-base bg-indigo-600 hover:bg-indigo-500 border-0 shadow-xl shadow-indigo-900/60 font-semibold">
+                    <Sparkles className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
                     Start for free
                   </Button>
                 </Link>
                 <a href="#how-it-works" className="text-sm text-slate-400 hover:text-white transition-colors flex items-center gap-1.5 group">
-                  See how it works
-                  <ArrowRight className="h-3.5 w-3.5 group-hover:translate-x-0.5 transition-transform" />
+                  See how it works <ArrowRight className="h-3.5 w-3.5 group-hover:translate-x-0.5 transition-transform" />
                 </a>
               </div>
 
               {/* Trust row */}
-              <div className="flex flex-wrap items-center justify-center lg:justify-start gap-x-5 gap-y-2">
+              <div className="flex flex-wrap items-center justify-center lg:justify-start gap-x-4 gap-y-1.5">
                 <div className="flex items-center gap-2">
                   <div className="flex -space-x-2">
                     {['SC', 'MR', 'PN', 'JK'].map((initials, i) => (
-                      <div key={i} className={`h-7 w-7 rounded-full flex items-center justify-center text-[10px] font-bold text-white ring-2 ring-[#0a0a14] ${['bg-purple-500','bg-blue-500','bg-emerald-500','bg-rose-500'][i]}`}>
+                      <div key={i} className={`h-6 w-6 sm:h-7 sm:w-7 rounded-full flex items-center justify-center text-[9px] sm:text-[10px] font-bold text-white ring-2 ring-[#0a0a14] ${['bg-purple-500','bg-blue-500','bg-emerald-500','bg-rose-500'][i]}`}>
                         {initials}
                       </div>
                     ))}
                   </div>
                   <span className="text-xs text-slate-400">2,400+ freelancers</span>
                 </div>
-                <div className="flex items-center gap-1">
+                <div className="flex items-center gap-0.5">
                   {[...Array(5)].map((_, i) => (
-                    <Star key={i} className="h-3.5 w-3.5 fill-amber-400 text-amber-400" />
+                    <Star key={i} className="h-3 w-3 sm:h-3.5 sm:w-3.5 fill-amber-400 text-amber-400" />
                   ))}
-                  <span className="text-xs text-slate-400 ml-1">4.9 / 5 rating</span>
+                  <span className="text-xs text-slate-400 ml-1">4.9 / 5</span>
                 </div>
-                <span className="text-xs text-slate-400">No credit card required</span>
+                <span className="text-xs text-slate-500">No credit card</span>
               </div>
             </div>
 
-            {/* Right: Proposal card mockup */}
+            {/* Mobile-only: compact proof strip */}
+            <div className="lg:hidden w-full mt-1">
+              <div className="bg-white/5 border border-white/10 rounded-2xl overflow-hidden">
+                {/* Header bar */}
+                <div className="flex items-center gap-2 px-3 py-2 border-b border-white/10 bg-white/5">
+                  <div className="flex gap-1">
+                    <div className="h-2 w-2 rounded-full bg-red-500/70" />
+                    <div className="h-2 w-2 rounded-full bg-yellow-500/70" />
+                    <div className="h-2 w-2 rounded-full bg-green-500/70" />
+                  </div>
+                  <span className="text-[10px] text-slate-500 flex-1 text-center">Proposal Preview</span>
+                  <div className="inline-flex items-center gap-1 bg-emerald-500/20 border border-emerald-500/30 text-emerald-400 rounded-full px-2 py-0.5 text-[10px] font-medium">
+                    <CheckCircle className="h-2.5 w-2.5" /> Accepted
+                  </div>
+                </div>
+                {/* Two-column body */}
+                <div className="p-3 grid grid-cols-2 gap-2">
+                  <div className="bg-white/5 rounded-xl p-2.5">
+                    <div className="text-[9px] font-semibold text-indigo-300 uppercase tracking-widest mb-2">Scope of Work</div>
+                    <div className="space-y-1">
+                      {[72, 55, 80, 42].map((w, i) => (
+                        <div key={i} className="h-1.5 bg-white/15 rounded-full" style={{ width: `${w}%` }} />
+                      ))}
+                    </div>
+                  </div>
+                  <div className="bg-indigo-600/20 border border-indigo-500/30 rounded-xl p-2.5">
+                    <div className="text-[9px] font-semibold text-indigo-300 uppercase tracking-widest mb-2">Pricing</div>
+                    <div className="space-y-1.5">
+                      {[['Design', '$1,200'], ['Dev', '$6,500'], ['QA', '$800']].map(([label, price]) => (
+                        <div key={label} className="flex items-center justify-between">
+                          <div className="h-1 bg-white/20 rounded-full w-12" />
+                          <span className="text-[10px] font-semibold text-white/80">{price}</span>
+                        </div>
+                      ))}
+                      <div className="border-t border-white/10 pt-1.5 flex justify-between">
+                        <span className="text-[10px] text-white/50">Total</span>
+                        <span className="text-[11px] font-bold text-indigo-300">$8,500</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                {/* Generation bar */}
+                <div className="px-3 pb-3">
+                  <div className="flex items-center gap-2 bg-white/5 border border-white/10 rounded-lg px-2.5 py-1.5">
+                    <div className="h-1.5 w-1.5 rounded-full bg-indigo-400 animate-pulse" />
+                    <span className="text-[10px] text-slate-400 flex-1">Generated by AI in <span className="text-indigo-300 font-medium">47 seconds</span></span>
+                    <Sparkles className="h-2.5 w-2.5 text-indigo-400" />
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Right: Proposal card mockup (desktop only) */}
             <div className="hidden lg:block flex-1 w-full max-w-md lg:max-w-none relative">
               {/* Glow behind card */}
               <div className="absolute inset-0 bg-indigo-600/20 blur-3xl rounded-3xl scale-90" />
@@ -365,13 +416,13 @@ export function Landing() {
       </section>
 
       {/* Stats strip */}
-      <section className="bg-[#0d0d1a] border-t border-white/5 py-8 sm:py-14">
+      <section className="bg-[#0d0d1a] border-t border-white/5 py-5 sm:py-14">
         <div className="max-w-5xl mx-auto px-4 sm:px-6">
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-px bg-white/5 rounded-2xl overflow-hidden">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-px bg-white/5 rounded-xl sm:rounded-2xl overflow-hidden">
             {stats.map((s) => (
-              <div key={s.label} className="group flex flex-col items-center justify-center text-center px-4 py-6 sm:py-8 bg-[#0d0d1a] hover:bg-[#111127] transition-colors">
-                <p className="text-3xl sm:text-4xl font-extrabold text-white mb-1.5 group-hover:text-indigo-400 transition-colors leading-none" style={{ fontFamily: 'Bricolage Grotesque, sans-serif' }}>{s.value}</p>
-                <p className="text-xs sm:text-sm text-slate-500 leading-snug max-w-[120px]">{s.label}</p>
+              <div key={s.label} className="group flex flex-col items-center justify-center text-center px-3 py-4 sm:py-8 bg-[#0d0d1a] hover:bg-[#111127] transition-colors">
+                <p className="text-2xl sm:text-4xl font-extrabold text-white mb-1 group-hover:text-indigo-400 transition-colors leading-none" style={{ fontFamily: 'Bricolage Grotesque, sans-serif' }}>{s.value}</p>
+                <p className="text-[11px] sm:text-sm text-slate-500 leading-snug max-w-[110px]">{s.label}</p>
               </div>
             ))}
           </div>
