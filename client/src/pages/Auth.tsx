@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import { useLocation } from 'wouter'
 import { useAuth } from '@/contexts/AuthContext'
+import { useSEO } from '@/hooks/useSEO'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
@@ -29,6 +30,8 @@ export function Auth() {
   const { login, register, refreshUser } = useAuth()
   const [, setLocation] = useLocation()
   const { toast } = useToast()
+
+  useSEO({ title: 'Sign In', noindex: true })
 
   useEffect(() => {
     const params = new URLSearchParams(window.location.search)

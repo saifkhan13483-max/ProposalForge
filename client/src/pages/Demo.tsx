@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { Link } from 'wouter'
+import { useSEO } from '@/hooks/useSEO'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
@@ -35,6 +36,11 @@ export function Demo() {
   const [timeline, setTimeline] = useState('')
   const [loading, setLoading] = useState(false)
   const [result, setResult] = useState<DemoProposal | null>(null)
+
+  useSEO({
+    title: 'Try ProposalForge Free — Live AI Proposal Demo',
+    description: 'Generate a real AI-powered proposal in under 60 seconds — no sign-up required. See how ProposalForge works.',
+  })
   const [limitReached, setLimitReached] = useState(false)
   const { toast } = useToast()
 

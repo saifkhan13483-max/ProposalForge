@@ -2,10 +2,148 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>ProposalForge — AI-Powered Proposals & Invoices</title>
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="shortcut icon" href="/favicon.ico" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/favicon.svg" />
+
+    <!-- Primary Meta Tags -->
+    <title>ProposalForge — AI-Powered Proposals &amp; Invoices for Freelancers</title>
     <meta name="description" content="Turn your project description into a polished client proposal in under 60 seconds. AI-powered proposals, quotes, and invoices for freelancers." />
+    <meta name="robots" content="index, follow" />
+    <meta name="author" content="ProposalForge" />
+    <meta name="theme-color" content="#4F46E5" />
+    <link rel="canonical" href="https://proposalforge.replit.app/" />
+
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="ProposalForge" />
+    <meta property="og:title" content="ProposalForge — AI-Powered Proposals &amp; Invoices for Freelancers" />
+    <meta property="og:description" content="Turn your project description into a polished client proposal in under 60 seconds. AI-powered proposals, quotes, and invoices for freelancers." />
+    <meta property="og:url" content="https://proposalforge.replit.app/" />
+    <meta property="og:image" content="https://proposalforge.replit.app/og-image.png" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content="ProposalForge — AI proposal generator for freelancers" />
+    <meta property="og:locale" content="en_US" />
+
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="ProposalForge — AI-Powered Proposals &amp; Invoices for Freelancers" />
+    <meta name="twitter:description" content="Turn your project description into a polished client proposal in under 60 seconds. AI-powered proposals, quotes, and invoices for freelancers." />
+    <meta name="twitter:image" content="https://proposalforge.replit.app/og-image.png" />
+    <meta name="twitter:image:alt" content="ProposalForge — AI proposal generator for freelancers" />
+
+    <!-- JSON-LD Structured Data -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@graph": [
+        {
+          "@type": "Organization",
+          "@id": "https://proposalforge.replit.app/#organization",
+          "name": "ProposalForge",
+          "url": "https://proposalforge.replit.app",
+          "logo": {
+            "@type": "ImageObject",
+            "url": "https://proposalforge.replit.app/favicon.svg",
+            "width": 512,
+            "height": 512
+          },
+          "description": "AI-powered proposal and invoice generator for freelancers"
+        },
+        {
+          "@type": "WebSite",
+          "@id": "https://proposalforge.replit.app/#website",
+          "url": "https://proposalforge.replit.app",
+          "name": "ProposalForge",
+          "description": "AI-powered proposals and invoices for freelancers",
+          "publisher": { "@id": "https://proposalforge.replit.app/#organization" }
+        },
+        {
+          "@type": "SoftwareApplication",
+          "@id": "https://proposalforge.replit.app/#app",
+          "name": "ProposalForge",
+          "url": "https://proposalforge.replit.app",
+          "applicationCategory": "BusinessApplication",
+          "operatingSystem": "Web",
+          "description": "AI-powered client proposal and invoice generator for freelancers. Turn project descriptions into polished proposals in under 60 seconds.",
+          "publisher": { "@id": "https://proposalforge.replit.app/#organization" },
+          "offers": {
+            "@type": "Offer",
+            "price": "0",
+            "priceCurrency": "USD",
+            "description": "Free plan — 3 AI-generated proposals per month. Pro plan available for unlimited access."
+          },
+          "aggregateRating": {
+            "@type": "AggregateRating",
+            "ratingValue": "4.9",
+            "reviewCount": "2400",
+            "bestRating": "5",
+            "worstRating": "1"
+          },
+          "featureList": [
+            "AI Proposal Generation",
+            "Electronic Signatures",
+            "Auto Invoicing via Stripe",
+            "PDF Export",
+            "Email Delivery",
+            "Real-time Tracking",
+            "Branding Controls",
+            "Analytics Dashboard"
+          ]
+        },
+        {
+          "@type": "FAQPage",
+          "@id": "https://proposalforge.replit.app/#faq",
+          "mainEntity": [
+            {
+              "@type": "Question",
+              "name": "How does ProposalForge generate proposals?",
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "You describe your project and ProposalForge's AI writes a complete, professional proposal with scope, deliverables, and pricing in under 60 seconds."
+              }
+            },
+            {
+              "@type": "Question",
+              "name": "Is ProposalForge free to use?",
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "Yes, the free plan includes 3 AI-generated proposals per month. A Pro plan is available for unlimited proposals and advanced features."
+              }
+            },
+            {
+              "@type": "Question",
+              "name": "Can clients sign proposals electronically?",
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "Yes. Clients receive a branded link where they can review and accept with an electronic signature — no additional tools or accounts required."
+              }
+            },
+            {
+              "@type": "Question",
+              "name": "Does ProposalForge handle invoicing?",
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "Yes. When a client accepts a proposal, an invoice is automatically created and payments are collected via Stripe Checkout."
+              }
+            },
+            {
+              "@type": "Question",
+              "name": "What types of freelancers use ProposalForge?",
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "ProposalForge is used by designers, developers, content strategists, consultants, and any independent professional who sends client proposals and invoices."
+              }
+            }
+          ]
+        }
+      ]
+    }
+    </script>
   </head>
   <body>
     <div id="root"></div>

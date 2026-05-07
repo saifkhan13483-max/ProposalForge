@@ -6,6 +6,7 @@ import {
   Quote, Menu, X
 } from 'lucide-react'
 import { useState } from 'react'
+import { useSEO } from '@/hooks/useSEO'
 
 const stats = [
   { value: '2,400+', label: 'Freelancers',  color: 'from-indigo-400 to-violet-400' },
@@ -109,6 +110,12 @@ const features = [
 
 export function Landing() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
+
+  useSEO({
+    title: 'AI-Powered Proposals & Invoices for Freelancers',
+    description: 'Turn your project description into a polished client proposal in under 60 seconds. AI-powered proposals, quotes, and invoices for freelancers.',
+    canonical: 'https://proposalforge.replit.app/',
+  })
 
   return (
     <div className="min-h-screen bg-white">

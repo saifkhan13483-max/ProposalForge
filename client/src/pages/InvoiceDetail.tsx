@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import { useRoute, useLocation } from 'wouter'
+import { useSEO } from '@/hooks/useSEO'
 import { api } from '@/lib/api'
 import { formatCurrency, formatDate, getStatusColor } from '@/lib/utils'
 import { Button } from '@/components/ui/button'
@@ -39,6 +40,8 @@ export function InvoiceDetail() {
     clientName: '', clientEmail: '', dueDate: '', notes: '', taxRate: 0,
     lineItems: [] as { description: string; quantity: number; unitPrice: number }[],
   })
+
+  useSEO({ title: invoice ? `Invoice ${invoice.invoice_number}` : 'Invoice', noindex: true })
 
   useEffect(() => {
     if (!params?.id) return

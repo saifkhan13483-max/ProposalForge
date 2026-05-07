@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { Link } from 'wouter'
 import { api } from '@/lib/api'
+import { useSEO } from '@/hooks/useSEO'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
@@ -40,6 +41,8 @@ export function Clients() {
   const [form, setForm] = useState<ClientForm>(EMPTY_FORM)
   const [saving, setSaving] = useState(false)
   const { toast } = useToast()
+
+  useSEO({ title: 'Clients', noindex: true })
 
   async function load() {
     try {

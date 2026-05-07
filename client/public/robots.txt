@@ -1,0 +1,23 @@
+User-agent: *
+Allow: /
+Allow: /auth
+Allow: /demo
+Allow: /proposal/
+
+# Block authenticated / private application routes
+Disallow: /dashboard
+Disallow: /proposals/
+Disallow: /invoices/
+Disallow: /clients/
+Disallow: /settings
+Disallow: /analytics
+Disallow: /onboarding
+Disallow: /auth/callback
+Disallow: /forgot-password
+Disallow: /reset-password
+
+# Block all API endpoints
+Disallow: /api/
+
+# Sitemap location
+Sitemap: https://proposalforge.replit.app/sitemap.xml

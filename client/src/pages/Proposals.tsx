@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { Link, useLocation } from 'wouter'
 import { api } from '@/lib/api'
+import { useSEO } from '@/hooks/useSEO'
 import { formatCurrency, formatDate, getStatusColor } from '@/lib/utils'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -37,6 +38,8 @@ export function Proposals() {
   const [showArchived, setShowArchived] = useState(false)
   const [, setLocation] = useLocation()
   const { toast } = useToast()
+
+  useSEO({ title: 'Proposals', noindex: true })
 
   async function load() {
     setLoading(true)

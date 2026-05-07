@@ -15,6 +15,7 @@ import dashboardRoutes from './routes/dashboard.js'
 import publicRoutes from './routes/public.js'
 import subscriptionRoutes from './routes/subscription.js'
 import pdfRoutes, { handlePublicPdf, handleInvoicePdf } from './routes/pdf.js'
+import sitemapRoutes from './routes/sitemap.js'
 
 dotenv.config()
 
@@ -22,6 +23,9 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url))
 const app = express()
 const PORT = parseInt(process.env.SERVER_PORT || process.env.PORT || '3000')
 const isProd = process.env.NODE_ENV === 'production'
+
+// Trust proxy — required on Replit (behind a reverse proxy) for rate limiting and IP detection
+app.set('trust proxy', 1)
 
 // Security headers
 app.use(helmet({
@@ -102,6 +106,9 @@ app.use('/api/public', publicRoutes)
 app.get('/api/public/proposal/:token/pdf', handlePublicPdf)
 app.get('/api/invoices/:id/pdf', handleInvoicePdf)
 app.use('/api', subscriptionRoutes)
+
+// Sitemap + robots.txt (dynamic, with correct base URL)
+app.use('/', sitemapRoutes)
 
 // Health check
 app.get('/api/health', (_req, res) => {

@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import { useRoute, useLocation, useSearch } from 'wouter'
+import { useSEO } from '@/hooks/useSEO'
 import { api } from '@/lib/api'
 import { formatCurrency, formatDate, getStatusColor } from '@/lib/utils'
 import { Button } from '@/components/ui/button'
@@ -71,6 +72,8 @@ export function ProposalDetail() {
   const [proposal, setProposal] = useState<Proposal | null>(null)
   const [lineItems, setLineItems] = useState<LineItem[]>([])
   const [loading, setLoading] = useState(true)
+
+  useSEO({ title: proposal ? proposal.title : 'Proposal', noindex: true })
   const [generating, setGenerating] = useState(false)
   const [saving, setSaving] = useState(false)
   const [sending, setSending] = useState(false)

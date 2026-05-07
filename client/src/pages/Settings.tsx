@@ -1,6 +1,7 @@
 import { useEffect, useState, useRef } from 'react'
 import { useSearch } from 'wouter'
 import { useAuth } from '@/contexts/AuthContext'
+import { useSEO } from '@/hooks/useSEO'
 import { api, getAuthToken } from '@/lib/api'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -23,6 +24,8 @@ export function Settings() {
   const search = useSearch()
   const { toast } = useToast()
   const [saving, setSaving] = useState(false)
+
+  useSEO({ title: 'Settings', noindex: true })
   const [upgrading, setUpgrading] = useState(false)
   const [uploadingLogo, setUploadingLogo] = useState(false)
   const [sub, setSub] = useState<Subscription | null>(null)

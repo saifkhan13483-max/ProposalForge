@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { useRoute } from 'wouter'
 import { api } from '@/lib/api'
+import { useSEO } from '@/hooks/useSEO'
 import { formatCurrency, formatDate } from '@/lib/utils'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -53,6 +54,12 @@ export function PublicProposal() {
   const [declined, setDeclined] = useState(false)
   const [showDecline, setShowDecline] = useState(false)
   const [declineReason, setDeclineReason] = useState('')
+
+  useSEO({
+    title: proposal ? proposal.title : 'Proposal',
+    description: proposal ? `Review and accept the proposal from ${proposal.business_name}.` : undefined,
+    noindex: true,
+  })
   const [declining, setDeclining] = useState(false)
   const [comments, setComments] = useState<Comment[]>([])
 

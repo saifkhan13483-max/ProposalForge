@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import { api } from '@/lib/api'
+import { useSEO } from '@/hooks/useSEO'
 import { formatCurrency } from '@/lib/utils'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import {
@@ -55,6 +56,8 @@ export function Analytics() {
   const [topClients, setTopClients] = useState<TopClient[]>([])
   const [stats, setStats] = useState<Stats | null>(null)
   const [loading, setLoading] = useState(true)
+
+  useSEO({ title: 'Analytics', noindex: true })
 
   useEffect(() => {
     Promise.all([

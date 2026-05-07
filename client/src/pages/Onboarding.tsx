@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { useLocation } from 'wouter'
 import { useAuth } from '@/contexts/AuthContext'
+import { useSEO } from '@/hooks/useSEO'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
@@ -35,6 +36,8 @@ export function Onboarding() {
   const [logoPreview, setLogoPreview] = useState<string | null>(null)
   const [logoFile, setLogoFile] = useState<File | null>(null)
   const [currency, setCurrency] = useState('USD')
+
+  useSEO({ title: 'Set Up Your Account', noindex: true })
   const [saving, setSaving] = useState(false)
   const { refreshUser } = useAuth()
   const [, setLocation] = useLocation()

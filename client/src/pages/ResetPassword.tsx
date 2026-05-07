@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
 import { useSearch, useLocation } from 'wouter'
+import { useSEO } from '@/hooks/useSEO'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
@@ -12,6 +13,8 @@ export function ResetPassword() {
   const [, setLocation] = useLocation()
   const { toast } = useToast()
   const token = new URLSearchParams(search).get('token') || ''
+
+  useSEO({ title: 'Set New Password', noindex: true })
 
   const [password, setPassword] = useState('')
   const [confirm, setConfirm] = useState('')

@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { useLocation } from 'wouter'
+import { useSEO } from '@/hooks/useSEO'
 import { api } from '@/lib/api'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -16,6 +17,9 @@ export function NewProposal() {
   const [, setLocation] = useLocation()
   const { toast } = useToast()
   const [loading, setLoading] = useState(false)
+
+  useSEO({ title: 'New Proposal', noindex: true })
+
   const [form, setForm] = useState({
     title: '',
     clientName: '',

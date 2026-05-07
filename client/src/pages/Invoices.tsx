@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { Link, useLocation } from 'wouter'
 import { api } from '@/lib/api'
+import { useSEO } from '@/hooks/useSEO'
 import { formatCurrency, formatDate, getStatusColor } from '@/lib/utils'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -47,6 +48,8 @@ export function Invoices() {
   const [loading, setLoading] = useState(true)
   const [statusFilter, setStatusFilter] = useState('all')
   const [search, setSearch] = useState('')
+
+  useSEO({ title: 'Invoices', noindex: true })
   const [showNew, setShowNew] = useState(false)
   const [form, setForm] = useState<NewInvoiceForm>({ clientName: '', clientEmail: '', dueDate: '', notes: '' })
   const [saving, setSaving] = useState(false)

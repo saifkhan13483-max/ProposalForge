@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { Link } from 'wouter'
+import { useSEO } from '@/hooks/useSEO'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
@@ -12,6 +13,8 @@ export function ForgotPassword() {
   const [loading, setLoading] = useState(false)
   const [sent, setSent] = useState(false)
   const { toast } = useToast()
+
+  useSEO({ title: 'Reset Password', noindex: true })
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault()

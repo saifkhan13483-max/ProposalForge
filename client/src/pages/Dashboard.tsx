@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { Link } from 'wouter'
 import { useAuth } from '@/contexts/AuthContext'
+import { useSEO } from '@/hooks/useSEO'
 import { api } from '@/lib/api'
 import { formatCurrency, formatDate, getStatusColor } from '@/lib/utils'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
@@ -57,6 +58,8 @@ export function Dashboard() {
   const [activity, setActivity] = useState<ActivityItem[]>([])
   const [chartData, setChartData] = useState<ChartPoint[]>([])
   const [loading, setLoading] = useState(true)
+
+  useSEO({ title: 'Dashboard', noindex: true })
 
   useEffect(() => {
     Promise.all([

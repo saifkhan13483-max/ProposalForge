@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import { useRoute, useLocation, Link } from 'wouter'
+import { useSEO } from '@/hooks/useSEO'
 import { api } from '@/lib/api'
 import { formatCurrency, formatDate, getStatusColor } from '@/lib/utils'
 import { Button } from '@/components/ui/button'
@@ -52,6 +53,8 @@ export function ClientDetail() {
   const [showEdit, setShowEdit] = useState(false)
   const [saving, setSaving] = useState(false)
   const [form, setForm] = useState({ name: '', email: '', company: '', phone: '', notes: '' })
+
+  useSEO({ title: client ? `${client.name} — Client` : 'Client', noindex: true })
 
   useEffect(() => {
     if (!params?.id) return
