@@ -204,18 +204,33 @@ function buildProposalPdfContent(proposal: Record<string, unknown>, lineItems: R
 
   return {
     content: docContent,
-    defaultStyle: { font: 'Helvetica', fontSize: 11, color: '#111827' },
+    defaultStyle: { font: 'Roboto', fontSize: 11, color: '#111827' },
     pageMargins: [40, 40, 40, 40],
     pageSize: 'A4',
   }
 }
 
-async function generatePdfBuffer(docDefinition: PdfContent): Promise<Buffer> {
+let _pdfMakeInstance: any = null
+
+async function getPdfMake() {
+  if (_pdfMakeInstance) return _pdfMakeInstance
   const pdfMake = (await import('pdfmake/build/pdfmake.js')).default
   const pdfFonts = (await import('pdfmake/build/vfs_fonts.js')).default
+  pdfMake.vfs = pdfFonts.vfs ?? (pdfFonts as any).pdfMake?.vfs ?? {}
+  pdfMake.fonts = {
+    Roboto: {
+      normal: 'Roboto-Regular.ttf',
+      bold: 'Roboto-Medium.ttf',
+      italics: 'Roboto-Italic.ttf',
+      bolditalics: 'Roboto-MediumItalic.ttf',
+    },
+  }
+  _pdfMakeInstance = pdfMake
+  return pdfMake
+}
 
-  pdfMake.vfs = pdfFonts.vfs || (pdfFonts as any).pdfMake?.vfs
-
+async function generatePdfBuffer(docDefinition: PdfContent): Promise<Buffer> {
+  const pdfMake = await getPdfMake()
   return new Promise((resolve, reject) => {
     try {
       const doc = pdfMake.createPdf(docDefinition as any)
@@ -377,7 +392,7 @@ function buildInvoicePdfContent(invoice: Record<string, unknown>, businessName: 
 
   return {
     content: docContent,
-    defaultStyle: { font: 'Helvetica', fontSize: 11, color: '#111827' },
+    defaultStyle: { font: 'Roboto', fontSize: 11, color: '#111827' },
     pageMargins: [40, 40, 40, 40],
     pageSize: 'A4',
   }
