@@ -19,7 +19,6 @@ import { Clients } from '@/pages/Clients'
 import { ClientDetail } from '@/pages/ClientDetail'
 import { Settings } from '@/pages/Settings'
 import { PublicProposal } from '@/pages/PublicProposal'
-import { Demo } from '@/pages/Demo'
 import { Analytics } from '@/pages/Analytics'
 import { Loader2 } from 'lucide-react'
 
@@ -70,9 +69,6 @@ function AppRoutes() {
       </Route>
       <Route path="/onboarding">
         {!user ? <Redirect to="/auth" /> : <Onboarding />}
-      </Route>
-      <Route path="/demo">
-        <Demo />
       </Route>
       <Route path="/forgot-password">
         <ForgotPassword />

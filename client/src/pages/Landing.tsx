@@ -171,12 +171,6 @@ export function Landing() {
                 Start for free
               </Button>
             </Link>
-            <Link href="/demo" className="w-full sm:w-auto">
-              <Button size="lg" className="w-full sm:w-auto h-12 px-8 text-base bg-white/10 border border-white/20 text-white hover:bg-white/20 hover:text-white gap-2">
-                <ArrowRight className="h-4 w-4" />
-                Try the live demo
-              </Button>
-            </Link>
           </div>
           <p className="mt-5 text-xs sm:text-sm text-slate-500">Free forever · No credit card required · 3 proposals/month on free tier</p>
         </div>
@@ -410,11 +404,6 @@ export function Landing() {
                 Get started for free
               </Button>
             </Link>
-            <Link href="/demo" className="w-full sm:w-auto">
-              <Button size="lg" variant="outline" className="w-full sm:w-auto h-12 px-8 text-base border-white/20 text-white hover:bg-white/10 hover:text-white gap-2 bg-transparent">
-                Try the live demo
-              </Button>
-            </Link>
           </div>
           <p className="mt-4 text-xs sm:text-sm text-slate-500">No credit card required · Cancel anytime</p>
         </div>
@@ -433,7 +422,6 @@ export function Landing() {
             <div className="flex items-center gap-5 sm:gap-6 text-sm text-slate-500">
               <a href="#features" className="hover:text-slate-800 transition-colors">Features</a>
               <a href="#pricing" className="hover:text-slate-800 transition-colors">Pricing</a>
-              <Link href="/demo" className="hover:text-slate-800 transition-colors">Demo</Link>
             </div>
             <p className="text-xs sm:text-sm text-slate-400 text-center md:text-right">© {new Date().getFullYear()} ProposalForge. All rights reserved.</p>
           </div>
