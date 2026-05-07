@@ -174,7 +174,7 @@ router.post('/:id/generate', async (req: AuthRequest, res) => {
     const user = userResult.rows[0]
 
     if (!hasGeminiKey()) {
-      return res.status(503).json({ error: 'AI generation not configured. Please add GEMINI_API_KEY.' })
+      return res.status(503).json({ error: 'AI generation not configured. Please add GROQ_API_KEY.' })
     }
 
     const prompt = `You are a senior proposal writer for freelancers and agencies. Generate a professional client proposal.
@@ -205,7 +205,8 @@ Return ONLY valid JSON with this exact structure:
 
     let aiContent
     try {
-      const jsonMatch = text.match(/\{[\s\S]*\}/)
+      const stripped = text.replace(/```(?:json)?\s*/gi, '').replace(/```/g, '').trim()
+      const jsonMatch = stripped.match(/\{[\s\S]*\}/)
       if (!jsonMatch) throw new Error('No JSON found in response')
       aiContent = JSON.parse(jsonMatch[0])
     } catch {
@@ -275,7 +276,8 @@ Current content of this section: ${JSON.stringify(currentContent[section] || '')
 Return ONLY valid JSON: { "${section}": "new content here" }`
 
     const text = await generateContent(prompt)
-    const jsonMatch = text.match(/\{[\s\S]*\}/)
+    const stripped = text.replace(/```(?:json)?\s*/gi, '').replace(/```/g, '').trim()
+    const jsonMatch = stripped.match(/\{[\s\S]*\}/)
     if (!jsonMatch) return res.status(500).json({ error: 'Failed to parse AI response' })
 
     const newSection = JSON.parse(jsonMatch[0])

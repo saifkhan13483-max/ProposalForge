@@ -290,7 +290,8 @@ Return ONLY valid JSON with this exact structure:
 }`
 
     const text = await generateContent(prompt)
-    const jsonMatch = text.match(/\{[\s\S]*\}/)
+    const stripped = text.replace(/```(?:json)?\s*/gi, '').replace(/```/g, '').trim()
+    const jsonMatch = stripped.match(/\{[\s\S]*\}/)
     if (!jsonMatch) throw new Error('No JSON in response')
     const proposal = JSON.parse(jsonMatch[0])
 
