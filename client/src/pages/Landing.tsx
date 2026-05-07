@@ -579,7 +579,7 @@ export function Landing() {
           <div className="text-center mt-8 sm:mt-12">
             <p className="text-slate-500 text-xs sm:text-sm">
               All features included on the free plan.{' '}
-              <Link href="/auth" className="text-indigo-400 hover:text-indigo-300 underline underline-offset-2 transition-colors">
+              <Link href="/auth" className="text-indigo-400 hover:text-indigo-300 underline underline-offset-2 transition-colors whitespace-nowrap">
                 Start building today →
               </Link>
             </p>
