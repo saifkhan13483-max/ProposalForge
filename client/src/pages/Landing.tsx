@@ -528,44 +528,47 @@ export function Landing() {
       </section>
 
       {/* Features */}
-      <section id="features" className="bg-[#07070f] py-14 sm:py-28 overflow-hidden relative">
-        {/* Ambient background glow */}
-        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[400px] bg-indigo-600/10 rounded-full blur-[120px] pointer-events-none" />
+      <section id="features" className="bg-[#07070f] py-10 sm:py-24 overflow-hidden relative">
+        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[600px] h-[300px] bg-indigo-600/10 rounded-full blur-[100px] pointer-events-none" />
 
         <div className="relative max-w-6xl mx-auto px-4 sm:px-6">
           {/* Header */}
-          <div className="text-center mb-10 sm:mb-16">
-            <span className="inline-flex items-center gap-1.5 text-xs font-bold tracking-widest text-indigo-400 uppercase bg-indigo-500/10 border border-indigo-500/20 px-3 py-1.5 rounded-full mb-4 sm:mb-5">
+          <div className="text-center mb-8 sm:mb-14">
+            <span className="inline-flex items-center gap-1.5 text-xs font-bold tracking-widest text-indigo-400 uppercase bg-indigo-500/10 border border-indigo-500/20 px-3 py-1.5 rounded-full mb-3 sm:mb-5">
               <Sparkles className="h-3 w-3" /> Features
             </span>
-            <h2 className="text-2xl sm:text-5xl font-extrabold text-white mb-3 sm:mb-5 leading-tight" style={{ fontFamily: 'Bricolage Grotesque, sans-serif' }}>
-              Everything you need to<br className="hidden sm:block" />
-              <span className="bg-gradient-to-r from-indigo-400 to-violet-400 bg-clip-text text-transparent"> win more clients</span>
+            <h2 className="text-2xl sm:text-5xl font-extrabold text-white mb-2 sm:mb-4 leading-tight" style={{ fontFamily: 'Bricolage Grotesque, sans-serif' }}>
+              Everything to{' '}
+              <span className="bg-gradient-to-r from-indigo-400 to-violet-400 bg-clip-text text-transparent">win more clients</span>
             </h2>
-            <p className="text-slate-400 text-sm sm:text-lg max-w-lg mx-auto leading-relaxed">
-              One focused tool that handles proposals, invoices, clients, and payments — so you never lose a deal to slow paperwork.
+            <p className="text-slate-400 text-sm sm:text-lg max-w-lg mx-auto leading-relaxed hidden sm:block">
+              One focused tool for proposals, invoices, clients, and payments — so you never lose a deal to slow paperwork.
             </p>
           </div>
 
-          {/* Feature grid — shared-border mosaic */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-px bg-white/[0.06] rounded-2xl overflow-hidden border border-white/[0.06]">
+          {/* Mobile: 2-col compact grid */}
+          <div className="grid grid-cols-2 gap-2.5 sm:hidden">
+            {features.map(({ icon: Icon, title, desc, gradient }) => (
+              <div key={title} className="group relative bg-[#0d0d1a] border border-white/[0.07] rounded-2xl p-4 overflow-hidden">
+                <div className={`absolute top-0 left-0 right-0 h-px bg-gradient-to-r ${gradient} opacity-50`} />
+                <div className={`h-9 w-9 rounded-xl bg-gradient-to-br ${gradient} flex items-center justify-center mb-3 shadow-md`}>
+                  <Icon className="h-4 w-4 text-white" strokeWidth={1.75} />
+                </div>
+                <h3 className="font-bold text-[13px] text-white leading-snug mb-1">{title}</h3>
+                <p className="text-slate-500 text-[11px] leading-relaxed line-clamp-2">{desc}</p>
+              </div>
+            ))}
+          </div>
+
+          {/* Desktop: 3-col mosaic grid */}
+          <div className="hidden sm:grid sm:grid-cols-2 lg:grid-cols-3 gap-px bg-white/[0.06] rounded-2xl overflow-hidden border border-white/[0.06]">
             {features.map(({ icon: Icon, title, desc, gradient, glow }) => (
-              <div
-                key={title}
-                className={`group relative bg-[#0d0d1a] hover:bg-[#111127] p-5 sm:p-7 transition-all duration-300 cursor-default overflow-hidden`}
-              >
-                {/* Card hover glow */}
-                <div className={`absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none bg-gradient-to-br ${gradient} opacity-0 group-hover:opacity-[0.04]`} />
-
-                {/* Top accent line */}
+              <div key={title} className="group relative bg-[#0d0d1a] hover:bg-[#111127] p-7 transition-all duration-300 cursor-default overflow-hidden">
+                <div className={`absolute inset-0 bg-gradient-to-br ${gradient} opacity-0 group-hover:opacity-[0.04] transition-opacity duration-300 pointer-events-none`} />
                 <div className={`absolute top-0 left-0 right-0 h-px bg-gradient-to-r ${gradient} opacity-0 group-hover:opacity-60 transition-opacity duration-300`} />
-
-                {/* Icon */}
                 <div className={`relative h-12 w-12 rounded-xl bg-gradient-to-br ${gradient} flex items-center justify-center mb-5 shadow-lg ${glow} group-hover:shadow-xl transition-shadow duration-300`}>
                   <Icon className="h-5 w-5 text-white" strokeWidth={1.75} />
                 </div>
-
-                {/* Text */}
                 <h3 className="font-bold text-[15px] text-white mb-2 leading-snug">{title}</h3>
                 <p className="text-slate-400 text-sm leading-relaxed">{desc}</p>
               </div>
@@ -573,8 +576,8 @@ export function Landing() {
           </div>
 
           {/* Bottom CTA nudge */}
-          <div className="text-center mt-12">
-            <p className="text-slate-500 text-sm">
+          <div className="text-center mt-8 sm:mt-12">
+            <p className="text-slate-500 text-xs sm:text-sm">
               All features included on the free plan.{' '}
               <Link href="/auth" className="text-indigo-400 hover:text-indigo-300 underline underline-offset-2 transition-colors">
                 Start building today →
