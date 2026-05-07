@@ -1,5 +1,5 @@
 import { Router } from 'express'
-import { GoogleGenerativeAI } from '@google/generative-ai'
+import { GoogleGenAI } from '@google/genai'
 import { query } from '../db.js'
 import { requireAuth, type AuthRequest } from '../middleware/auth.js'
 
@@ -178,8 +178,7 @@ router.post('/:id/generate', async (req: AuthRequest, res) => {
       return res.status(503).json({ error: 'AI generation not configured. Please add GEMINI_API_KEY.' })
     }
 
-    const genAI = new GoogleGenerativeAI(apiKey)
-    const model = genAI.getGenerativeModel({ model: 'gemini-2.0-flash' })
+    const ai = new GoogleGenAI({ apiKey })
 
     const prompt = `You are a senior proposal writer for freelancers and agencies. Generate a professional client proposal.
 
@@ -205,8 +204,8 @@ Return ONLY valid JSON with this exact structure:
   "totalEstimate": 1500
 }`
 
-    const result = await model.generateContent(prompt)
-    const text = result.response.text()
+    const result = await ai.models.generateContent({ model: 'gemini-2.0-flash', contents: prompt })
+    const text = result.text
 
     let aiContent
     try {
@@ -268,8 +267,7 @@ router.post('/:id/regenerate-section', async (req: AuthRequest, res) => {
     const apiKey = process.env.GEMINI_API_KEY
     if (!apiKey) return res.status(503).json({ error: 'AI generation not configured' })
 
-    const genAI = new GoogleGenerativeAI(apiKey)
-    const model = genAI.getGenerativeModel({ model: 'gemini-2.0-flash' })
+    const ai = new GoogleGenAI({ apiKey })
 
     const currentContent = proposal.content || {}
     const prompt = `You are a senior proposal writer. Regenerate the "${section}" section of a client proposal.
@@ -283,8 +281,8 @@ Current content of this section: ${JSON.stringify(currentContent[section] || '')
 
 Return ONLY valid JSON: { "${section}": "new content here" }`
 
-    const result = await model.generateContent(prompt)
-    const text = result.response.text()
+    const result = await ai.models.generateContent({ model: 'gemini-2.0-flash', contents: prompt })
+    const text = result.text
     const jsonMatch = text.match(/\{[\s\S]*\}/)
     if (!jsonMatch) return res.status(500).json({ error: 'Failed to parse AI response' })
 

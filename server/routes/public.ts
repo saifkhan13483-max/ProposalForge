@@ -1,6 +1,6 @@
 import { Router } from 'express'
 import { query } from '../db.js'
-import { GoogleGenerativeAI } from '@google/generative-ai'
+import { GoogleGenAI } from '@google/genai'
 
 const router = Router()
 
@@ -268,8 +268,7 @@ router.post('/demo/generate', async (req, res) => {
   }
 
   try {
-    const genAI = new GoogleGenerativeAI(apiKey)
-    const model = genAI.getGenerativeModel({ model: 'gemini-2.0-flash' })
+    const ai = new GoogleGenAI({ apiKey })
 
     const prompt = `You are a senior proposal writer for freelancers and agencies. Generate a professional client proposal.
 
@@ -293,8 +292,8 @@ Return ONLY valid JSON with this exact structure:
   "totalEstimate": 1500
 }`
 
-    const result = await model.generateContent(prompt)
-    const text = result.response.text()
+    const result = await ai.models.generateContent({ model: 'gemini-2.0-flash', contents: prompt })
+    const text = result.text
     const jsonMatch = text.match(/\{[\s\S]*\}/)
     if (!jsonMatch) throw new Error('No JSON in response')
     const proposal = JSON.parse(jsonMatch[0])
