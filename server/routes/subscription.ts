@@ -18,7 +18,56 @@ router.post('/stripe/webhook', async (req, res) => {
       return res.status(400).json({ error: 'Webhook body must be raw buffer' })
     }
 
+    // Parse before verifying so we can act on the event type after verification
+    let event: { type: string; data: { object: Record<string, unknown> } }
+    try {
+      event = JSON.parse(req.body.toString())
+    } catch {
+      return res.status(400).json({ error: 'Invalid JSON body' })
+    }
+
+    // Verify signature + sync to stripe.* tables
     await sync.processWebhook(req.body, sig)
+
+    // Update users.plan based on subscription lifecycle events
+    try {
+      if (event.type === 'checkout.session.completed') {
+        const session = event.data.object
+        if (session.mode === 'subscription' && session.metadata && (session.metadata as Record<string, string>).userId) {
+          const userId = (session.metadata as Record<string, string>).userId
+          const subId = session.subscription as string | null
+          await query(
+            'UPDATE users SET plan = $1, stripe_subscription_id = $2 WHERE id = $3',
+            ['pro', subId, userId]
+          )
+        }
+      } else if (event.type === 'customer.subscription.updated') {
+        const sub = event.data.object
+        const status = sub.status as string
+        const customerId = sub.customer as string
+        if (status === 'active' || status === 'trialing') {
+          await query(
+            'UPDATE users SET plan = $1, stripe_subscription_id = $2 WHERE stripe_customer_id = $3',
+            ['pro', sub.id, customerId]
+          )
+        } else if (status === 'canceled' || status === 'unpaid' || status === 'past_due') {
+          await query(
+            'UPDATE users SET plan = $1, stripe_subscription_id = NULL WHERE stripe_customer_id = $2',
+            ['free', customerId]
+          )
+        }
+      } else if (event.type === 'customer.subscription.deleted') {
+        const sub = event.data.object
+        const customerId = sub.customer as string
+        await query(
+          'UPDATE users SET plan = $1, stripe_subscription_id = NULL WHERE stripe_customer_id = $2',
+          ['free', customerId]
+        )
+      }
+    } catch (planErr) {
+      console.error('Failed to update user plan from webhook:', planErr)
+    }
+
     res.json({ received: true })
   } catch (err) {
     console.error('Webhook error:', err)

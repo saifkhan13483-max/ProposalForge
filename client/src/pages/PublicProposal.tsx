@@ -286,6 +286,14 @@ export function PublicProposal() {
           </div>
         )}
 
+        {/* Timeline */}
+        {content.timeline && (
+          <div className="bg-white rounded-2xl border p-8 shadow-sm">
+            <h2 className="text-xl font-bold mb-4" style={{ fontFamily: 'Bricolage Grotesque, sans-serif' }}>Project Timeline</h2>
+            <div className="prose prose-gray max-w-none" dangerouslySetInnerHTML={{ __html: content.timeline as string }} />
+          </div>
+        )}
+
         {/* Deliverables */}
         {content.deliverables && (
           <div className="bg-white rounded-2xl border p-8 shadow-sm">

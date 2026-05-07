@@ -161,6 +161,7 @@ export function ProposalDetail() {
       executiveSummaryEditor?.commands.setContent((data.content.executiveSummary as string) || '')
       scopeEditor?.commands.setContent((data.content.scopeOfWork as string) || '')
       termsEditor?.commands.setContent((data.content.terms as string) || '')
+      setTimelineContent((data.content.timeline as string) || '')
       setActiveTab('proposal')
       toast({ title: 'Proposal generated!', description: 'AI has created your proposal. Review and edit as needed.' })
     } catch (err: unknown) {
