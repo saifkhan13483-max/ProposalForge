@@ -12,7 +12,7 @@ interface SEOOptions {
 
 const SITE_NAME = 'ProposalForge'
 const BASE_URL = 'https://proposalforge.replit.app'
-const DEFAULT_OG_IMAGE = `${BASE_URL}/og-image.png`
+const DEFAULT_OG_IMAGE = 'https://res.cloudinary.com/de2wrwg6e/image/upload/v1778175217/ChatGPT_Image_May_7_2026_10_25_23_PM_tf5pko.png'
 
 function setMeta(name: string, content: string, property = false) {
   const attr = property ? 'property' : 'name'
