@@ -8,10 +8,10 @@ import {
 import { useState } from 'react'
 
 const stats = [
-  { value: '2,400+', label: 'Freelancers using ProposalForge' },
-  { value: '$4.2M', label: 'In proposals generated' },
-  { value: '68%', label: 'Average acceptance rate' },
-  { value: '58s', label: 'Average proposal generation time' },
+  { value: '2,400+', label: 'Freelancers' },
+  { value: '$4.2M', label: 'Proposals sent' },
+  { value: '68%', label: 'Acceptance rate' },
+  { value: '58s', label: 'Avg. generation' },
 ]
 
 const testimonials = [
@@ -416,13 +416,13 @@ export function Landing() {
       </section>
 
       {/* Stats strip */}
-      <section className="bg-[#0d0d1a] border-t border-white/5 py-5 sm:py-14">
+      <section className="bg-[#0d0d1a] border-t border-white/5 py-3 sm:py-14">
         <div className="max-w-5xl mx-auto px-4 sm:px-6">
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-px bg-white/5 rounded-xl sm:rounded-2xl overflow-hidden">
+          <div className="grid grid-cols-4 gap-px bg-white/5 rounded-xl sm:rounded-2xl overflow-hidden">
             {stats.map((s) => (
-              <div key={s.label} className="group flex flex-col items-center justify-center text-center px-3 py-4 sm:py-8 bg-[#0d0d1a] hover:bg-[#111127] transition-colors">
-                <p className="text-2xl sm:text-4xl font-extrabold text-white mb-1 group-hover:text-indigo-400 transition-colors leading-none" style={{ fontFamily: 'Bricolage Grotesque, sans-serif' }}>{s.value}</p>
-                <p className="text-[11px] sm:text-sm text-slate-500 leading-snug max-w-[110px]">{s.label}</p>
+              <div key={s.label} className="group flex flex-col items-center justify-center text-center px-2 py-3 sm:py-8 bg-[#0d0d1a] hover:bg-[#111127] transition-colors">
+                <p className="text-lg sm:text-4xl font-extrabold text-white mb-0.5 group-hover:text-indigo-400 transition-colors leading-none" style={{ fontFamily: 'Bricolage Grotesque, sans-serif' }}>{s.value}</p>
+                <p className="text-[9px] sm:text-sm text-slate-500 leading-tight">{s.label}</p>
               </div>
             ))}
           </div>
