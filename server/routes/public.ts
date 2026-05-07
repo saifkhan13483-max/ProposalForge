@@ -1,6 +1,6 @@
 import { Router } from 'express'
 import { query } from '../db.js'
-import { GoogleGenerativeAI } from '@google/generative-ai'
+import { generateContent, hasGeminiKey } from '../lib/gemini.js'
 
 const router = Router()
 
@@ -262,15 +262,11 @@ router.post('/demo/generate', async (req, res) => {
     return res.status(400).json({ error: 'Project description is required' })
   }
 
-  const apiKey = process.env.GEMINI_API_KEY
-  if (!apiKey) {
+  if (!hasGeminiKey()) {
     return res.status(503).json({ error: 'AI generation not configured' })
   }
 
   try {
-    const genAI = new GoogleGenerativeAI(apiKey)
-    const model = genAI.getGenerativeModel({ model: 'gemini-2.0-flash' })
-
     const prompt = `You are a senior proposal writer for freelancers and agencies. Generate a professional client proposal.
 
 Client: ${clientName || 'Client'}
@@ -293,8 +289,7 @@ Return ONLY valid JSON with this exact structure:
   "totalEstimate": 1500
 }`
 
-    const result = await model.generateContent(prompt)
-    const text = result.response.text()
+    const text = await generateContent(prompt)
     const jsonMatch = text.match(/\{[\s\S]*\}/)
     if (!jsonMatch) throw new Error('No JSON in response')
     const proposal = JSON.parse(jsonMatch[0])
