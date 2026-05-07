@@ -14,7 +14,6 @@
     "db:push": "cd server && tsx schema.ts"
   },
   "dependencies": {
-    "@google/genai": "^1.52.0",
     "@google/generative-ai": "^0.21.0",
     "bcrypt": "^5.1.1",
     "cors": "^2.8.6",

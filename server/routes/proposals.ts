@@ -1,5 +1,5 @@
 import { Router } from 'express'
-import { GoogleGenAI } from '@google/genai'
+import { GoogleGenerativeAI } from '@google/generative-ai'
 import { query } from '../db.js'
 import { requireAuth, type AuthRequest } from '../middleware/auth.js'
 
@@ -178,7 +178,8 @@ router.post('/:id/generate', async (req: AuthRequest, res) => {
       return res.status(503).json({ error: 'AI generation not configured. Please add GEMINI_API_KEY.' })
     }
 
-    const ai = new GoogleGenAI({ apiKey })
+    const genAI = new GoogleGenerativeAI(apiKey)
+    const model = genAI.getGenerativeModel({ model: 'gemini-2.0-flash' })
 
     const prompt = `You are a senior proposal writer for freelancers and agencies. Generate a professional client proposal.
 
@@ -204,8 +205,8 @@ Return ONLY valid JSON with this exact structure:
   "totalEstimate": 1500
 }`
 
-    const result = await ai.models.generateContent({ model: 'gemini-2.0-flash', contents: prompt })
-    const text = result.text
+    const result = await model.generateContent(prompt)
+    const text = result.response.text()
 
     let aiContent
     try {
@@ -247,12 +248,8 @@ Return ONLY valid JSON with this exact structure:
     const updatedProposal = await query('SELECT * FROM proposals WHERE id = $1', [req.params.id])
 
     res.json({ proposal: updatedProposal.rows[0], lineItems: lineItems.rows, content: aiContent })
-  } catch (err: unknown) {
+  } catch (err) {
     console.error('Generate error:', err)
-    const status = (err as { status?: number })?.status
-    if (status === 429) {
-      return res.status(429).json({ error: 'The AI service is temporarily rate-limited. Please wait 30–60 seconds and try again.' })
-    }
     res.status(500).json({ error: 'AI generation failed. Please try again.' })
   }
 })
@@ -271,7 +268,8 @@ router.post('/:id/regenerate-section', async (req: AuthRequest, res) => {
     const apiKey = process.env.GEMINI_API_KEY
     if (!apiKey) return res.status(503).json({ error: 'AI generation not configured' })
 
-    const ai = new GoogleGenAI({ apiKey })
+    const genAI = new GoogleGenerativeAI(apiKey)
+    const model = genAI.getGenerativeModel({ model: 'gemini-2.0-flash' })
 
     const currentContent = proposal.content || {}
     const prompt = `You are a senior proposal writer. Regenerate the "${section}" section of a client proposal.
@@ -285,8 +283,8 @@ Current content of this section: ${JSON.stringify(currentContent[section] || '')
 
 Return ONLY valid JSON: { "${section}": "new content here" }`
 
-    const result = await ai.models.generateContent({ model: 'gemini-2.0-flash', contents: prompt })
-    const text = result.text
+    const result = await model.generateContent(prompt)
+    const text = result.response.text()
     const jsonMatch = text.match(/\{[\s\S]*\}/)
     if (!jsonMatch) return res.status(500).json({ error: 'Failed to parse AI response' })
 
@@ -298,10 +296,6 @@ Return ONLY valid JSON: { "${section}": "new content here" }`
     res.json({ content: updatedContent, section: newSection })
   } catch (err) {
     console.error('Regenerate section error:', err)
-    const status = (err as { status?: number })?.status
-    if (status === 429) {
-      return res.status(429).json({ error: 'Rate limited. Please wait 30–60 seconds and try again.' })
-    }
     res.status(500).json({ error: 'Failed to regenerate section' })
   }
 })
