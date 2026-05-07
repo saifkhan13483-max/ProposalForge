@@ -560,56 +560,87 @@ export function Landing() {
             </h2>
             <p className="text-slate-400 text-base sm:text-lg">Start free. Upgrade when you're ready.</p>
           </div>
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-5 max-w-3xl mx-auto">
-            {[
-              {
-                name: 'Free',
-                price: '$0',
-                period: 'forever',
-                desc: 'Perfect for freelancers just getting started.',
-                features: ['3 AI proposals / month', 'Unlimited clients & invoices', 'Stripe payment collection', 'E-signature acceptance', 'PDF export', 'Analytics dashboard'],
-                cta: 'Get started free',
-                highlight: false,
-              },
-              {
-                name: 'Pro',
-                price: '$19',
-                period: 'per month',
-                desc: 'For serious freelancers who want to impress.',
-                features: ['Unlimited AI proposals', 'Remove ProposalForge branding', 'Client comment threads', 'Priority support', 'All future features', 'Early access to new AI models'],
-                cta: 'Start Pro',
-                highlight: true,
-              },
-            ].map(plan => (
-              <div key={plan.name} className={`relative rounded-2xl p-7 flex flex-col ${plan.highlight ? 'bg-[#0a0a14] border border-indigo-500/40 shadow-2xl shadow-indigo-900/30' : 'bg-white border border-slate-200 shadow-sm'}`}>
-                {plan.highlight && (
-                  <div className="absolute -top-3.5 left-1/2 -translate-x-1/2">
-                    <span className="bg-indigo-600 text-white text-xs font-bold px-3 py-1 rounded-full shadow-lg">Most Popular</span>
-                  </div>
-                )}
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-5 max-w-3xl mx-auto items-start">
+
+            {/* Free plan */}
+            <div className="relative rounded-2xl p-7 flex flex-col bg-white border border-slate-200 shadow-sm">
+              <div className="mb-6">
+                <h3 className="text-lg font-bold mb-1 text-slate-900">Free</h3>
+                <div className="flex items-baseline gap-1 mb-2">
+                  <span className="text-4xl font-extrabold text-slate-900">$0</span>
+                  <span className="text-sm text-slate-500">/ forever</span>
+                </div>
+                <p className="text-sm text-slate-500">Perfect for freelancers just getting started.</p>
+              </div>
+              <ul className="space-y-3 mb-8 flex-1">
+                {['3 AI proposals / month', 'Unlimited clients & invoices', 'Stripe payment collection', 'E-signature acceptance', 'PDF export', 'Analytics dashboard'].map(f => (
+                  <li key={f} className="flex items-center gap-2.5 text-sm text-slate-600">
+                    <CheckCircle className="h-4 w-4 shrink-0 text-indigo-500" />
+                    {f}
+                  </li>
+                ))}
+              </ul>
+              <Link href="/auth">
+                <Button className="w-full h-11 font-semibold bg-white border border-slate-200 text-slate-800 hover:bg-slate-50">
+                  Get started free
+                </Button>
+              </Link>
+            </div>
+
+            {/* Pro plan */}
+            <div className="relative rounded-2xl flex flex-col overflow-hidden shadow-2xl shadow-indigo-950/60">
+              {/* Gradient border via wrapper */}
+              <div className="absolute inset-0 rounded-2xl bg-gradient-to-br from-indigo-500 via-violet-500 to-indigo-800 p-px">
+                <div className="absolute inset-0 rounded-2xl bg-[#0c0c1e]" />
+              </div>
+
+              {/* Dot-grid texture */}
+              <div
+                className="absolute inset-0 rounded-2xl opacity-[0.18] pointer-events-none"
+                style={{
+                  backgroundImage: 'radial-gradient(circle, rgba(139,92,246,0.5) 1px, transparent 1px)',
+                  backgroundSize: '22px 22px',
+                }}
+              />
+
+              {/* Top glow bloom */}
+              <div className="absolute -top-12 left-1/2 -translate-x-1/2 w-60 h-40 bg-indigo-500/30 rounded-full blur-[60px] pointer-events-none" />
+              {/* Bottom-right accent */}
+              <div className="absolute -bottom-10 -right-10 w-48 h-48 bg-violet-600/20 rounded-full blur-[60px] pointer-events-none" />
+
+              {/* Most Popular badge */}
+              <div className="absolute -top-3.5 left-1/2 -translate-x-1/2 z-20">
+                <span className="bg-gradient-to-r from-indigo-500 to-violet-500 text-white text-xs font-bold px-4 py-1.5 rounded-full shadow-lg shadow-indigo-900/50">
+                  Most Popular
+                </span>
+              </div>
+
+              {/* Card content */}
+              <div className="relative z-10 p-7 flex flex-col flex-1">
                 <div className="mb-6">
-                  <h3 className={`text-lg font-bold mb-1 ${plan.highlight ? 'text-white' : 'text-slate-900'}`}>{plan.name}</h3>
+                  <h3 className="text-lg font-bold mb-1 text-white">Pro</h3>
                   <div className="flex items-baseline gap-1 mb-2">
-                    <span className={`text-4xl font-extrabold ${plan.highlight ? 'text-white' : 'text-slate-900'}`}>{plan.price}</span>
-                    <span className={`text-sm ${plan.highlight ? 'text-slate-400' : 'text-slate-500'}`}>/ {plan.period}</span>
+                    <span className="text-4xl font-extrabold text-white">$19</span>
+                    <span className="text-sm text-slate-400">/ per month</span>
                   </div>
-                  <p className={`text-sm ${plan.highlight ? 'text-slate-400' : 'text-slate-500'}`}>{plan.desc}</p>
+                  <p className="text-sm text-slate-400">For serious freelancers who want to impress.</p>
                 </div>
                 <ul className="space-y-3 mb-8 flex-1">
-                  {plan.features.map(f => (
-                    <li key={f} className={`flex items-center gap-2.5 text-sm ${plan.highlight ? 'text-slate-300' : 'text-slate-600'}`}>
-                      <CheckCircle className={`h-4 w-4 shrink-0 ${plan.highlight ? 'text-indigo-400' : 'text-indigo-500'}`} />
+                  {['Unlimited AI proposals', 'Remove ProposalForge branding', 'Client comment threads', 'Priority support', 'All future features', 'Early access to new AI models'].map(f => (
+                    <li key={f} className="flex items-center gap-2.5 text-sm text-slate-300">
+                      <CheckCircle className="h-4 w-4 shrink-0 text-indigo-400" />
                       {f}
                     </li>
                   ))}
                 </ul>
                 <Link href="/auth">
-                  <Button className={`w-full h-11 font-semibold ${plan.highlight ? 'bg-indigo-600 hover:bg-indigo-500 text-white border-0' : 'bg-white border border-slate-200 text-slate-800 hover:bg-slate-50'}`}>
-                    {plan.cta}
+                  <Button className="w-full h-12 font-bold text-base bg-gradient-to-r from-indigo-600 to-violet-600 hover:from-indigo-500 hover:to-violet-500 text-white border-0 shadow-lg shadow-indigo-900/50 transition-all duration-200">
+                    Start Pro
                   </Button>
                 </Link>
               </div>
-            ))}
+            </div>
+
           </div>
         </div>
       </section>
