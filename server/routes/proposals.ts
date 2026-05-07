@@ -247,8 +247,12 @@ Return ONLY valid JSON with this exact structure:
     const updatedProposal = await query('SELECT * FROM proposals WHERE id = $1', [req.params.id])
 
     res.json({ proposal: updatedProposal.rows[0], lineItems: lineItems.rows, content: aiContent })
-  } catch (err) {
+  } catch (err: unknown) {
     console.error('Generate error:', err)
+    const status = (err as { status?: number })?.status
+    if (status === 429) {
+      return res.status(429).json({ error: 'The AI service is temporarily rate-limited. Please wait 30–60 seconds and try again.' })
+    }
     res.status(500).json({ error: 'AI generation failed. Please try again.' })
   }
 })
@@ -294,6 +298,10 @@ Return ONLY valid JSON: { "${section}": "new content here" }`
     res.json({ content: updatedContent, section: newSection })
   } catch (err) {
     console.error('Regenerate section error:', err)
+    const status = (err as { status?: number })?.status
+    if (status === 429) {
+      return res.status(429).json({ error: 'Rate limited. Please wait 30–60 seconds and try again.' })
+    }
     res.status(500).json({ error: 'Failed to regenerate section' })
   }
 })
