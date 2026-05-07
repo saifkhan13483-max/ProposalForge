@@ -164,9 +164,8 @@ export function Landing() {
                 AI-powered · Ready in 60 seconds
               </div>
 
-              <h1 className="text-4xl sm:text-5xl lg:text-6xl xl:text-7xl font-extrabold tracking-tight leading-[1.06] mb-6" style={{ fontFamily: 'Bricolage Grotesque, sans-serif' }}>
-                Close more clients<br />
-                with{' '}
+              <h1 className="text-3xl sm:text-4xl lg:text-5xl xl:text-6xl font-extrabold tracking-tight leading-[1.1] mb-6" style={{ fontFamily: 'Bricolage Grotesque, sans-serif' }}>
+                Close more clients with{' '}
                 <span className="relative inline-block">
                   <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 via-violet-400 to-fuchsia-400">
                     AI proposals
