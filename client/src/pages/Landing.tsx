@@ -194,7 +194,7 @@ export function Landing() {
       </header>
 
       {/* Hero */}
-      <section className="relative overflow-hidden bg-[#0a0a14] text-white min-h-[90vh] flex items-center">
+      <section className="relative overflow-hidden bg-[#0a0a14] text-white min-h-[85vh] sm:min-h-[90vh] flex items-center">
         {/* Background effects */}
         <div className="absolute inset-0 pointer-events-none">
           <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[500px] bg-indigo-600/20 rounded-full blur-[120px]" />
@@ -207,18 +207,18 @@ export function Landing() {
           }} />
         </div>
 
-        <div className="relative w-full max-w-6xl mx-auto px-4 sm:px-6 py-20 md:py-0">
+        <div className="relative w-full max-w-6xl mx-auto px-4 sm:px-6 py-12 sm:py-20 md:py-0">
           <div className="flex flex-col lg:flex-row items-center gap-12 lg:gap-16">
 
             {/* Left: Copy */}
             <div className="flex-1 text-center lg:text-left">
               {/* Badge */}
-              <div className="inline-flex items-center gap-2 bg-indigo-500/10 border border-indigo-500/30 text-indigo-300 rounded-full px-4 py-1.5 text-xs sm:text-sm font-medium mb-6">
-                <Sparkles className="h-3.5 w-3.5 shrink-0" />
+              <div className="inline-flex items-center gap-2 bg-indigo-500/10 border border-indigo-500/30 text-indigo-300 rounded-full px-3 py-1 sm:px-4 sm:py-1.5 text-xs font-medium mb-4 sm:mb-6">
+                <Sparkles className="h-3 w-3 sm:h-3.5 sm:w-3.5 shrink-0" />
                 AI-powered · Ready in 60 seconds
               </div>
 
-              <h1 className="text-3xl sm:text-4xl lg:text-5xl xl:text-6xl font-extrabold tracking-tight leading-[1.1] mb-6" style={{ fontFamily: 'Bricolage Grotesque, sans-serif' }}>
+              <h1 className="text-3xl sm:text-4xl lg:text-5xl xl:text-6xl font-extrabold tracking-tight leading-[1.1] mb-4 sm:mb-6" style={{ fontFamily: 'Bricolage Grotesque, sans-serif' }}>
                 Close more clients with{' '}
                 <span className="relative inline-block">
                   <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 via-violet-400 to-fuchsia-400">
@@ -228,14 +228,14 @@ export function Landing() {
                 </span>
               </h1>
 
-              <p className="text-base sm:text-lg text-slate-400 max-w-lg mx-auto lg:mx-0 mb-8 leading-relaxed">
+              <p className="text-sm sm:text-lg text-slate-400 max-w-lg mx-auto lg:mx-0 mb-6 sm:mb-8 leading-relaxed">
                 Describe your project and get a fully written, branded proposal with scope, deliverables, and pricing — in under a minute.
               </p>
 
               {/* CTA */}
-              <div className="flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-3 mb-8">
-                <Link href="/auth">
-                  <Button size="lg" className="h-12 px-8 gap-2 text-base bg-indigo-600 hover:bg-indigo-500 border-0 shadow-xl shadow-indigo-900/60 font-semibold">
+              <div className="flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-3 mb-6 sm:mb-8">
+                <Link href="/auth" className="w-full sm:w-auto">
+                  <Button size="lg" className="w-full sm:w-auto h-11 sm:h-12 px-8 gap-2 text-base bg-indigo-600 hover:bg-indigo-500 border-0 shadow-xl shadow-indigo-900/60 font-semibold">
                     <Sparkles className="h-4 w-4" />
                     Start for free
                   </Button>
@@ -247,7 +247,7 @@ export function Landing() {
               </div>
 
               {/* Trust row */}
-              <div className="flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-4 sm:gap-6">
+              <div className="flex flex-wrap items-center justify-center lg:justify-start gap-x-5 gap-y-2">
                 <div className="flex items-center gap-2">
                   <div className="flex -space-x-2">
                     {['SC', 'MR', 'PN', 'JK'].map((initials, i) => (
@@ -258,14 +258,12 @@ export function Landing() {
                   </div>
                   <span className="text-xs text-slate-400">2,400+ freelancers</span>
                 </div>
-                <div className="hidden sm:block h-4 w-px bg-slate-700" />
                 <div className="flex items-center gap-1">
                   {[...Array(5)].map((_, i) => (
                     <Star key={i} className="h-3.5 w-3.5 fill-amber-400 text-amber-400" />
                   ))}
                   <span className="text-xs text-slate-400 ml-1">4.9 / 5 rating</span>
                 </div>
-                <div className="hidden sm:block h-4 w-px bg-slate-700" />
                 <span className="text-xs text-slate-400">No credit card required</span>
               </div>
             </div>
@@ -400,18 +398,18 @@ export function Landing() {
       </section>
 
       {/* How it works */}
-      <section id="how-it-works" className="bg-white py-20 sm:py-28">
+      <section id="how-it-works" className="bg-white py-14 sm:py-28">
         <div className="max-w-5xl mx-auto px-4 sm:px-6">
-          <div className="text-center mb-14">
-            <span className="inline-block text-xs font-bold tracking-widest text-indigo-600 uppercase bg-indigo-50 px-3 py-1 rounded-full mb-4">How it works</span>
-            <h2 className="text-3xl sm:text-4xl font-extrabold text-slate-900 mb-4" style={{ fontFamily: 'Bricolage Grotesque, sans-serif' }}>
+          <div className="text-center mb-10 sm:mb-14">
+            <span className="inline-block text-xs font-bold tracking-widest text-indigo-600 uppercase bg-indigo-50 px-3 py-1 rounded-full mb-3 sm:mb-4">How it works</span>
+            <h2 className="text-2xl sm:text-4xl font-extrabold text-slate-900 mb-3 sm:mb-4" style={{ fontFamily: 'Bricolage Grotesque, sans-serif' }}>
               From idea to signed deal<br className="hidden sm:block" /> in minutes
             </h2>
-            <p className="text-slate-400 text-base sm:text-lg max-w-lg mx-auto">
+            <p className="text-slate-400 text-sm sm:text-lg max-w-lg mx-auto">
               ProposalForge handles the writing so you can focus on winning the work.
             </p>
           </div>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-6">
             {[
               {
                 step: '01',
@@ -441,7 +439,7 @@ export function Landing() {
                 text: 'text-emerald-600',
               },
             ].map(({ step, icon: Icon, title, desc, accent, bg, text }, idx) => (
-              <div key={step} className="relative flex flex-col p-7 rounded-2xl border border-slate-100 bg-white shadow-sm hover:shadow-md transition-shadow group">
+              <div key={step} className="relative flex flex-col p-5 sm:p-7 rounded-2xl border border-slate-100 bg-white shadow-sm hover:shadow-md transition-shadow group">
                 <div className="flex items-center gap-3 mb-5">
                   <div className={`h-11 w-11 rounded-xl ${bg} flex items-center justify-center shrink-0`}>
                     <Icon className={`h-5 w-5 ${text}`} />
@@ -462,21 +460,21 @@ export function Landing() {
       </section>
 
       {/* Features */}
-      <section id="features" className="bg-[#07070f] py-20 sm:py-28 overflow-hidden relative">
+      <section id="features" className="bg-[#07070f] py-14 sm:py-28 overflow-hidden relative">
         {/* Ambient background glow */}
         <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[400px] bg-indigo-600/10 rounded-full blur-[120px] pointer-events-none" />
 
         <div className="relative max-w-6xl mx-auto px-4 sm:px-6">
           {/* Header */}
-          <div className="text-center mb-16">
-            <span className="inline-flex items-center gap-1.5 text-xs font-bold tracking-widest text-indigo-400 uppercase bg-indigo-500/10 border border-indigo-500/20 px-3 py-1.5 rounded-full mb-5">
+          <div className="text-center mb-10 sm:mb-16">
+            <span className="inline-flex items-center gap-1.5 text-xs font-bold tracking-widest text-indigo-400 uppercase bg-indigo-500/10 border border-indigo-500/20 px-3 py-1.5 rounded-full mb-4 sm:mb-5">
               <Sparkles className="h-3 w-3" /> Features
             </span>
-            <h2 className="text-3xl sm:text-5xl font-extrabold text-white mb-5 leading-tight" style={{ fontFamily: 'Bricolage Grotesque, sans-serif' }}>
+            <h2 className="text-2xl sm:text-5xl font-extrabold text-white mb-3 sm:mb-5 leading-tight" style={{ fontFamily: 'Bricolage Grotesque, sans-serif' }}>
               Everything you need to<br className="hidden sm:block" />
               <span className="bg-gradient-to-r from-indigo-400 to-violet-400 bg-clip-text text-transparent"> win more clients</span>
             </h2>
-            <p className="text-slate-400 text-base sm:text-lg max-w-lg mx-auto leading-relaxed">
+            <p className="text-slate-400 text-sm sm:text-lg max-w-lg mx-auto leading-relaxed">
               One focused tool that handles proposals, invoices, clients, and payments — so you never lose a deal to slow paperwork.
             </p>
           </div>
@@ -486,7 +484,7 @@ export function Landing() {
             {features.map(({ icon: Icon, title, desc, gradient, glow }) => (
               <div
                 key={title}
-                className={`group relative bg-[#0d0d1a] hover:bg-[#111127] p-7 transition-all duration-300 cursor-default overflow-hidden`}
+                className={`group relative bg-[#0d0d1a] hover:bg-[#111127] p-5 sm:p-7 transition-all duration-300 cursor-default overflow-hidden`}
               >
                 {/* Card hover glow */}
                 <div className={`absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none bg-gradient-to-br ${gradient} opacity-0 group-hover:opacity-[0.04]`} />
@@ -519,16 +517,16 @@ export function Landing() {
       </section>
 
       {/* Testimonials */}
-      <section className="bg-white py-20 sm:py-28">
+      <section className="bg-white py-14 sm:py-28">
         <div className="max-w-5xl mx-auto px-4 sm:px-6">
-          <div className="text-center mb-14">
-            <span className="inline-block text-xs font-bold tracking-widest text-indigo-600 uppercase bg-indigo-50 px-3 py-1 rounded-full mb-4">Testimonials</span>
-            <h2 className="text-3xl sm:text-4xl font-extrabold text-slate-900 mb-4" style={{ fontFamily: 'Bricolage Grotesque, sans-serif' }}>
+          <div className="text-center mb-10 sm:mb-14">
+            <span className="inline-block text-xs font-bold tracking-widest text-indigo-600 uppercase bg-indigo-50 px-3 py-1 rounded-full mb-3 sm:mb-4">Testimonials</span>
+            <h2 className="text-2xl sm:text-4xl font-extrabold text-slate-900 mb-3 sm:mb-4" style={{ fontFamily: 'Bricolage Grotesque, sans-serif' }}>
               Freelancers love ProposalForge
             </h2>
-            <p className="text-slate-400 text-base sm:text-lg">Real results from real users.</p>
+            <p className="text-slate-400 text-sm sm:text-lg">Real results from real users.</p>
           </div>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-5">
             {testimonials.map((t) => (
               <div key={t.name} className="flex flex-col bg-slate-50 border border-slate-100 rounded-2xl p-6 hover:shadow-md transition-shadow">
                 <div className="flex gap-0.5 mb-4">
@@ -553,14 +551,14 @@ export function Landing() {
       </section>
 
       {/* Pricing */}
-      <section id="pricing" className="bg-slate-50 py-20 sm:py-28">
+      <section id="pricing" className="bg-slate-50 py-14 sm:py-28">
         <div className="max-w-4xl mx-auto px-4 sm:px-6">
-          <div className="text-center mb-14">
-            <span className="inline-block text-xs font-bold tracking-widest text-indigo-600 uppercase bg-indigo-50 px-3 py-1 rounded-full mb-4">Pricing</span>
-            <h2 className="text-3xl sm:text-4xl font-extrabold text-slate-900 mb-4" style={{ fontFamily: 'Bricolage Grotesque, sans-serif' }}>
+          <div className="text-center mb-10 sm:mb-14">
+            <span className="inline-block text-xs font-bold tracking-widest text-indigo-600 uppercase bg-indigo-50 px-3 py-1 rounded-full mb-3 sm:mb-4">Pricing</span>
+            <h2 className="text-2xl sm:text-4xl font-extrabold text-slate-900 mb-3 sm:mb-4" style={{ fontFamily: 'Bricolage Grotesque, sans-serif' }}>
               Simple, transparent pricing
             </h2>
-            <p className="text-slate-400 text-base sm:text-lg">Start free. Upgrade when you're ready.</p>
+            <p className="text-slate-400 text-sm sm:text-lg">Start free. Upgrade when you're ready.</p>
           </div>
 
           {/* Cards row — both wrapped in pt-5 so tops align */}
@@ -568,7 +566,7 @@ export function Landing() {
 
             {/* Free plan */}
             <div className="pt-5">
-              <div className="h-full rounded-2xl p-7 flex flex-col bg-white border border-slate-200 shadow-sm">
+              <div className="h-full rounded-2xl p-5 sm:p-7 flex flex-col bg-white border border-slate-200 shadow-sm">
                 <div className="mb-6">
                   <h3 className="text-lg font-bold mb-1 text-slate-900">Free</h3>
                   <div className="flex items-baseline gap-1 mb-2">
@@ -622,7 +620,7 @@ export function Landing() {
                 <div className="absolute -bottom-10 -right-10 w-48 h-48 bg-violet-600/20 rounded-full blur-[60px] pointer-events-none" />
 
                 {/* Content */}
-                <div className="relative z-10 p-7 flex flex-col">
+                <div className="relative z-10 p-5 sm:p-7 flex flex-col">
                   <div className="mb-6">
                     <h3 className="text-lg font-bold mb-1 text-white">Pro</h3>
                     <div className="flex items-baseline gap-1 mb-2">
@@ -653,22 +651,22 @@ export function Landing() {
       </section>
 
       {/* CTA */}
-      <section className="bg-[#0a0a14] relative overflow-hidden py-20 sm:py-28">
+      <section className="bg-[#0a0a14] relative overflow-hidden py-14 sm:py-28">
         <div className="absolute inset-0 pointer-events-none">
           <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[300px] bg-indigo-600/20 rounded-full blur-[100px]" />
         </div>
         <div className="relative max-w-2xl mx-auto px-4 sm:px-6 text-center">
-          <div className="inline-flex h-14 w-14 rounded-2xl bg-indigo-500/10 border border-indigo-500/30 items-center justify-center mx-auto mb-6">
-            <Sparkles className="h-7 w-7 text-indigo-400" />
+          <div className="inline-flex h-12 w-12 sm:h-14 sm:w-14 rounded-2xl bg-indigo-500/10 border border-indigo-500/30 items-center justify-center mx-auto mb-5 sm:mb-6">
+            <Sparkles className="h-6 w-6 sm:h-7 sm:w-7 text-indigo-400" />
           </div>
-          <h2 className="text-3xl sm:text-4xl font-extrabold text-white mb-4" style={{ fontFamily: 'Bricolage Grotesque, sans-serif' }}>
+          <h2 className="text-2xl sm:text-4xl font-extrabold text-white mb-3 sm:mb-4" style={{ fontFamily: 'Bricolage Grotesque, sans-serif' }}>
             Start winning more clients today
           </h2>
-          <p className="text-slate-400 text-base sm:text-lg mb-8 max-w-md mx-auto">
+          <p className="text-slate-400 text-sm sm:text-lg mb-6 sm:mb-8 max-w-md mx-auto">
             Join 2,400+ freelancers who send polished proposals in under 60 seconds.
           </p>
-          <Link href="/auth">
-            <Button size="lg" className="h-12 px-10 gap-2 text-base bg-indigo-600 hover:bg-indigo-500 border-0 shadow-xl shadow-indigo-900/50 font-semibold">
+          <Link href="/auth" className="block sm:inline-block">
+            <Button size="lg" className="w-full sm:w-auto h-11 sm:h-12 px-8 sm:px-10 gap-2 text-base bg-indigo-600 hover:bg-indigo-500 border-0 shadow-xl shadow-indigo-900/50 font-semibold">
               <Sparkles className="h-4 w-4" />
               Get started for free
             </Button>
