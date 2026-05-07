@@ -88,10 +88,10 @@ export function Analytics() {
   const avgMonthlyRevenue = chartData.length > 0 ? totalRevenue / chartData.filter(d => d.revenue > 0).length || 0 : 0
 
   return (
-    <div className="p-6 lg:p-8 space-y-8 max-w-7xl mx-auto">
+    <div className="p-4 sm:p-6 lg:p-8 space-y-6 sm:space-y-8 max-w-7xl mx-auto">
       {/* Header */}
       <div>
-        <h1 className="text-2xl font-bold" style={{ fontFamily: 'Bricolage Grotesque, sans-serif' }}>
+        <h1 className="text-xl sm:text-2xl font-bold" style={{ fontFamily: 'Bricolage Grotesque, sans-serif' }}>
           Analytics
         </h1>
         <p className="text-muted-foreground mt-1">Track your business performance over time.</p>

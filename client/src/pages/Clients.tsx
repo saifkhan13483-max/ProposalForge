@@ -111,14 +111,14 @@ export function Clients() {
   }
 
   return (
-    <div className="p-6 lg:p-8 space-y-6 max-w-7xl mx-auto">
+    <div className="p-4 sm:p-6 lg:p-8 space-y-6 max-w-7xl mx-auto">
       <div className="flex items-center justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold" style={{ fontFamily: 'Bricolage Grotesque, sans-serif' }}>Clients</h1>
+          <h1 className="text-xl sm:text-2xl font-bold" style={{ fontFamily: 'Bricolage Grotesque, sans-serif' }}>Clients</h1>
           <p className="text-muted-foreground text-sm mt-0.5">{clients.length} total clients</p>
         </div>
-        <Button onClick={openCreate} className="gap-2" data-testid="button-new-client">
-          <Plus className="h-4 w-4" /> Add Client
+        <Button onClick={openCreate} className="gap-1.5" data-testid="button-new-client">
+          <Plus className="h-4 w-4" /><span className="hidden sm:inline"> Add Client</span><span className="sm:hidden">Add</span>
         </Button>
       </div>
 
@@ -215,7 +215,7 @@ export function Clients() {
               <Label>Name *</Label>
               <Input placeholder="John Smith" value={form.name} onChange={e => setForm(f => ({ ...f, name: e.target.value }))} data-testid="input-client-name" />
             </div>
-            <div className="grid grid-cols-2 gap-3">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
               <div className="space-y-2">
                 <Label>Email</Label>
                 <Input type="email" placeholder="john@example.com" value={form.email} onChange={e => setForm(f => ({ ...f, email: e.target.value }))} data-testid="input-client-email" />

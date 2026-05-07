@@ -116,19 +116,20 @@ export function Dashboard() {
   const hasRevenueData = chartData.some(d => d.revenue > 0)
 
   return (
-    <div className="p-6 lg:p-8 space-y-8 max-w-7xl mx-auto">
+    <div className="p-4 sm:p-6 lg:p-8 space-y-6 sm:space-y-8 max-w-7xl mx-auto">
       {/* Header */}
       <div className="flex items-start justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold" style={{ fontFamily: 'Bricolage Grotesque, sans-serif' }}>
+          <h1 className="text-xl sm:text-2xl font-bold" style={{ fontFamily: 'Bricolage Grotesque, sans-serif' }}>
             {(() => { const h = new Date().getHours(); return h < 12 ? 'Good morning' : h < 17 ? 'Good afternoon' : 'Good evening' })()}{user?.business_name ? `, ${user.business_name}` : ''}
           </h1>
-          <p className="text-muted-foreground mt-1">Here's what's happening with your business.</p>
+          <p className="text-muted-foreground mt-1 text-sm">Here's what's happening with your business.</p>
         </div>
         <Link href="/proposals/new">
           <Button data-testid="button-new-proposal" className="gap-2 shrink-0">
             <Plus className="h-4 w-4" />
-            New Proposal
+            <span className="hidden sm:inline">New Proposal</span>
+            <span className="sm:hidden">New</span>
           </Button>
         </Link>
       </div>
@@ -248,8 +249,8 @@ export function Dashboard() {
                         <p className="text-xs text-muted-foreground">{formatDate(item.date)}</p>
                       </div>
                     </div>
-                    <div className="flex items-center gap-3">
-                      <span className={cn('text-xs px-2 py-0.5 rounded-full font-medium capitalize', getStatusColor(item.status))}>
+                    <div className="flex items-center gap-2 shrink-0">
+                      <span className={cn('text-xs px-2 py-0.5 rounded-full font-medium capitalize hidden sm:inline', getStatusColor(item.status))}>
                         {item.status}
                       </span>
                       <span className="text-sm font-semibold">{formatCurrency(item.amount || 0)}</span>

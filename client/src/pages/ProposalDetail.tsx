@@ -338,75 +338,84 @@ export function ProposalDetail() {
   const acceptUrl = `${window.location.origin}/proposal/${proposal.accept_token}`
 
   return (
-    <div className="max-w-5xl mx-auto p-6 lg:p-8 space-y-6">
+    <div className="max-w-5xl mx-auto p-4 sm:p-6 lg:p-8 space-y-6">
       {/* Header */}
-      <div className="flex items-start gap-4">
+      <div className="flex items-start gap-3">
         <Button variant="ghost" size="icon" onClick={() => setLocation('/proposals')} className="shrink-0 mt-1">
           <ArrowLeft className="h-4 w-4" />
         </Button>
         <div className="flex-1 min-w-0">
-          <div className="flex items-center gap-2 flex-wrap">
-            <h1 className="text-xl font-bold truncate" style={{ fontFamily: 'Bricolage Grotesque, sans-serif' }}>
-              {proposal.title}
-            </h1>
-            <span className={cn('text-xs px-2.5 py-1 rounded-full font-medium capitalize shrink-0', getStatusColor(proposal.status))}>
-              {proposal.status}
-            </span>
+          <div className="flex items-start justify-between gap-2">
+            <div className="min-w-0 flex-1">
+              <div className="flex items-center gap-2 flex-wrap">
+                <h1 className="text-xl font-bold truncate" style={{ fontFamily: 'Bricolage Grotesque, sans-serif' }}>
+                  {proposal.title}
+                </h1>
+                <span className={cn('text-xs px-2.5 py-1 rounded-full font-medium capitalize shrink-0', getStatusColor(proposal.status))}>
+                  {proposal.status}
+                </span>
+              </div>
+              <div className="flex items-center gap-3 flex-wrap mt-0.5">
+                {proposal.client_name && (
+                  <p className="text-sm text-muted-foreground">{proposal.client_name}</p>
+                )}
+                {proposal.sent_at && (
+                  <span className="text-xs text-muted-foreground flex items-center gap-1">
+                    <Send className="h-3 w-3" /> Sent {new Date(proposal.sent_at).toLocaleDateString()}
+                  </span>
+                )}
+                {proposal.viewed_at && (
+                  <span className="text-xs text-blue-600 flex items-center gap-1">
+                    <Eye className="h-3 w-3" /> Viewed {new Date(proposal.viewed_at).toLocaleDateString()}
+                  </span>
+                )}
+                {proposal.accepted_at && (
+                  <span className="text-xs text-green-600 flex items-center gap-1">
+                    <CheckCircle className="h-3 w-3" /> Accepted {new Date(proposal.accepted_at).toLocaleDateString()}
+                  </span>
+                )}
+              </div>
+            </div>
+            <div className="hidden sm:flex items-center gap-2 flex-wrap shrink-0">
+              {proposal.status === 'draft' && (
+                <Button onClick={generateAI} disabled={generating} className="gap-2" data-testid="button-generate-ai">
+                  {generating ? <Loader2 className="h-4 w-4 animate-spin" /> : <Sparkles className="h-4 w-4" />}
+                  {generating ? 'Generating...' : 'Generate with AI'}
+                </Button>
+              )}
+              {proposal.content && Object.keys(proposal.content).length > 0 && (
+                <Button variant="outline" className="gap-2" onClick={downloadPdf} data-testid="button-download-pdf">
+                  <Download className="h-4 w-4" /> PDF
+                </Button>
+              )}
+              {proposal.status !== 'accepted' && (
+                <Button variant="outline" onClick={() => setShowSendDialog(true)} className="gap-2" data-testid="button-send-proposal">
+                  <Send className="h-4 w-4" />
+                  {proposal.status === 'draft' ? 'Send' : 'Resend'}
+                </Button>
+              )}
+            </div>
           </div>
-          <div className="flex items-center gap-3 flex-wrap mt-0.5">
-            {proposal.client_name && (
-              <p className="text-sm text-muted-foreground">{proposal.client_name}</p>
+          {/* Mobile action buttons */}
+          <div className="flex items-center gap-2 flex-wrap mt-3 sm:hidden">
+            {proposal.status === 'draft' && (
+              <Button size="sm" onClick={generateAI} disabled={generating} className="gap-1.5">
+                {generating ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Sparkles className="h-3.5 w-3.5" />}
+                {generating ? 'Generating...' : 'Generate'}
+              </Button>
             )}
-            {proposal.sent_at && (
-              <span className="text-xs text-muted-foreground flex items-center gap-1">
-                <Send className="h-3 w-3" /> Sent {new Date(proposal.sent_at).toLocaleDateString()}
-              </span>
+            {proposal.content && Object.keys(proposal.content).length > 0 && (
+              <Button size="sm" variant="outline" className="gap-1.5" onClick={downloadPdf}>
+                <Download className="h-3.5 w-3.5" /> PDF
+              </Button>
             )}
-            {proposal.viewed_at && (
-              <span className="text-xs text-blue-600 flex items-center gap-1">
-                <Eye className="h-3 w-3" /> Viewed {new Date(proposal.viewed_at).toLocaleDateString()}
-              </span>
-            )}
-            {proposal.accepted_at && (
-              <span className="text-xs text-green-600 flex items-center gap-1">
-                <CheckCircle className="h-3 w-3" /> Accepted {new Date(proposal.accepted_at).toLocaleDateString()}
-              </span>
+            {proposal.status !== 'accepted' && (
+              <Button size="sm" variant="outline" onClick={() => setShowSendDialog(true)} className="gap-1.5">
+                <Send className="h-3.5 w-3.5" />
+                {proposal.status === 'draft' ? 'Send' : 'Resend'}
+              </Button>
             )}
           </div>
-        </div>
-        <div className="flex items-center gap-2 shrink-0 flex-wrap">
-          {proposal.status === 'draft' && (
-            <Button
-              onClick={generateAI}
-              disabled={generating}
-              className="gap-2"
-              data-testid="button-generate-ai"
-            >
-              {generating ? <Loader2 className="h-4 w-4 animate-spin" /> : <Sparkles className="h-4 w-4" />}
-              {generating ? 'Generating...' : 'Generate with AI'}
-            </Button>
-          )}
-          {proposal.content && Object.keys(proposal.content).length > 0 && (
-            <Button
-              variant="outline"
-              className="gap-2"
-              onClick={downloadPdf}
-              data-testid="button-download-pdf"
-            >
-              <Download className="h-4 w-4" /> PDF
-            </Button>
-          )}
-          {proposal.status !== 'accepted' && (
-            <Button
-              variant="outline"
-              onClick={() => setShowSendDialog(true)}
-              className="gap-2"
-              data-testid="button-send-proposal"
-            >
-              <Send className="h-4 w-4" />
-              {proposal.status === 'draft' ? 'Send' : 'Resend'}
-            </Button>
-          )}
         </div>
       </div>
 
@@ -634,42 +643,42 @@ export function ProposalDetail() {
             <CardContent className="p-6 space-y-4">
               <div className="space-y-3">
                 {lineItems.map((item, index) => (
-                  <div key={index} className="grid grid-cols-12 gap-2 items-center" data-testid={`line-item-${index}`}>
-                    <div className="col-span-6">
+                  <div key={index} className="space-y-2 sm:space-y-0 sm:grid sm:grid-cols-12 sm:gap-2 sm:items-center" data-testid={`line-item-${index}`}>
+                    <div className="sm:col-span-6">
                       <Input
                         placeholder="Description"
                         value={item.description}
                         onChange={e => updateLineItem(index, 'description', e.target.value)}
                       />
                     </div>
-                    <div className="col-span-2">
-                      <Input
-                        type="number"
-                        min="0"
-                        step="0.5"
-                        placeholder="Qty"
-                        value={item.quantity}
-                        onChange={e => updateLineItem(index, 'quantity', parseFloat(e.target.value) || 0)}
-                      />
+                    <div className="flex gap-2 sm:contents">
+                      <div className="flex-1 sm:col-span-2">
+                        <Input
+                          type="number"
+                          min="0"
+                          step="0.5"
+                          placeholder="Qty"
+                          value={item.quantity}
+                          onChange={e => updateLineItem(index, 'quantity', parseFloat(e.target.value) || 0)}
+                        />
+                      </div>
+                      <div className="flex-[2] sm:col-span-3">
+                        <Input
+                          type="number"
+                          min="0"
+                          placeholder="Unit price"
+                          value={item.unit_price}
+                          onChange={e => updateLineItem(index, 'unit_price', parseFloat(e.target.value) || 0)}
+                        />
+                      </div>
+                      <div className="sm:col-span-1 flex justify-end items-center">
+                        <Button variant="ghost" size="icon" onClick={() => removeLineItem(index)} className="h-9 w-9 text-destructive hover:text-destructive">
+                          <Trash2 className="h-4 w-4" />
+                        </Button>
+                      </div>
                     </div>
-                    <div className="col-span-3">
-                      <Input
-                        type="number"
-                        min="0"
-                        placeholder="Unit price"
-                        value={item.unit_price}
-                        onChange={e => updateLineItem(index, 'unit_price', parseFloat(e.target.value) || 0)}
-                      />
-                    </div>
-                    <div className="col-span-1 flex justify-end">
-                      <Button variant="ghost" size="icon" onClick={() => removeLineItem(index)} className="h-9 w-9 text-destructive hover:text-destructive">
-                        <Trash2 className="h-4 w-4" />
-                      </Button>
-                    </div>
-                    <div className="col-span-6 text-xs text-muted-foreground">
-                      {/* label spacer */}
-                    </div>
-                    <div className="col-span-6 text-right text-sm font-medium text-muted-foreground">
+                    <div className="hidden sm:block sm:col-span-6 text-xs text-muted-foreground" />
+                    <div className="hidden sm:block sm:col-span-6 text-right text-sm font-medium text-muted-foreground">
                       {formatCurrency(item.quantity * item.unit_price)}
                     </div>
                   </div>

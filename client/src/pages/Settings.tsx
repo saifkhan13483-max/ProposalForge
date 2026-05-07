@@ -121,7 +121,7 @@ export function Settings() {
   }
 
   return (
-    <div className="max-w-3xl mx-auto p-6 lg:p-8 space-y-6">
+    <div className="max-w-3xl mx-auto p-4 sm:p-6 lg:p-8 space-y-6">
       <div>
         <h1 className="text-2xl font-bold" style={{ fontFamily: 'Bricolage Grotesque, sans-serif' }}>Settings</h1>
         <p className="text-muted-foreground text-sm mt-0.5">Manage your account and billing preferences.</p>
@@ -192,7 +192,7 @@ export function Settings() {
                   data-testid="input-business-name"
                 />
               </div>
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div className="space-y-2">
                   <Label>Accent Color</Label>
                   <div className="flex items-center gap-3">
@@ -222,7 +222,7 @@ export function Settings() {
                 </div>
               </div>
 
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div className="space-y-2">
                   <Label>Proposal Font</Label>
                   <div className="grid grid-cols-1 gap-2">
@@ -285,10 +285,10 @@ export function Settings() {
               <CardTitle className="text-base">Current Plan</CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="flex items-center justify-between">
+              <div className="flex items-start sm:items-center justify-between gap-3 flex-wrap">
                 <div className="flex items-center gap-3">
                   <div className={cn(
-                    'h-10 w-10 rounded-xl flex items-center justify-center',
+                    'h-10 w-10 rounded-xl flex items-center justify-center shrink-0',
                     user?.plan === 'pro' ? 'bg-amber-100 dark:bg-amber-900/20' : 'bg-muted'
                   )}>
                     {user?.plan === 'pro'

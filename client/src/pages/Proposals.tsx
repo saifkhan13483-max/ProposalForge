@@ -117,28 +117,28 @@ export function Proposals() {
   }
 
   return (
-    <div className="p-6 lg:p-8 space-y-6 max-w-7xl mx-auto">
+    <div className="p-4 sm:p-6 lg:p-8 space-y-6 max-w-7xl mx-auto">
       {/* Header */}
-      <div className="flex items-center justify-between gap-4">
+      <div className="flex items-center justify-between gap-3">
         <div>
-          <h1 className="text-2xl font-bold" style={{ fontFamily: 'Bricolage Grotesque, sans-serif' }}>
-            {showArchived ? 'Archived Proposals' : 'Proposals'}
+          <h1 className="text-xl sm:text-2xl font-bold" style={{ fontFamily: 'Bricolage Grotesque, sans-serif' }}>
+            {showArchived ? 'Archived' : 'Proposals'}
           </h1>
-          <p className="text-muted-foreground text-sm mt-0.5">{proposals.length} {showArchived ? 'archived' : 'total'} proposals</p>
+          <p className="text-muted-foreground text-sm mt-0.5">{proposals.length} {showArchived ? 'archived' : 'total'}</p>
         </div>
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-2 shrink-0">
           <Button
             variant="outline"
             size="sm"
             onClick={() => { setShowArchived(!showArchived); setStatusFilter('all') }}
-            className="gap-2"
+            className="gap-1.5"
           >
-            {showArchived ? <><ArchiveRestore className="h-4 w-4" /> Active</> : <><Archive className="h-4 w-4" /> Archived</>}
+            {showArchived ? <><ArchiveRestore className="h-4 w-4" /><span className="hidden sm:inline"> Active</span></> : <><Archive className="h-4 w-4" /><span className="hidden sm:inline"> Archived</span></>}
           </Button>
           {!showArchived && (
             <Link href="/proposals/new">
-              <Button data-testid="button-new-proposal" className="gap-2">
-                <Plus className="h-4 w-4" /> New Proposal
+              <Button data-testid="button-new-proposal" className="gap-1.5">
+                <Plus className="h-4 w-4" /><span className="hidden sm:inline"> New Proposal</span><span className="sm:hidden">New</span>
               </Button>
             </Link>
           )}
@@ -225,25 +225,25 @@ export function Proposals() {
                 </div>
               </div>
 
-              <div className="hidden sm:flex items-center gap-3">
+              <div className="flex items-center gap-2 sm:gap-3 shrink-0">
                 {showArchived && (
-                  <span className="text-xs px-2.5 py-1 rounded-full font-medium bg-amber-50 text-amber-700">
+                  <span className="text-xs px-2 sm:px-2.5 py-1 rounded-full font-medium bg-amber-50 text-amber-700 hidden sm:inline">
                     Archived
                   </span>
                 )}
                 {!showArchived && (
-                  <span className={cn('text-xs px-2.5 py-1 rounded-full font-medium capitalize', getStatusColor(proposal.status))}>
+                  <span className={cn('text-xs px-2 sm:px-2.5 py-1 rounded-full font-medium capitalize hidden sm:inline', getStatusColor(proposal.status))}>
                     {proposal.status}
                   </span>
                 )}
-                <span className="text-sm font-semibold w-24 text-right">
+                <span className="text-sm font-semibold sm:w-24 text-right">
                   {formatCurrency(proposal.total_amount || 0)}
                 </span>
               </div>
 
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
-                  <Button variant="ghost" size="icon" className="opacity-0 group-hover:opacity-100 shrink-0" data-testid={`proposal-menu-${proposal.id}`}>
+                  <Button variant="ghost" size="icon" className="shrink-0 sm:opacity-0 sm:group-hover:opacity-100" data-testid={`proposal-menu-${proposal.id}`}>
                     <MoreHorizontal className="h-4 w-4" />
                   </Button>
                 </DropdownMenuTrigger>

@@ -118,15 +118,15 @@ export function Invoices() {
   }
 
   return (
-    <div className="p-6 lg:p-8 space-y-6 max-w-7xl mx-auto">
+    <div className="p-4 sm:p-6 lg:p-8 space-y-6 max-w-7xl mx-auto">
       {/* Header */}
       <div className="flex items-center justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold" style={{ fontFamily: 'Bricolage Grotesque, sans-serif' }}>Invoices</h1>
+          <h1 className="text-xl sm:text-2xl font-bold" style={{ fontFamily: 'Bricolage Grotesque, sans-serif' }}>Invoices</h1>
           <p className="text-muted-foreground text-sm mt-0.5">{invoices.length} total invoices</p>
         </div>
-        <Button onClick={() => setShowNew(true)} className="gap-2" data-testid="button-new-invoice">
-          <Plus className="h-4 w-4" /> New Invoice
+        <Button onClick={() => setShowNew(true)} className="gap-1.5" data-testid="button-new-invoice">
+          <Plus className="h-4 w-4" /><span className="hidden sm:inline"> New Invoice</span><span className="sm:hidden">New</span>
         </Button>
       </div>
 
@@ -196,15 +196,15 @@ export function Invoices() {
                   {invoice.client_name || 'No client'} · Due {formatDate(invoice.due_date)}
                 </p>
               </div>
-              <div className="hidden sm:flex items-center gap-3">
-                <span className={cn('text-xs px-2.5 py-1 rounded-full font-medium capitalize', getStatusColor(getEffectiveStatus(invoice)))}>
+              <div className="flex items-center gap-2 sm:gap-3 shrink-0">
+                <span className={cn('text-xs px-2 sm:px-2.5 py-1 rounded-full font-medium capitalize hidden sm:inline', getStatusColor(getEffectiveStatus(invoice)))}>
                   {getEffectiveStatus(invoice)}
                 </span>
-                <span className="text-sm font-semibold w-24 text-right">{formatCurrency(invoice.total || 0)}</span>
+                <span className="text-sm font-semibold sm:w-24 text-right">{formatCurrency(invoice.total || 0)}</span>
               </div>
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
-                  <Button variant="ghost" size="icon" className="opacity-0 group-hover:opacity-100 shrink-0">
+                  <Button variant="ghost" size="icon" className="shrink-0 sm:opacity-0 sm:group-hover:opacity-100">
                     <MoreHorizontal className="h-4 w-4" />
                   </Button>
                 </DropdownMenuTrigger>

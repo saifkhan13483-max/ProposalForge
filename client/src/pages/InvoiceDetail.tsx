@@ -138,19 +138,39 @@ export function InvoiceDetail() {
   if (!invoice) return <div className="p-8">Invoice not found</div>
 
   return (
-    <div className="max-w-3xl mx-auto p-6 lg:p-8 space-y-6">
-      <div className="flex items-center gap-3">
-        <Button variant="ghost" size="icon" onClick={() => setLocation('/invoices')}>
+    <div className="max-w-3xl mx-auto p-4 sm:p-6 lg:p-8 space-y-6">
+      <div className="flex items-start gap-3">
+        <Button variant="ghost" size="icon" onClick={() => setLocation('/invoices')} className="shrink-0 mt-0.5">
           <ArrowLeft className="h-4 w-4" />
         </Button>
-        <div className="flex-1">
+        <div className="flex-1 min-w-0">
           <div className="flex items-center gap-2 flex-wrap">
             <h1 className="text-xl font-bold" style={{ fontFamily: 'Bricolage Grotesque, sans-serif' }}>{invoice.invoice_number}</h1>
             <span className={cn('text-xs px-2.5 py-1 rounded-full font-medium capitalize', getStatusColor(invoice.status))}>{invoice.status}</span>
           </div>
           <p className="text-sm text-muted-foreground">Created {formatDate(invoice.created_at)}</p>
+          <div className="flex gap-2 flex-wrap mt-3 sm:hidden">
+            <Button variant="outline" size="sm" onClick={downloadPdf} className="gap-1.5" data-testid="button-download-pdf-mobile">
+              <Download className="h-3.5 w-3.5" /> PDF
+            </Button>
+            {invoice.status !== 'paid' && (
+              <>
+                {invoice.client_email && (
+                  <Button variant="outline" size="sm" onClick={sendInvoice} className="gap-1.5">
+                    <Send className="h-3.5 w-3.5" /> Send
+                  </Button>
+                )}
+                <Button variant="outline" size="sm" onClick={markPaid} className="gap-1.5">
+                  <CheckCircle className="h-3.5 w-3.5" /> Paid
+                </Button>
+                <Button size="sm" onClick={checkout} className="gap-1.5">
+                  <CreditCard className="h-3.5 w-3.5" /> Pay Link
+                </Button>
+              </>
+            )}
+          </div>
         </div>
-        <div className="flex gap-2 flex-wrap">
+        <div className="hidden sm:flex gap-2 flex-wrap shrink-0">
           <Button variant="outline" onClick={downloadPdf} className="gap-2" data-testid="button-download-pdf">
             <Download className="h-4 w-4" /> PDF
           </Button>
@@ -174,7 +194,7 @@ export function InvoiceDetail() {
 
       <Card>
         <CardContent className="p-6 space-y-5">
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div className="space-y-2">
               <Label>Client Name</Label>
               <Input value={form.clientName} onChange={e => setForm(f => ({ ...f, clientName: e.target.value }))} data-testid="input-client-name" />
@@ -196,16 +216,24 @@ export function InvoiceDetail() {
           {/* Line items */}
           <div>
             <Label className="mb-3 block">Line Items</Label>
-            <div className="space-y-2">
+            <div className="space-y-3">
               {form.lineItems.map((item, i) => (
-                <div key={i} className="grid grid-cols-12 gap-2 items-center">
-                  <div className="col-span-6"><Input placeholder="Description" value={item.description} onChange={e => updateItem(i, 'description', e.target.value)} /></div>
-                  <div className="col-span-2"><Input type="number" min="0" step="0.5" placeholder="Qty" value={item.quantity} onChange={e => updateItem(i, 'quantity', parseFloat(e.target.value) || 0)} /></div>
-                  <div className="col-span-3"><Input type="number" min="0" placeholder="Price" value={item.unitPrice} onChange={e => updateItem(i, 'unitPrice', parseFloat(e.target.value) || 0)} /></div>
-                  <div className="col-span-1 flex justify-end">
-                    <Button variant="ghost" size="icon" className="h-9 w-9 text-destructive hover:text-destructive" onClick={() => removeItem(i)}>
-                      <Trash2 className="h-4 w-4" />
-                    </Button>
+                <div key={i} className="space-y-2 sm:space-y-0 sm:grid sm:grid-cols-12 sm:gap-2 sm:items-center">
+                  <div className="sm:col-span-6">
+                    <Input placeholder="Description" value={item.description} onChange={e => updateItem(i, 'description', e.target.value)} />
+                  </div>
+                  <div className="flex gap-2 sm:contents">
+                    <div className="flex-1 sm:col-span-2">
+                      <Input type="number" min="0" step="0.5" placeholder="Qty" value={item.quantity} onChange={e => updateItem(i, 'quantity', parseFloat(e.target.value) || 0)} />
+                    </div>
+                    <div className="flex-[2] sm:col-span-3">
+                      <Input type="number" min="0" placeholder="Price" value={item.unitPrice} onChange={e => updateItem(i, 'unitPrice', parseFloat(e.target.value) || 0)} />
+                    </div>
+                    <div className="sm:col-span-1 flex justify-end items-center">
+                      <Button variant="ghost" size="icon" className="h-9 w-9 text-destructive hover:text-destructive" onClick={() => removeItem(i)}>
+                        <Trash2 className="h-4 w-4" />
+                      </Button>
+                    </div>
                   </div>
                 </div>
               ))}
