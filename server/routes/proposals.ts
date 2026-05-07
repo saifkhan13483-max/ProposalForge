@@ -177,28 +177,50 @@ router.post('/:id/generate', async (req: AuthRequest, res) => {
       return res.status(503).json({ error: 'AI generation not configured. Please add GROQ_API_KEY.' })
     }
 
-    const prompt = `You are a senior proposal writer for freelancers and agencies. Generate a professional client proposal.
+    const budgetHint = proposal.budget_range
+      ? `The client's stated budget is ${proposal.budget_range}. Price your line items to fit naturally within this range.`
+      : 'Provide realistic market-rate pricing.'
 
-Business: ${user.business_name || 'Freelancer'}
-Client: ${proposal.client_name || 'Client'}
+    const prompt = `You are an expert freelance proposal writer with 15 years of experience winning high-value client contracts. Your proposals are known for being detailed, persuasive, and tailored — never generic.
+
+Write a complete professional proposal using the details below.
+
+--- PROJECT DETAILS ---
+Freelancer / Agency: ${user.business_name || 'Our Team'}
+Client Name: ${proposal.client_name || 'the client'}
 Project Type: ${proposal.project_type}
 Project Description: ${proposal.project_description || 'Not provided'}
 Budget Range: ${proposal.budget_range || 'To be discussed'}
 Timeline: ${proposal.timeline || 'To be discussed'}
 Currency: ${user.default_currency || 'USD'}
 
-Return ONLY valid JSON with this exact structure:
+--- INSTRUCTIONS ---
+- Write in a confident, professional tone — specific to the project described, never generic filler.
+- executiveSummary: Write 3 substantial paragraphs. Paragraph 1: restate the client's challenge/goal in your own words. Paragraph 2: describe your proposed solution and approach. Paragraph 3: express confidence in delivery and invite them to move forward.
+- scopeOfWork: Return as HTML. Use <p> for intro text and <ul><li> for feature/task lists. Be specific and detailed — list every major task, phase, and technology relevant to this project.
+- whyUs: Return as HTML. 3-4 bullet points (<ul><li>) explaining why this freelancer/agency is the right choice for this specific project. Reference the project type and any relevant expertise.
+- deliverables: List 5-8 specific, tangible deliverables the client will receive. Be concrete (e.g. "Fully deployed iOS and Android app" not just "Mobile app").
+- timeline: Return as plain text (no HTML). Break down the project into weekly phases with clear milestones. Format as: "Week 1-2: Phase name — description. Week 3-4: ..." etc.
+- nextSteps: Return as HTML. A short <ol><li> numbered list of 4-5 clear action items for the client to move forward (e.g. "Review and sign this proposal", "Schedule a kickoff call", etc.).
+- terms: Return as HTML. Include payment schedule (e.g. 50% upfront, 50% on delivery), revision policy, IP ownership, confidentiality, and cancellation terms. Be professional and fair.
+- lineItems: Generate 5-8 specific line items that together sum close to the stated budget. ${budgetHint} Each item should be a real, named deliverable or service phase — not vague entries.
+- totalEstimate: The sum of all lineItem (quantity × unitPrice) values.
+
+Return ONLY valid JSON with this exact structure (no markdown, no code fences):
 {
-  "executiveSummary": "2-3 paragraph executive summary",
-  "scopeOfWork": "Detailed scope of work in HTML format with bullet points",
-  "deliverables": ["deliverable 1", "deliverable 2", "deliverable 3"],
-  "timeline": "Project timeline description",
-  "terms": "Standard terms and conditions",
+  "executiveSummary": "three paragraphs of text...",
+  "scopeOfWork": "<p>intro</p><ul><li>task 1</li><li>task 2</li></ul>",
+  "whyUs": "<ul><li>reason 1</li><li>reason 2</li></ul>",
+  "deliverables": ["Deliverable 1", "Deliverable 2", "Deliverable 3", "Deliverable 4", "Deliverable 5"],
+  "timeline": "Week 1-2: Discovery — ... Week 3-5: Development — ...",
+  "nextSteps": "<ol><li>Step 1</li><li>Step 2</li></ol>",
+  "terms": "<p>Payment: ...</p><p>Revisions: ...</p>",
   "lineItems": [
-    {"description": "Service name", "quantity": 1, "unitPrice": 1000},
-    {"description": "Service name 2", "quantity": 1, "unitPrice": 500}
+    {"description": "Phase 1 – Discovery & Planning", "quantity": 1, "unitPrice": 1500},
+    {"description": "UI/UX Design", "quantity": 1, "unitPrice": 2000},
+    {"description": "Frontend Development", "quantity": 1, "unitPrice": 3000}
   ],
-  "totalEstimate": 1500
+  "totalEstimate": 6500
 }`
 
     const text = await generateContent(prompt)

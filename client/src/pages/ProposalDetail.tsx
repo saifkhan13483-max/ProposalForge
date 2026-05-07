@@ -83,6 +83,17 @@ export function ProposalDetail() {
   const [showRegenerateDialog, setShowRegenerateDialog] = useState<string | null>(null)
   const [comments, setComments] = useState<{ id: string; comment: string; commenter_name: string | null; created_at: string }[]>([])
   const [timelineContent, setTimelineContent] = useState('')
+  const [generatingStep, setGeneratingStep] = useState('')
+
+  const GENERATION_STEPS = [
+    'Analyzing your project details...',
+    'Writing executive summary...',
+    'Building scope of work...',
+    'Crafting "Why Choose Us"...',
+    'Calculating pricing & line items...',
+    'Writing timeline & next steps...',
+    'Finalizing your proposal...',
+  ]
 
   const [form, setForm] = useState({
     title: '',
@@ -112,6 +123,18 @@ export function ProposalDetail() {
     editorProps: { attributes: { class: 'tiptap p-3 min-h-[120px]' } },
   })
 
+  const whyUsEditor = useEditor({
+    extensions: [StarterKit],
+    content: '',
+    editorProps: { attributes: { class: 'tiptap p-3 min-h-[100px]' } },
+  })
+
+  const nextStepsEditor = useEditor({
+    extensions: [StarterKit],
+    content: '',
+    editorProps: { attributes: { class: 'tiptap p-3 min-h-[100px]' } },
+  })
+
   useEffect(() => {
     if (!params?.id) return
     api.get<{ proposal: Proposal; lineItems: LineItem[] }>(`/proposals/${params.id}`)
@@ -131,6 +154,8 @@ export function ProposalDetail() {
         executiveSummaryEditor?.commands.setContent((content.executiveSummary as string) || '')
         scopeEditor?.commands.setContent((content.scopeOfWork as string) || '')
         termsEditor?.commands.setContent((content.terms as string) || '')
+        whyUsEditor?.commands.setContent((content.whyUs as string) || '')
+        nextStepsEditor?.commands.setContent((content.nextSteps as string) || '')
         setTimelineContent(htmlToPlainText((content.timeline as string) || ''))
         if (data.proposal.content && Object.keys(data.proposal.content).length > 0) {
           setActiveTab('proposal')
@@ -169,13 +194,25 @@ export function ProposalDetail() {
     if (!proposal) return
     await saveBasics()
     setGenerating(true)
+
+    let stepIndex = 0
+    setGeneratingStep(GENERATION_STEPS[0])
+    const stepInterval = setInterval(() => {
+      stepIndex = (stepIndex + 1) % (GENERATION_STEPS.length - 1)
+      setGeneratingStep(GENERATION_STEPS[stepIndex])
+    }, 2200)
+
     try {
       const data = await api.post<{ proposal: Proposal; lineItems: LineItem[]; content: Record<string, unknown> }>(`/proposals/${proposal.id}/generate`)
+      clearInterval(stepInterval)
+      setGeneratingStep(GENERATION_STEPS[GENERATION_STEPS.length - 1])
       setProposal(data.proposal)
       setLineItems(data.lineItems || [])
       executiveSummaryEditor?.commands.setContent((data.content.executiveSummary as string) || '')
       scopeEditor?.commands.setContent((data.content.scopeOfWork as string) || '')
       termsEditor?.commands.setContent((data.content.terms as string) || '')
+      whyUsEditor?.commands.setContent((data.content.whyUs as string) || '')
+      nextStepsEditor?.commands.setContent((data.content.nextSteps as string) || '')
       setTimelineContent(htmlToPlainText((data.content.timeline as string) || ''))
       setActiveTab('proposal')
       toast({ title: 'Proposal generated!', description: 'AI has created your proposal. Review and edit as needed.' })
@@ -192,6 +229,7 @@ export function ProposalDetail() {
       }
     } finally {
       setGenerating(false)
+      setGeneratingStep('')
     }
   }
 
@@ -204,6 +242,8 @@ export function ProposalDetail() {
         executiveSummary: executiveSummaryEditor?.getHTML() || '',
         scopeOfWork: scopeEditor?.getHTML() || '',
         terms: termsEditor?.getHTML() || '',
+        whyUs: whyUsEditor?.getHTML() || '',
+        nextSteps: nextStepsEditor?.getHTML() || '',
         timeline: timelineContent,
       }
       await api.put(`/proposals/${proposal.id}`, { content })
@@ -226,6 +266,8 @@ export function ProposalDetail() {
       if (section === 'executiveSummary') executiveSummaryEditor?.commands.setContent((data.content.executiveSummary as string) || '')
       if (section === 'scopeOfWork') scopeEditor?.commands.setContent((data.content.scopeOfWork as string) || '')
       if (section === 'terms') termsEditor?.commands.setContent((data.content.terms as string) || '')
+      if (section === 'whyUs') whyUsEditor?.commands.setContent((data.content.whyUs as string) || '')
+      if (section === 'nextSteps') nextStepsEditor?.commands.setContent((data.content.nextSteps as string) || '')
       if (section === 'timeline') setTimelineContent(htmlToPlainText((data.content.timeline as string) || ''))
       toast({ title: 'Section regenerated' })
     } catch (err) {
@@ -449,9 +491,9 @@ export function ProposalDetail() {
                   {saving ? <Loader2 className="h-4 w-4 animate-spin" /> : <Save className="h-4 w-4" />}
                   Save Details
                 </Button>
-                <Button onClick={generateAI} disabled={generating || !form.projectDescription} className="gap-2" data-testid="button-generate">
+                <Button onClick={generateAI} disabled={generating || !form.projectDescription} className="gap-2 min-w-[220px]" data-testid="button-generate">
                   {generating ? <Loader2 className="h-4 w-4 animate-spin" /> : <Sparkles className="h-4 w-4" />}
-                  {generating ? 'Generating...' : 'Generate Proposal with AI'}
+                  {generating ? generatingStep || 'Generating...' : 'Generate Proposal with AI'}
                 </Button>
               </div>
             </CardContent>
@@ -472,6 +514,7 @@ export function ProposalDetail() {
               {[
                 { key: 'executiveSummary', label: 'Executive Summary', editor: executiveSummaryEditor },
                 { key: 'scopeOfWork', label: 'Scope of Work', editor: scopeEditor },
+                { key: 'whyUs', label: 'Why Choose Us', editor: whyUsEditor },
                 { key: 'terms', label: 'Terms & Conditions', editor: termsEditor },
               ].map(({ key, label, editor }) => (
                 <Card key={key}>
@@ -527,6 +570,32 @@ export function ProposalDetail() {
                     className="min-h-[100px] text-sm"
                     data-testid="textarea-timeline"
                   />
+                </CardContent>
+              </Card>
+
+              {/* Next Steps */}
+              <Card>
+                <CardHeader className="pb-2 flex-row items-center justify-between space-y-0">
+                  <CardTitle className="text-sm font-semibold">Next Steps</CardTitle>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => setShowRegenerateDialog('nextSteps')}
+                    disabled={regeneratingSection === 'nextSteps'}
+                    className="gap-1.5 text-xs"
+                    data-testid="button-regenerate-nextSteps"
+                  >
+                    {regeneratingSection === 'nextSteps'
+                      ? <Loader2 className="h-3 w-3 animate-spin" />
+                      : <RotateCw className="h-3 w-3" />
+                    }
+                    Regenerate
+                  </Button>
+                </CardHeader>
+                <CardContent className="p-0">
+                  <div className="border-t rounded-b-xl overflow-hidden">
+                    <EditorContent editor={nextStepsEditor} />
+                  </div>
                 </CardContent>
               </Card>
 
