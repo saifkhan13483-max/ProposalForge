@@ -20,6 +20,21 @@ import {
 import { useEditor, EditorContent } from '@tiptap/react'
 import StarterKit from '@tiptap/starter-kit'
 
+function htmlToPlainText(html: string): string {
+  return html
+    .replace(/<li[^>]*>/gi, '• ')
+    .replace(/<\/li>/gi, '\n')
+    .replace(/<br\s*\/?>/gi, '\n')
+    .replace(/<\/p>/gi, '\n')
+    .replace(/<[^>]+>/g, '')
+    .replace(/&amp;/g, '&')
+    .replace(/&lt;/g, '<')
+    .replace(/&gt;/g, '>')
+    .replace(/&nbsp;/g, ' ')
+    .replace(/\n{3,}/g, '\n\n')
+    .trim()
+}
+
 interface Proposal {
   id: string
   title: string
@@ -116,7 +131,7 @@ export function ProposalDetail() {
         executiveSummaryEditor?.commands.setContent((content.executiveSummary as string) || '')
         scopeEditor?.commands.setContent((content.scopeOfWork as string) || '')
         termsEditor?.commands.setContent((content.terms as string) || '')
-        setTimelineContent((content.timeline as string) || '')
+        setTimelineContent(htmlToPlainText((content.timeline as string) || ''))
         if (data.proposal.content && Object.keys(data.proposal.content).length > 0) {
           setActiveTab('proposal')
         }
@@ -161,7 +176,7 @@ export function ProposalDetail() {
       executiveSummaryEditor?.commands.setContent((data.content.executiveSummary as string) || '')
       scopeEditor?.commands.setContent((data.content.scopeOfWork as string) || '')
       termsEditor?.commands.setContent((data.content.terms as string) || '')
-      setTimelineContent((data.content.timeline as string) || '')
+      setTimelineContent(htmlToPlainText((data.content.timeline as string) || ''))
       setActiveTab('proposal')
       toast({ title: 'Proposal generated!', description: 'AI has created your proposal. Review and edit as needed.' })
     } catch (err: unknown) {
@@ -211,7 +226,7 @@ export function ProposalDetail() {
       if (section === 'executiveSummary') executiveSummaryEditor?.commands.setContent((data.content.executiveSummary as string) || '')
       if (section === 'scopeOfWork') scopeEditor?.commands.setContent((data.content.scopeOfWork as string) || '')
       if (section === 'terms') termsEditor?.commands.setContent((data.content.terms as string) || '')
-      if (section === 'timeline') setTimelineContent((data.content.timeline as string) || '')
+      if (section === 'timeline') setTimelineContent(htmlToPlainText((data.content.timeline as string) || ''))
       toast({ title: 'Section regenerated' })
     } catch (err) {
       toast({ title: 'Error', description: (err as Error).message, variant: 'destructive' })
