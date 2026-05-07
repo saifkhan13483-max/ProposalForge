@@ -1,7 +1,7 @@
 modules = ["nodejs-20", "web"]
 [agent]
 expertMode = true
-stack = "BEST_EFFORT_FALLBACK"
+stack = "FULLSTACK_JS"
 
 [nix]
 channel = "stable-25_05"
@@ -10,8 +10,6 @@ channel = "stable-25_05"
 
 [userenv.shared]
 SERVER_PORT = "3000"
-JWT_SECRET = "proposalforge-jwt-k9x2mQvL8pNwR4hT7jYcZ3eFbA6dUs1X"
-GROQ_API_KEY = "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"
 
 [workflows]
 runButton = "Project"
@@ -29,13 +27,13 @@ args = "Start application"
 name = "Start application"
 author = "agent"
 
+[workflows.workflow.metadata]
+outputType = "webview"
+
 [[workflows.workflow.tasks]]
 task = "shell.exec"
 args = "npm run dev"
 waitForPort = 5000
-
-[workflows.workflow.metadata]
-outputType = "webview"
 
 [[ports]]
 localPort = 3000
@@ -44,10 +42,6 @@ externalPort = 3000
 [[ports]]
 localPort = 5000
 externalPort = 80
-
-[[ports]]
-localPort = 5001
-externalPort = 3002
 
 [[ports]]
 localPort = 5002
@@ -76,3 +70,8 @@ externalPort = 6800
 [[ports]]
 localPort = 5008
 externalPort = 8000
+
+[deployment]
+deploymentTarget = "autoscale"
+run = ["node", "./dist/index.cjs"]
+build = ["npm", "run", "build"]
