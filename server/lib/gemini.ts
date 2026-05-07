@@ -1,16 +1,16 @@
-import { GoogleGenerativeAI } from '@google/generative-ai'
+import Groq from 'groq-sdk'
 
 const MODEL_CHAIN = [
-  'gemini-2.5-flash',
-  'gemini-2.0-flash',
-  'gemini-1.5-flash',
+  'llama-3.3-70b-versatile',
+  'llama3-8b-8192',
+  'mixtral-8x7b-32768',
 ]
 
 function getApiKeys(): string[] {
   const suffixes = ['', '_B', '_C', '_D', '_E', '_F']
   const keys: string[] = []
   for (const suffix of suffixes) {
-    const key = process.env[`GEMINI_API_KEY${suffix}`]
+    const key = process.env[`GROQ_API_KEY${suffix}`]
     if (key?.trim()) keys.push(key.trim())
   }
   return keys
@@ -30,7 +30,7 @@ export async function generateContent(prompt: string): Promise<string> {
   const keys = getApiKeys()
 
   if (keys.length === 0) {
-    throw new Error('AI generation not configured. Please add GEMINI_API_KEY.')
+    throw new Error('AI generation not configured. Please add GROQ_API_KEY.')
   }
 
   const errors: string[] = []
@@ -40,27 +40,28 @@ export async function generateContent(prompt: string): Promise<string> {
 
     for (const key of keys) {
       try {
-        const genAI = new GoogleGenerativeAI(key)
-        const model = genAI.getGenerativeModel({ model: modelName })
-        const result = await model.generateContent(prompt)
-        return result.response.text()
+        const groq = new Groq({ apiKey: key })
+        const completion = await groq.chat.completions.create({
+          model: modelName,
+          messages: [{ role: 'user', content: prompt }],
+          temperature: 0.7,
+          max_tokens: 4096,
+        })
+        const text = completion.choices[0]?.message?.content
+        if (!text) throw new Error('Empty response from Groq')
+        return text
       } catch (err) {
         if (isRateLimit(err)) {
           errors.push(`${modelName}: rate limited`)
-          // try next key with same model
           continue
         }
-        // Non-rate-limit error — don't try other keys for this model
         allRateLimited = false
         errors.push(`${modelName}: ${(err as Error).message}`)
         break
       }
     }
 
-    // If all keys were rate-limited for this model, try the next model
     if (allRateLimited) continue
-
-    // Non-429 error on this model — still try next model as fallback
   }
 
   throw new Error(`AI generation failed after trying all keys and models. Details: ${errors.join('; ')}`)
