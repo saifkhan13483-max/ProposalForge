@@ -382,18 +382,20 @@ export function Landing() {
 
       {/* Social proof strip */}
       <section className="bg-white border-b py-4 sm:py-5">
-        <div className="max-w-5xl mx-auto px-4 sm:px-6 flex flex-wrap items-center justify-center gap-x-8 gap-y-3">
-          {[
-            'Trusted by freelancers worldwide',
-            '60-second proposal generation',
-            'Stripe-powered payments',
-            'Electronic signatures',
-          ].map((text, i) => (
-            <div key={i} className="flex items-center gap-2 text-xs sm:text-sm text-slate-500 font-medium">
-              <div className="h-1.5 w-1.5 rounded-full bg-indigo-500 shrink-0" />
-              {text}
-            </div>
-          ))}
+        <div className="max-w-5xl mx-auto px-4 sm:px-6">
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-x-6 gap-y-3">
+            {[
+              'Trusted by freelancers worldwide',
+              '60-second proposal generation',
+              'Stripe-powered payments',
+              'Electronic signatures',
+            ].map((text, i) => (
+              <div key={i} className="flex items-center gap-2 text-xs sm:text-sm text-slate-500 font-medium justify-center sm:justify-start">
+                <div className="h-1.5 w-1.5 rounded-full bg-indigo-500 shrink-0" />
+                <span>{text}</span>
+              </div>
+            ))}
+          </div>
         </div>
       </section>
 
