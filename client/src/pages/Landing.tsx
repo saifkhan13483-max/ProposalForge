@@ -560,87 +560,89 @@ export function Landing() {
             </h2>
             <p className="text-slate-400 text-base sm:text-lg">Start free. Upgrade when you're ready.</p>
           </div>
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-5 max-w-3xl mx-auto items-start">
+
+          {/* Cards row — both wrapped in pt-5 so tops align */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-5 max-w-3xl mx-auto items-stretch">
 
             {/* Free plan */}
-            <div className="relative rounded-2xl p-7 flex flex-col bg-white border border-slate-200 shadow-sm">
-              <div className="mb-6">
-                <h3 className="text-lg font-bold mb-1 text-slate-900">Free</h3>
-                <div className="flex items-baseline gap-1 mb-2">
-                  <span className="text-4xl font-extrabold text-slate-900">$0</span>
-                  <span className="text-sm text-slate-500">/ forever</span>
+            <div className="pt-5">
+              <div className="h-full rounded-2xl p-7 flex flex-col bg-white border border-slate-200 shadow-sm">
+                <div className="mb-6">
+                  <h3 className="text-lg font-bold mb-1 text-slate-900">Free</h3>
+                  <div className="flex items-baseline gap-1 mb-2">
+                    <span className="text-4xl font-extrabold text-slate-900">$0</span>
+                    <span className="text-sm text-slate-500">/ forever</span>
+                  </div>
+                  <p className="text-sm text-slate-500">Perfect for freelancers just getting started.</p>
                 </div>
-                <p className="text-sm text-slate-500">Perfect for freelancers just getting started.</p>
+                <ul className="space-y-3 mb-8 flex-1">
+                  {['3 AI proposals / month', 'Unlimited clients & invoices', 'Stripe payment collection', 'E-signature acceptance', 'PDF export', 'Analytics dashboard'].map(f => (
+                    <li key={f} className="flex items-center gap-2.5 text-sm text-slate-600">
+                      <CheckCircle className="h-4 w-4 shrink-0 text-indigo-500" />
+                      {f}
+                    </li>
+                  ))}
+                </ul>
+                <Link href="/auth">
+                  <Button className="w-full h-11 font-semibold bg-white border border-slate-200 text-slate-800 hover:bg-slate-50">
+                    Get started free
+                  </Button>
+                </Link>
               </div>
-              <ul className="space-y-3 mb-8 flex-1">
-                {['3 AI proposals / month', 'Unlimited clients & invoices', 'Stripe payment collection', 'E-signature acceptance', 'PDF export', 'Analytics dashboard'].map(f => (
-                  <li key={f} className="flex items-center gap-2.5 text-sm text-slate-600">
-                    <CheckCircle className="h-4 w-4 shrink-0 text-indigo-500" />
-                    {f}
-                  </li>
-                ))}
-              </ul>
-              <Link href="/auth">
-                <Button className="w-full h-11 font-semibold bg-white border border-slate-200 text-slate-800 hover:bg-slate-50">
-                  Get started free
-                </Button>
-              </Link>
             </div>
 
             {/* Pro plan */}
             <div className="relative pt-5">
-              {/* Most Popular badge — outside overflow-hidden card */}
+              {/* Badge floats above the card, outside overflow-hidden */}
               <div className="absolute top-0 left-1/2 -translate-x-1/2 z-30">
                 <span className="bg-gradient-to-r from-indigo-500 to-violet-500 text-white text-xs font-bold px-4 py-1.5 rounded-full shadow-lg shadow-indigo-900/50 whitespace-nowrap">
                   Most Popular
                 </span>
               </div>
 
-              {/* Inner card with overflow-hidden for background effects */}
-              <div className="relative rounded-2xl flex flex-col overflow-hidden shadow-2xl shadow-indigo-950/60">
-              {/* Gradient border via wrapper */}
-              <div className="absolute inset-0 rounded-2xl bg-gradient-to-br from-indigo-500 via-violet-500 to-indigo-800 p-px">
-                <div className="absolute inset-0 rounded-2xl bg-[#0c0c1e]" />
-              </div>
-
-              {/* Dot-grid texture */}
-              <div
-                className="absolute inset-0 rounded-2xl opacity-[0.18] pointer-events-none"
-                style={{
-                  backgroundImage: 'radial-gradient(circle, rgba(139,92,246,0.5) 1px, transparent 1px)',
-                  backgroundSize: '22px 22px',
-                }}
-              />
-
-              {/* Top glow bloom */}
-              <div className="absolute -top-12 left-1/2 -translate-x-1/2 w-60 h-40 bg-indigo-500/30 rounded-full blur-[60px] pointer-events-none" />
-              {/* Bottom-right accent */}
-              <div className="absolute -bottom-10 -right-10 w-48 h-48 bg-violet-600/20 rounded-full blur-[60px] pointer-events-none" />
-
-              {/* Card content */}
-              <div className="relative z-10 p-7 flex flex-col flex-1">
-                <div className="mb-6">
-                  <h3 className="text-lg font-bold mb-1 text-white">Pro</h3>
-                  <div className="flex items-baseline gap-1 mb-2">
-                    <span className="text-4xl font-extrabold text-white">$19</span>
-                    <span className="text-sm text-slate-400">/ per month</span>
-                  </div>
-                  <p className="text-sm text-slate-400">For serious freelancers who want to impress.</p>
+              {/* Card — overflow-hidden clips the background decorations */}
+              <div className="relative rounded-2xl overflow-hidden shadow-2xl shadow-indigo-950/60">
+                {/* Gradient border */}
+                <div className="absolute inset-0 bg-gradient-to-br from-indigo-500 via-violet-500 to-indigo-800 p-px rounded-2xl">
+                  <div className="absolute inset-0 rounded-2xl bg-[#0c0c1e]" />
                 </div>
-                <ul className="space-y-3 mb-8 flex-1">
-                  {['Unlimited AI proposals', 'Remove ProposalForge branding', 'Client comment threads', 'Priority support', 'All future features', 'Early access to new AI models'].map(f => (
-                    <li key={f} className="flex items-center gap-2.5 text-sm text-slate-300">
-                      <CheckCircle className="h-4 w-4 shrink-0 text-indigo-400" />
-                      {f}
-                    </li>
-                  ))}
-                </ul>
-                <Link href="/auth">
-                  <Button className="w-full h-12 font-bold text-base bg-gradient-to-r from-indigo-600 to-violet-600 hover:from-indigo-500 hover:to-violet-500 text-white border-0 shadow-lg shadow-indigo-900/50 transition-all duration-200">
-                    Start Pro
-                  </Button>
-                </Link>
-              </div>
+                {/* Dot-grid texture */}
+                <div
+                  className="absolute inset-0 opacity-[0.18] pointer-events-none"
+                  style={{
+                    backgroundImage: 'radial-gradient(circle, rgba(139,92,246,0.5) 1px, transparent 1px)',
+                    backgroundSize: '22px 22px',
+                  }}
+                />
+                {/* Top glow */}
+                <div className="absolute -top-12 left-1/2 -translate-x-1/2 w-60 h-40 bg-indigo-500/30 rounded-full blur-[60px] pointer-events-none" />
+                {/* Bottom-right accent */}
+                <div className="absolute -bottom-10 -right-10 w-48 h-48 bg-violet-600/20 rounded-full blur-[60px] pointer-events-none" />
+
+                {/* Content */}
+                <div className="relative z-10 p-7 flex flex-col">
+                  <div className="mb-6">
+                    <h3 className="text-lg font-bold mb-1 text-white">Pro</h3>
+                    <div className="flex items-baseline gap-1 mb-2">
+                      <span className="text-4xl font-extrabold text-white">$19</span>
+                      <span className="text-sm text-slate-400">/ per month</span>
+                    </div>
+                    <p className="text-sm text-slate-400">For serious freelancers who want to impress.</p>
+                  </div>
+                  <ul className="space-y-3 mb-8 flex-1">
+                    {['Unlimited AI proposals', 'Remove ProposalForge branding', 'Client comment threads', 'Priority support', 'All future features', 'Early access to new AI models'].map(f => (
+                      <li key={f} className="flex items-center gap-2.5 text-sm text-slate-300">
+                        <CheckCircle className="h-4 w-4 shrink-0 text-indigo-400" />
+                        {f}
+                      </li>
+                    ))}
+                  </ul>
+                  <Link href="/auth">
+                    <Button className="w-full h-12 font-bold text-base bg-gradient-to-r from-indigo-600 to-violet-600 hover:from-indigo-500 hover:to-violet-500 text-white border-0 shadow-lg shadow-indigo-900/50">
+                      Start Pro
+                    </Button>
+                  </Link>
+                </div>
               </div>
             </div>
 
