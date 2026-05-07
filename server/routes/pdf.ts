@@ -214,9 +214,12 @@ let _pdfMakeInstance: any = null
 
 async function getPdfMake() {
   if (_pdfMakeInstance) return _pdfMakeInstance
-  const pdfMake = (await import('pdfmake/build/pdfmake.js')).default
-  const pdfFonts = (await import('pdfmake/build/vfs_fonts.js')).default
-  pdfMake.vfs = pdfFonts.vfs ?? (pdfFonts as any).pdfMake?.vfs ?? {}
+  const pdfMakeModule = await import('pdfmake/build/pdfmake.js')
+  const pdfFontsModule = await import('pdfmake/build/vfs_fonts.js')
+  const pdfMake = (pdfMakeModule as any).default ?? pdfMakeModule
+  const pdfFonts = (pdfFontsModule as any).default ?? pdfFontsModule
+  // In pdfmake 0.3.x font data is at the top level of the vfs_fonts export
+  pdfMake.vfs = (pdfFonts as any).vfs ?? (pdfFonts as any).pdfMake?.vfs ?? pdfFonts
   pdfMake.fonts = {
     Roboto: {
       normal: 'Roboto-Regular.ttf',
@@ -231,16 +234,10 @@ async function getPdfMake() {
 
 async function generatePdfBuffer(docDefinition: PdfContent): Promise<Buffer> {
   const pdfMake = await getPdfMake()
-  return new Promise((resolve, reject) => {
-    try {
-      const doc = pdfMake.createPdf(docDefinition as any)
-      doc.getBuffer((buffer: Uint8Array) => {
-        resolve(Buffer.from(buffer))
-      })
-    } catch (err) {
-      reject(err)
-    }
-  })
+  // pdfmake 0.3.x: getBuffer() returns a Promise (no callback)
+  const doc = pdfMake.createPdf(docDefinition as any)
+  const buffer = await doc.getBuffer()
+  return Buffer.from(buffer)
 }
 
 // Download PDF for authenticated user (their own proposal)
