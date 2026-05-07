@@ -218,7 +218,7 @@ export function Landing() {
             </div>
 
             {/* Right: Proposal card mockup */}
-            <div className="flex-1 w-full max-w-md lg:max-w-none relative">
+            <div className="hidden lg:block flex-1 w-full max-w-md lg:max-w-none relative">
               {/* Glow behind card */}
               <div className="absolute inset-0 bg-indigo-600/20 blur-3xl rounded-3xl scale-90" />
 
