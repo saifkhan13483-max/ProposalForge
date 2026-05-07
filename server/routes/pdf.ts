@@ -4,200 +4,228 @@ import { requireAuth, type AuthRequest } from '../middleware/auth.js'
 
 const router = Router()
 
-function buildProposalHtml(proposal: Record<string, unknown>, lineItems: Record<string, unknown>[]): string {
-  const accentColor = (proposal.accent_color as string) || '#6366f1'
+function stripHtml(html: string): string {
+  return html
+    .replace(/<br\s*\/?>/gi, '\n')
+    .replace(/<\/p>/gi, '\n')
+    .replace(/<\/li>/gi, '\n')
+    .replace(/<\/h[1-6]>/gi, '\n')
+    .replace(/<[^>]+>/g, '')
+    .replace(/&amp;/g, '&')
+    .replace(/&lt;/g, '<')
+    .replace(/&gt;/g, '>')
+    .replace(/&nbsp;/g, ' ')
+    .replace(/&quot;/g, '"')
+    .replace(/&#39;/g, "'")
+    .replace(/\n{3,}/g, '\n\n')
+    .trim()
+}
+
+function hexToRgb(hex: string): [number, number, number] {
+  const clean = hex.replace('#', '')
+  const r = parseInt(clean.substring(0, 2), 16)
+  const g = parseInt(clean.substring(2, 4), 16)
+  const b = parseInt(clean.substring(4, 6), 16)
+  return [r, g, b]
+}
+
+type PdfContent = Record<string, unknown>
+
+function buildProposalPdfContent(proposal: Record<string, unknown>, lineItems: Record<string, unknown>[]): PdfContent {
+  const accentHex = (proposal.accent_color as string) || '#6366f1'
+  const accentRgb = hexToRgb(accentHex)
   const content = (proposal.content as Record<string, unknown>) || {}
   const total = lineItems.reduce((sum, i) => sum + (Number(i.quantity) * Number(i.unit_price)), 0)
+  const deliverables = (content.deliverables as string[]) || []
 
   const formatCurrency = (n: number) =>
     new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(n)
 
-  const deliverables = (content.deliverables as string[]) || []
+  const accent = { r: accentRgb[0], g: accentRgb[1], b: accentRgb[2] }
 
-  return `<!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>${proposal.title}</title>
-<style>
-  * { margin: 0; padding: 0; box-sizing: border-box; }
-  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; color: #111827; background: #fff; font-size: 14px; line-height: 1.6; }
-  .page { max-width: 800px; margin: 0 auto; padding: 48px 40px; }
-  .header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 48px; padding-bottom: 24px; border-bottom: 2px solid ${accentColor}; }
-  .brand { display: flex; align-items: center; gap: 12px; }
-  .brand-icon { width: 40px; height: 40px; border-radius: 10px; background: ${accentColor}; display: flex; align-items: center; justify-content: center; color: white; font-size: 18px; font-weight: bold; }
-  .brand-name { font-size: 18px; font-weight: 700; color: #111827; }
-  .proposal-meta { text-align: right; }
-  .proposal-meta p { font-size: 12px; color: #6b7280; }
-  .hero { margin-bottom: 40px; }
-  .hero h1 { font-size: 32px; font-weight: 800; color: #111827; margin-bottom: 8px; }
-  .hero .subtitle { color: #6b7280; font-size: 15px; }
-  .hero .total-box { display: inline-block; margin-top: 20px; padding: 12px 20px; background: #f9fafb; border: 1px solid #e5e7eb; border-radius: 10px; }
-  .hero .total-label { font-size: 11px; color: #9ca3af; text-transform: uppercase; letter-spacing: 0.05em; }
-  .hero .total-value { font-size: 28px; font-weight: 800; color: ${accentColor}; }
-  .personal-message { margin: 24px 0; padding: 16px 20px; background: #f0f9ff; border-left: 3px solid ${accentColor}; border-radius: 0 8px 8px 0; font-style: italic; color: #374151; }
-  .section { margin-bottom: 36px; }
-  .section h2 { font-size: 18px; font-weight: 700; color: #111827; margin-bottom: 12px; padding-bottom: 8px; border-bottom: 1px solid #e5e7eb; }
-  .prose p { margin-bottom: 10px; color: #374151; }
-  .prose ul, .prose ol { margin-left: 20px; margin-bottom: 10px; }
-  .prose li { margin-bottom: 4px; color: #374151; }
-  .prose strong { font-weight: 600; }
-  .deliverables-list { list-style: none; }
-  .deliverables-list li { display: flex; align-items: flex-start; gap: 10px; margin-bottom: 8px; }
-  .deliverables-list li::before { content: '✓'; color: ${accentColor}; font-weight: 700; flex-shrink: 0; }
-  table { width: 100%; border-collapse: collapse; }
-  thead th { text-align: left; font-size: 12px; font-weight: 600; color: #6b7280; text-transform: uppercase; letter-spacing: 0.04em; padding: 8px 12px; background: #f9fafb; border-bottom: 1px solid #e5e7eb; }
-  thead th:last-child { text-align: right; }
-  tbody td { padding: 12px; border-bottom: 1px solid #f3f4f6; color: #374151; vertical-align: top; }
-  tbody td:not(:first-child) { text-align: right; white-space: nowrap; }
-  tfoot td { padding: 14px 12px; font-weight: 700; font-size: 16px; border-top: 2px solid #e5e7eb; }
-  tfoot td:last-child { text-align: right; color: ${accentColor}; font-size: 20px; }
-  .footer { margin-top: 56px; padding-top: 20px; border-top: 1px solid #e5e7eb; display: flex; justify-content: space-between; align-items: center; }
-  .footer p { font-size: 11px; color: #9ca3af; }
-  .accepted-badge { display: inline-flex; align-items: center; gap: 6px; background: #dcfce7; color: #16a34a; font-size: 12px; font-weight: 600; padding: 6px 12px; border-radius: 20px; }
-</style>
-</head>
-<body>
-<div class="page">
-  <div class="header">
-    <div class="brand">
-      ${proposal.logo_url
-        ? `<img src="${proposal.logo_url}" alt="${proposal.business_name}" style="height:40px;max-width:160px;object-fit:contain;">`
-        : `<div class="brand-icon">${((proposal.business_name as string) || 'P')[0].toUpperCase()}</div>`
-      }
-      <span class="brand-name">${proposal.business_name || 'ProposalForge'}</span>
-    </div>
-    <div class="proposal-meta">
-      <p><strong>${proposal.title}</strong></p>
-      <p>Prepared for ${proposal.client_name || 'Client'}</p>
-      ${proposal.accepted_at ? `<p style="color:#16a34a;font-weight:600;">✓ Accepted</p>` : ''}
-    </div>
-  </div>
-
-  <div class="hero">
-    <h1>${proposal.title}</h1>
-    <p class="subtitle">Prepared for ${proposal.client_name || 'Client'} ${proposal.client_email ? `· ${proposal.client_email}` : ''}</p>
-    ${total > 0 ? `
-    <div class="total-box">
-      <div class="total-label">Project Value</div>
-      <div class="total-value">${formatCurrency(total)}</div>
-    </div>` : ''}
-  </div>
-
-  ${proposal.personal_message ? `
-  <div class="personal-message">
-    "${proposal.personal_message}"
-    <br><small style="color:#9ca3af;font-style:normal;margin-top:6px;display:block;">— ${proposal.business_name}</small>
-  </div>` : ''}
-
-  ${content.executiveSummary ? `
-  <div class="section">
-    <h2>Executive Summary</h2>
-    <div class="prose">${content.executiveSummary}</div>
-  </div>` : ''}
-
-  ${content.scopeOfWork ? `
-  <div class="section">
-    <h2>Scope of Work</h2>
-    <div class="prose">${content.scopeOfWork}</div>
-  </div>` : ''}
-
-  ${deliverables.length > 0 ? `
-  <div class="section">
-    <h2>Deliverables</h2>
-    <ul class="deliverables-list">
-      ${deliverables.map(d => `<li>${d}</li>`).join('')}
-    </ul>
-  </div>` : ''}
-
-  ${lineItems.length > 0 ? `
-  <div class="section">
-    <h2>Project Quote</h2>
-    <table>
-      <thead>
-        <tr>
-          <th>Description</th>
-          <th>Qty</th>
-          <th>Unit Price</th>
-          <th>Total</th>
-        </tr>
-      </thead>
-      <tbody>
-        ${lineItems.map(item => `
-        <tr>
-          <td>${item.description}</td>
-          <td>${item.quantity}</td>
-          <td>${formatCurrency(Number(item.unit_price))}</td>
-          <td>${formatCurrency(Number(item.quantity) * Number(item.unit_price))}</td>
-        </tr>`).join('')}
-      </tbody>
-      <tfoot>
-        <tr>
-          <td colspan="3">Total</td>
-          <td>${formatCurrency(total)}</td>
-        </tr>
-      </tfoot>
-    </table>
-  </div>` : ''}
-
-  ${content.terms ? `
-  <div class="section">
-    <h2>Terms &amp; Conditions</h2>
-    <div class="prose" style="font-size:12px;color:#6b7280;">${content.terms}</div>
-  </div>` : ''}
-
-  <div class="footer">
-    <p>Generated by ProposalForge · ${new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}</p>
-    ${proposal.accepted_at ? `<span class="accepted-badge">✓ Accepted</span>` : ''}
-  </div>
-</div>
-</body>
-</html>`
-}
-
-async function findChromiumExecutable(): Promise<string | undefined> {
-  const { execSync } = await import('child_process')
-  const candidates = [
-    '/home/runner/.cache/puppeteer/chrome/linux-127.0.6533.88/chrome-linux64/chrome',
-    '/usr/bin/chromium-browser',
-    '/usr/bin/chromium',
-    '/usr/bin/google-chrome',
-  ]
-  for (const p of candidates) {
-    try {
-      const { existsSync } = await import('fs')
-      if (existsSync(p)) return p
-    } catch {}
-  }
-  try {
-    const result = execSync('find /home/runner/.cache/puppeteer -name "chrome" -type f 2>/dev/null | head -1', { timeout: 5000 }).toString().trim()
-    if (result) return result
-  } catch {}
-  return undefined
-}
-
-async function generatePdf(html: string): Promise<Buffer> {
-  const puppeteer = await import('puppeteer-core')
-  const executablePath = await findChromiumExecutable()
-  if (!executablePath) throw new Error('No Chromium executable found')
-  const browser = await puppeteer.default.launch({
-    executablePath,
-    args: ['--no-sandbox', '--disable-setuid-sandbox', '--disable-dev-shm-usage', '--disable-gpu', '--single-process'],
-    headless: true,
+  const sectionHeader = (title: string): PdfContent => ({
+    text: title,
+    fontSize: 14,
+    bold: true,
+    color: accentHex,
+    margin: [0, 20, 0, 6],
+    decoration: 'underline',
+    decorationColor: '#e5e7eb',
   })
-  try {
-    const page = await browser.newPage()
-    await page.setContent(html, { waitUntil: 'networkidle0' })
-    const pdf = await page.pdf({
-      format: 'A4',
-      printBackground: true,
-      margin: { top: '0', right: '0', bottom: '0', left: '0' },
-    })
-    return Buffer.from(pdf)
-  } finally {
-    await browser.close()
+
+  const docContent: PdfContent[] = []
+
+  // Header bar
+  docContent.push({
+    canvas: [{ type: 'rect', x: 0, y: 0, w: 515, h: 4, r: 2, color: accentHex }],
+    margin: [0, 0, 0, 16],
+  })
+
+  // Title + client row
+  docContent.push({
+    columns: [
+      {
+        stack: [
+          { text: proposal.title as string, fontSize: 22, bold: true, color: '#111827' },
+          { text: `Prepared for ${proposal.client_name || 'Client'}${proposal.client_email ? ' · ' + proposal.client_email : ''}`, fontSize: 11, color: '#6b7280', margin: [0, 4, 0, 0] },
+        ],
+      },
+      {
+        stack: [
+          { text: (proposal.business_name as string) || 'ProposalForge', fontSize: 13, bold: true, color: '#111827', alignment: 'right' },
+          ...(total > 0 ? [{ text: formatCurrency(total), fontSize: 20, bold: true, color: accentHex, alignment: 'right', margin: [0, 4, 0, 0] }] : []),
+        ],
+      },
+    ],
+    margin: [0, 0, 0, 16],
+  })
+
+  // Divider
+  docContent.push({
+    canvas: [{ type: 'line', x1: 0, y1: 0, x2: 515, y2: 0, lineWidth: 1, lineColor: '#e5e7eb' }],
+    margin: [0, 0, 0, 16],
+  })
+
+  // Personal message
+  if (proposal.personal_message) {
+    docContent.push({
+      text: `"${proposal.personal_message}"`,
+      italics: true,
+      color: '#374151',
+      background: '#f0f9ff',
+      margin: [0, 0, 0, 16],
+      padding: [12, 8, 12, 8],
+    } as PdfContent)
   }
+
+  // Executive Summary
+  if (content.executiveSummary) {
+    docContent.push(sectionHeader('Executive Summary'))
+    docContent.push({
+      text: stripHtml(content.executiveSummary as string),
+      fontSize: 10,
+      color: '#374151',
+      lineHeight: 1.5,
+      margin: [0, 0, 0, 8],
+    })
+  }
+
+  // Scope of Work
+  if (content.scopeOfWork) {
+    docContent.push(sectionHeader('Scope of Work'))
+    const scopeText = stripHtml(content.scopeOfWork as string)
+    const lines = scopeText.split('\n').filter(l => l.trim())
+    const scopeItems = lines.map(line => {
+      const trimmed = line.trim()
+      const isBullet = trimmed.startsWith('•') || trimmed.startsWith('-') || trimmed.startsWith('*')
+      const isHeader = trimmed.endsWith(':') && trimmed.length < 60
+      return {
+        text: isBullet ? trimmed.replace(/^[•\-*]\s*/, '') : trimmed,
+        bold: isHeader,
+        fontSize: 10,
+        color: '#374151',
+        margin: isBullet ? [10, 1, 0, 1] : [0, 2, 0, 2],
+        lineHeight: 1.4,
+      }
+    })
+    docContent.push({ stack: scopeItems, margin: [0, 0, 0, 8] } as PdfContent)
+  }
+
+  // Deliverables
+  if (deliverables.length > 0) {
+    docContent.push(sectionHeader('Deliverables'))
+    docContent.push({
+      ul: deliverables.map(d => ({ text: d, fontSize: 10, color: '#374151', margin: [0, 2, 0, 2] })),
+      margin: [0, 0, 0, 8],
+    })
+  }
+
+  // Line items table
+  if (lineItems.length > 0) {
+    docContent.push(sectionHeader('Project Quote'))
+    const tableBody: PdfContent[][] = [
+      [
+        { text: 'Description', bold: true, fontSize: 10, color: '#6b7280', fillColor: '#f9fafb' },
+        { text: 'Qty', bold: true, fontSize: 10, color: '#6b7280', fillColor: '#f9fafb', alignment: 'right' },
+        { text: 'Unit Price', bold: true, fontSize: 10, color: '#6b7280', fillColor: '#f9fafb', alignment: 'right' },
+        { text: 'Total', bold: true, fontSize: 10, color: '#6b7280', fillColor: '#f9fafb', alignment: 'right' },
+      ],
+      ...lineItems.map(item => [
+        { text: String(item.description || ''), fontSize: 10, color: '#374151' },
+        { text: String(item.quantity || 1), fontSize: 10, color: '#374151', alignment: 'right' },
+        { text: formatCurrency(Number(item.unit_price)), fontSize: 10, color: '#374151', alignment: 'right' },
+        { text: formatCurrency(Number(item.quantity) * Number(item.unit_price)), fontSize: 10, color: '#374151', alignment: 'right' },
+      ]),
+      [
+        { text: 'Total', colSpan: 3, bold: true, fontSize: 12, color: '#111827', border: [false, true, false, false] },
+        {},
+        {},
+        { text: formatCurrency(total), bold: true, fontSize: 12, color: accentHex, alignment: 'right', border: [false, true, false, false] },
+      ],
+    ]
+    docContent.push({
+      table: { headerRows: 1, widths: ['*', 50, 80, 80], body: tableBody },
+      layout: {
+        hLineWidth: (i: number, node: { table: { body: unknown[] } }) => (i === 0 || i === 1 || i === node.table.body.length) ? 1 : 0.5,
+        vLineWidth: () => 0,
+        hLineColor: () => '#e5e7eb',
+        paddingLeft: () => 8,
+        paddingRight: () => 8,
+        paddingTop: () => 8,
+        paddingBottom: () => 8,
+      },
+      margin: [0, 0, 0, 8],
+    } as PdfContent)
+  }
+
+  // Terms
+  if (content.terms) {
+    docContent.push(sectionHeader('Terms & Conditions'))
+    docContent.push({
+      text: stripHtml(content.terms as string),
+      fontSize: 9,
+      color: '#6b7280',
+      lineHeight: 1.5,
+      margin: [0, 0, 0, 8],
+    })
+  }
+
+  // Footer divider
+  docContent.push({
+    canvas: [{ type: 'line', x1: 0, y1: 0, x2: 515, y2: 0, lineWidth: 1, lineColor: '#e5e7eb' }],
+    margin: [0, 20, 0, 8],
+  })
+  docContent.push({
+    columns: [
+      { text: `Generated by ProposalForge · ${new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}`, fontSize: 9, color: '#9ca3af' },
+      ...(proposal.accepted_at ? [{ text: '✓ Accepted', fontSize: 9, color: '#16a34a', bold: true, alignment: 'right' }] : []),
+    ],
+  })
+
+  return {
+    content: docContent,
+    defaultStyle: { font: 'Helvetica', fontSize: 11, color: '#111827' },
+    pageMargins: [40, 40, 40, 40],
+    pageSize: 'A4',
+  }
+}
+
+async function generatePdfBuffer(docDefinition: PdfContent): Promise<Buffer> {
+  const pdfMake = (await import('pdfmake/build/pdfmake.js')).default
+  const pdfFonts = (await import('pdfmake/build/vfs_fonts.js')).default
+
+  pdfMake.vfs = pdfFonts.vfs || (pdfFonts as any).pdfMake?.vfs
+
+  return new Promise((resolve, reject) => {
+    try {
+      const doc = pdfMake.createPdf(docDefinition as any)
+      doc.getBuffer((buffer: Uint8Array) => {
+        resolve(Buffer.from(buffer))
+      })
+    } catch (err) {
+      reject(err)
+    }
+  })
 }
 
 // Download PDF for authenticated user (their own proposal)
@@ -217,8 +245,8 @@ router.get('/:id/pdf', requireAuth, async (req: AuthRequest, res) => {
       [req.params.id]
     )
 
-    const html = buildProposalHtml(proposal, lineItemsResult.rows)
-    const pdf = await generatePdf(html)
+    const docDefinition = buildProposalPdfContent(proposal, lineItemsResult.rows)
+    const pdf = await generatePdfBuffer(docDefinition)
 
     const filename = `${(proposal.title as string).replace(/[^a-z0-9]/gi, '-').toLowerCase()}-proposal.pdf`
     res.setHeader('Content-Type', 'application/pdf')
@@ -231,7 +259,7 @@ router.get('/:id/pdf', requireAuth, async (req: AuthRequest, res) => {
   }
 })
 
-function buildInvoiceHtml(invoice: Record<string, unknown>, businessName: string, logoUrl: string | null, accentColor: string): string {
+function buildInvoicePdfContent(invoice: Record<string, unknown>, businessName: string, accentColor: string): PdfContent {
   const color = accentColor || '#6366f1'
   const lineItems = (invoice.line_items as { description: string; quantity: number; unitPrice: number }[]) || []
   const subtotal = parseFloat(String(invoice.subtotal || 0))
@@ -241,105 +269,122 @@ function buildInvoiceHtml(invoice: Record<string, unknown>, businessName: string
   const formatCurrency = (n: number) => new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(n)
   const formatDate = (d: string) => d ? new Date(d).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' }) : ''
 
-  return `<!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="UTF-8">
-<title>Invoice ${invoice.invoice_number}</title>
-<style>
-  * { margin: 0; padding: 0; box-sizing: border-box; }
-  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; color: #111827; background: #fff; font-size: 14px; line-height: 1.6; }
-  .page { max-width: 800px; margin: 0 auto; padding: 48px 40px; }
-  .header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 48px; padding-bottom: 24px; border-bottom: 2px solid ${color}; }
-  .brand { display: flex; align-items: center; gap: 12px; }
-  .brand-icon { width: 40px; height: 40px; border-radius: 10px; background: ${color}; display: flex; align-items: center; justify-content: center; color: white; font-size: 18px; font-weight: bold; }
-  .brand-name { font-size: 18px; font-weight: 700; }
-  .invoice-meta { text-align: right; }
-  .invoice-meta h1 { font-size: 28px; font-weight: 800; color: ${color}; }
-  .invoice-meta p { font-size: 12px; color: #6b7280; margin-top: 4px; }
-  .bill-section { display: flex; justify-content: space-between; margin-bottom: 40px; }
-  .bill-to h3 { font-size: 11px; text-transform: uppercase; letter-spacing: 0.05em; color: #9ca3af; font-weight: 600; margin-bottom: 6px; }
-  .bill-to p { color: #374151; }
-  table { width: 100%; border-collapse: collapse; margin-bottom: 24px; }
-  thead th { text-align: left; font-size: 12px; font-weight: 600; color: #6b7280; text-transform: uppercase; letter-spacing: 0.04em; padding: 8px 12px; background: #f9fafb; border-bottom: 1px solid #e5e7eb; }
-  thead th:last-child { text-align: right; }
-  tbody td { padding: 12px; border-bottom: 1px solid #f3f4f6; color: #374151; }
-  tbody td:not(:first-child) { text-align: right; white-space: nowrap; }
-  .totals { margin-left: auto; width: 280px; }
-  .totals-row { display: flex; justify-content: space-between; padding: 6px 0; font-size: 14px; }
-  .totals-row.total { border-top: 2px solid #e5e7eb; margin-top: 8px; padding-top: 12px; font-size: 18px; font-weight: 700; color: ${color}; }
-  .status-badge { display: inline-block; padding: 4px 12px; border-radius: 20px; font-size: 12px; font-weight: 600; }
-  .paid { background: #dcfce7; color: #16a34a; }
-  .due { background: #fef9c3; color: #a16207; }
-  .notes { margin-top: 32px; padding: 16px; background: #f9fafb; border-radius: 8px; font-size: 13px; color: #6b7280; }
-  .footer { margin-top: 48px; padding-top: 16px; border-top: 1px solid #e5e7eb; font-size: 11px; color: #9ca3af; text-align: center; }
-</style>
-</head>
-<body>
-<div class="page">
-  <div class="header">
-    <div class="brand">
-      ${logoUrl
-        ? `<img src="${logoUrl}" alt="${businessName}" style="height:40px;max-width:160px;object-fit:contain;">`
-        : `<div class="brand-icon">${(businessName || 'P')[0].toUpperCase()}</div>`
-      }
-      <span class="brand-name">${businessName || 'ProposalForge'}</span>
-    </div>
-    <div class="invoice-meta">
-      <h1>INVOICE</h1>
-      <p><strong>${invoice.invoice_number}</strong></p>
-      <p>Issued: ${formatDate(invoice.created_at as string)}</p>
-      ${invoice.due_date ? `<p>Due: ${formatDate(invoice.due_date as string)}</p>` : ''}
-      <span class="status-badge ${invoice.status === 'paid' ? 'paid' : 'due'}">${String(invoice.status).toUpperCase()}</span>
-    </div>
-  </div>
+  const docContent: PdfContent[] = []
 
-  <div class="bill-section">
-    <div class="bill-to">
-      <h3>Bill To</h3>
-      <p><strong>${invoice.client_name || 'Client'}</strong></p>
-      ${invoice.client_email ? `<p>${invoice.client_email}</p>` : ''}
-    </div>
-  </div>
+  docContent.push({
+    canvas: [{ type: 'rect', x: 0, y: 0, w: 515, h: 4, r: 2, color }],
+    margin: [0, 0, 0, 16],
+  })
 
-  <table>
-    <thead>
-      <tr>
-        <th>Description</th>
-        <th>Qty</th>
-        <th>Unit Price</th>
-        <th>Total</th>
-      </tr>
-    </thead>
-    <tbody>
-      ${lineItems.map(item => `
-      <tr>
-        <td>${item.description}</td>
-        <td>${item.quantity}</td>
-        <td>${formatCurrency(item.unitPrice)}</td>
-        <td>${formatCurrency(item.quantity * item.unitPrice)}</td>
-      </tr>`).join('')}
-    </tbody>
-  </table>
+  docContent.push({
+    columns: [
+      {
+        stack: [
+          { text: businessName || 'ProposalForge', fontSize: 18, bold: true, color: '#111827' },
+        ],
+      },
+      {
+        stack: [
+          { text: 'INVOICE', fontSize: 24, bold: true, color, alignment: 'right' },
+          { text: String(invoice.invoice_number || ''), fontSize: 11, color: '#6b7280', alignment: 'right', margin: [0, 4, 0, 0] },
+          { text: `Issued: ${formatDate(invoice.created_at as string)}`, fontSize: 10, color: '#6b7280', alignment: 'right' },
+          ...(invoice.due_date ? [{ text: `Due: ${formatDate(invoice.due_date as string)}`, fontSize: 10, color: '#6b7280', alignment: 'right' }] : []),
+          { text: String(invoice.status || '').toUpperCase(), fontSize: 10, bold: true, color: invoice.status === 'paid' ? '#16a34a' : '#a16207', alignment: 'right', margin: [0, 4, 0, 0] },
+        ],
+      },
+    ],
+    margin: [0, 0, 0, 20],
+  })
 
-  <div class="totals">
-    <div class="totals-row"><span>Subtotal</span><span>${formatCurrency(subtotal)}</span></div>
-    ${taxRate > 0 ? `<div class="totals-row"><span>Tax (${taxRate}%)</span><span>${formatCurrency(taxAmount)}</span></div>` : ''}
-    <div class="totals-row total"><span>Total</span><span>${formatCurrency(total)}</span></div>
-    ${invoice.paid_at ? `<div class="totals-row" style="color:#16a34a;font-weight:600;margin-top:8px;"><span>✓ Paid</span><span>${formatDate(invoice.paid_at as string)}</span></div>` : ''}
-  </div>
+  docContent.push({
+    canvas: [{ type: 'line', x1: 0, y1: 0, x2: 515, y2: 0, lineWidth: 1, lineColor: '#e5e7eb' }],
+    margin: [0, 0, 0, 16],
+  })
 
-  ${invoice.notes ? `<div class="notes"><strong>Notes:</strong> ${invoice.notes}</div>` : ''}
+  docContent.push({
+    stack: [
+      { text: 'BILL TO', fontSize: 9, bold: true, color: '#9ca3af', margin: [0, 0, 0, 4] },
+      { text: String(invoice.client_name || 'Client'), fontSize: 11, bold: true, color: '#111827' },
+      ...(invoice.client_email ? [{ text: String(invoice.client_email), fontSize: 10, color: '#6b7280' }] : []),
+    ],
+    margin: [0, 0, 0, 20],
+  })
 
-  <div class="footer">Generated by ProposalForge · ${new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}</div>
-</div>
-</body>
-</html>`
+  if (lineItems.length > 0) {
+    const tableBody: PdfContent[][] = [
+      [
+        { text: 'Description', bold: true, fontSize: 10, color: '#6b7280', fillColor: '#f9fafb' },
+        { text: 'Qty', bold: true, fontSize: 10, color: '#6b7280', fillColor: '#f9fafb', alignment: 'right' },
+        { text: 'Unit Price', bold: true, fontSize: 10, color: '#6b7280', fillColor: '#f9fafb', alignment: 'right' },
+        { text: 'Total', bold: true, fontSize: 10, color: '#6b7280', fillColor: '#f9fafb', alignment: 'right' },
+      ],
+      ...lineItems.map(item => [
+        { text: item.description, fontSize: 10, color: '#374151' },
+        { text: String(item.quantity), fontSize: 10, color: '#374151', alignment: 'right' },
+        { text: formatCurrency(item.unitPrice), fontSize: 10, color: '#374151', alignment: 'right' },
+        { text: formatCurrency(item.quantity * item.unitPrice), fontSize: 10, color: '#374151', alignment: 'right' },
+      ]),
+    ]
+    docContent.push({
+      table: { headerRows: 1, widths: ['*', 50, 80, 80], body: tableBody },
+      layout: {
+        hLineWidth: (i: number, node: { table: { body: unknown[] } }) => (i === 0 || i === 1 || i === node.table.body.length) ? 1 : 0.5,
+        vLineWidth: () => 0,
+        hLineColor: () => '#e5e7eb',
+        paddingLeft: () => 8,
+        paddingRight: () => 8,
+        paddingTop: () => 8,
+        paddingBottom: () => 8,
+      },
+      margin: [0, 0, 0, 16],
+    } as PdfContent)
+  }
+
+  const totalsStack: PdfContent[] = [
+    { columns: [{ text: 'Subtotal', fontSize: 10, color: '#374151' }, { text: formatCurrency(subtotal), fontSize: 10, color: '#374151', alignment: 'right' }] },
+  ]
+  if (taxRate > 0) {
+    totalsStack.push({ columns: [{ text: `Tax (${taxRate}%)`, fontSize: 10, color: '#374151' }, { text: formatCurrency(taxAmount), fontSize: 10, color: '#374151', alignment: 'right' }] } as PdfContent)
+  }
+  totalsStack.push({
+    canvas: [{ type: 'line', x1: 0, y1: 0, x2: 515, y2: 0, lineWidth: 1, lineColor: '#e5e7eb' }],
+    margin: [0, 6, 0, 6],
+  })
+  totalsStack.push({ columns: [{ text: 'Total', fontSize: 14, bold: true, color: '#111827' }, { text: formatCurrency(total), fontSize: 14, bold: true, color, alignment: 'right' }] } as PdfContent)
+
+  if (invoice.paid_at) {
+    totalsStack.push({ columns: [{ text: '✓ Paid', fontSize: 10, color: '#16a34a', bold: true }, { text: formatDate(invoice.paid_at as string), fontSize: 10, color: '#16a34a', alignment: 'right' }], margin: [0, 4, 0, 0] } as PdfContent)
+  }
+
+  docContent.push({ stack: totalsStack, margin: [0, 0, 0, 16] } as PdfContent)
+
+  if (invoice.notes) {
+    docContent.push({
+      stack: [
+        { text: 'Notes', bold: true, fontSize: 10, color: '#374151', margin: [0, 0, 0, 4] },
+        { text: String(invoice.notes), fontSize: 10, color: '#6b7280' },
+      ],
+      background: '#f9fafb',
+      margin: [0, 0, 0, 16],
+    } as PdfContent)
+  }
+
+  docContent.push({
+    canvas: [{ type: 'line', x1: 0, y1: 0, x2: 515, y2: 0, lineWidth: 1, lineColor: '#e5e7eb' }],
+    margin: [0, 16, 0, 8],
+  })
+  docContent.push({ text: `Generated by ProposalForge · ${new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}`, fontSize: 9, color: '#9ca3af', alignment: 'center' })
+
+  return {
+    content: docContent,
+    defaultStyle: { font: 'Helvetica', fontSize: 11, color: '#111827' },
+    pageMargins: [40, 40, 40, 40],
+    pageSize: 'A4',
+  }
 }
 
 // Download invoice PDF — exported for direct mounting in index.ts
 export async function handleInvoicePdf(req: import('express').Request & { userId?: string }, res: import('express').Response) {
-  // Verify auth
   const authHeader = req.headers.authorization
   const token = authHeader?.startsWith('Bearer ') ? authHeader.slice(7) : null
   if (!token) return res.status(401).json({ error: 'Unauthorized' })
@@ -356,8 +401,8 @@ export async function handleInvoicePdf(req: import('express').Request & { userId
     if (invoiceResult.rows.length === 0) return res.status(404).json({ error: 'Invoice not found' })
     const invoice = invoiceResult.rows[0]
 
-    const html = buildInvoiceHtml(invoice, invoice.business_name, invoice.logo_url, invoice.accent_color)
-    const pdf = await generatePdf(html)
+    const docDefinition = buildInvoicePdfContent(invoice, invoice.business_name, invoice.accent_color)
+    const pdf = await generatePdfBuffer(docDefinition)
 
     const filename = `invoice-${String(invoice.invoice_number).replace(/[^a-z0-9]/gi, '-').toLowerCase()}.pdf`
     res.setHeader('Content-Type', 'application/pdf')
@@ -386,8 +431,8 @@ export async function handlePublicPdf(req: import('express').Request, res: impor
     const proposal = result.rows[0]
     const lineItems = (proposal.line_items_json as Record<string, unknown>[]) || []
 
-    const html = buildProposalHtml(proposal, lineItems)
-    const pdf = await generatePdf(html)
+    const docDefinition = buildProposalPdfContent(proposal, lineItems)
+    const pdf = await generatePdfBuffer(docDefinition)
 
     const filename = `${(proposal.title as string).replace(/[^a-z0-9]/gi, '-').toLowerCase()}-proposal.pdf`
     res.setHeader('Content-Type', 'application/pdf')
