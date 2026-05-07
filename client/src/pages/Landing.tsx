@@ -588,7 +588,16 @@ export function Landing() {
             </div>
 
             {/* Pro plan */}
-            <div className="relative rounded-2xl flex flex-col overflow-hidden shadow-2xl shadow-indigo-950/60">
+            <div className="relative pt-5">
+              {/* Most Popular badge — outside overflow-hidden card */}
+              <div className="absolute top-0 left-1/2 -translate-x-1/2 z-30">
+                <span className="bg-gradient-to-r from-indigo-500 to-violet-500 text-white text-xs font-bold px-4 py-1.5 rounded-full shadow-lg shadow-indigo-900/50 whitespace-nowrap">
+                  Most Popular
+                </span>
+              </div>
+
+              {/* Inner card with overflow-hidden for background effects */}
+              <div className="relative rounded-2xl flex flex-col overflow-hidden shadow-2xl shadow-indigo-950/60">
               {/* Gradient border via wrapper */}
               <div className="absolute inset-0 rounded-2xl bg-gradient-to-br from-indigo-500 via-violet-500 to-indigo-800 p-px">
                 <div className="absolute inset-0 rounded-2xl bg-[#0c0c1e]" />
@@ -607,13 +616,6 @@ export function Landing() {
               <div className="absolute -top-12 left-1/2 -translate-x-1/2 w-60 h-40 bg-indigo-500/30 rounded-full blur-[60px] pointer-events-none" />
               {/* Bottom-right accent */}
               <div className="absolute -bottom-10 -right-10 w-48 h-48 bg-violet-600/20 rounded-full blur-[60px] pointer-events-none" />
-
-              {/* Most Popular badge */}
-              <div className="absolute -top-3.5 left-1/2 -translate-x-1/2 z-20">
-                <span className="bg-gradient-to-r from-indigo-500 to-violet-500 text-white text-xs font-bold px-4 py-1.5 rounded-full shadow-lg shadow-indigo-900/50">
-                  Most Popular
-                </span>
-              </div>
 
               {/* Card content */}
               <div className="relative z-10 p-7 flex flex-col flex-1">
@@ -638,6 +640,7 @@ export function Landing() {
                     Start Pro
                   </Button>
                 </Link>
+              </div>
               </div>
             </div>
 
