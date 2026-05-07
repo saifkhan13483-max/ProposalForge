@@ -269,7 +269,7 @@ router.post('/demo/generate', async (req, res) => {
 
   try {
     const genAI = new GoogleGenerativeAI(apiKey)
-    const model = genAI.getGenerativeModel({ model: 'gemini-1.5-flash' })
+    const model = genAI.getGenerativeModel({ model: 'gemini-2.0-flash' })
 
     const prompt = `You are a senior proposal writer for freelancers and agencies. Generate a professional client proposal.
 

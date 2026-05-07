@@ -179,7 +179,7 @@ router.post('/:id/generate', async (req: AuthRequest, res) => {
     }
 
     const genAI = new GoogleGenerativeAI(apiKey)
-    const model = genAI.getGenerativeModel({ model: 'gemini-1.5-flash' })
+    const model = genAI.getGenerativeModel({ model: 'gemini-2.0-flash' })
 
     const prompt = `You are a senior proposal writer for freelancers and agencies. Generate a professional client proposal.
 
@@ -269,7 +269,7 @@ router.post('/:id/regenerate-section', async (req: AuthRequest, res) => {
     if (!apiKey) return res.status(503).json({ error: 'AI generation not configured' })
 
     const genAI = new GoogleGenerativeAI(apiKey)
-    const model = genAI.getGenerativeModel({ model: 'gemini-1.5-flash' })
+    const model = genAI.getGenerativeModel({ model: 'gemini-2.0-flash' })
 
     const currentContent = proposal.content || {}
     const prompt = `You are a senior proposal writer. Regenerate the "${section}" section of a client proposal.
