@@ -128,7 +128,7 @@ export function Landing() {
         </div>
 
         {/* Dashboard preview mockup */}
-        <div className="relative max-w-5xl mx-auto px-6 pb-0 hidden sm:block">
+        <div className="relative max-w-5xl mx-auto px-6 pb-0 hidden">
           <div className="relative rounded-t-2xl border border-white/10 bg-slate-800/60 backdrop-blur-sm overflow-hidden shadow-2xl shadow-indigo-900/40">
             {/* Browser chrome */}
             <div className="flex items-center gap-2 px-4 py-3 border-b border-white/10 bg-slate-900/50">
