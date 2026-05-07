@@ -10,6 +10,7 @@ channel = "stable-25_05"
 
 [userenv.shared]
 SERVER_PORT = "3000"
+JWT_SECRET = "4dc809c2c8cda1fa14897d9e6a3c2a32ff20812f47e7286a3c6857d13472d9a94b281e5e286370188848c3ba8d5541804c85cb324670e524b1bdf787cb237c7d"
 
 [workflows]
 runButton = "Project"

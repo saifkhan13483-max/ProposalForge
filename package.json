@@ -4,8 +4,8 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "dev": "concurrently -n client,server -c cyan,yellow \"npm run dev:client\" \"npm run dev:server\"",
-    "dev:client": "cd client && ./node_modules/.bin/vite --port 5000 --host",
+    "dev": "node_modules/.bin/concurrently -n client,server -c cyan,yellow \"npm run dev:client\" \"npm run dev:server\"",
+    "dev:client": "cd client && node_modules/.bin/vite --port 5000 --host",
     "dev:server": "node_modules/.bin/tsx watch server/index.ts",
     "build": "npm run build:client && npm run build:server",
     "build:client": "cd client && vite build",
