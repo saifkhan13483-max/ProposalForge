@@ -7,11 +7,35 @@ const router = Router()
 // In-memory demo rate limit (IP → last used date string)
 const demoUsage = new Map<string, string>()
 
+async function sendFreelancerEmail(to: string, subject: string, html: string) {
+  const resendKey = process.env.RESEND_API_KEY
+  if (!resendKey) return
+  try {
+    const { Resend } = await import('resend')
+    const resend = new Resend(resendKey)
+    await resend.emails.send({
+      from: 'ProposalForge <noreply@proposalforge.app>',
+      to,
+      subject,
+      html,
+    })
+  } catch (err) {
+    console.error('Notification email failed:', err)
+  }
+}
+
+function getBaseUrl(): string {
+  return process.env.REPLIT_DOMAINS
+    ? `https://${process.env.REPLIT_DOMAINS.split(',')[0]}`
+    : 'http://localhost:5000'
+}
+
 // Get proposal by accept token (public)
 router.get('/proposal/:token', async (req, res) => {
   try {
     const result = await query(
       `SELECT p.*, u.business_name, u.logo_url, u.accent_color, u.plan, u.font_family,
+        u.email as owner_email,
         (SELECT json_agg(json_build_object('description', description, 'quantity', quantity, 'unit_price', unit_price) ORDER BY sort_order) 
          FROM quote_line_items WHERE proposal_id = p.id) as line_items
        FROM proposals p
@@ -30,6 +54,18 @@ router.get('/proposal/:token', async (req, res) => {
         'INSERT INTO acceptance_events (proposal_id, event_type, ip_address) VALUES ($1, $2, $3)',
         [proposal.id, 'viewed', req.ip]
       )
+
+      // Notify the freelancer that client viewed the proposal
+      if (proposal.owner_email) {
+        sendFreelancerEmail(
+          proposal.owner_email,
+          `👀 Proposal viewed: ${proposal.title}`,
+          `<h2>Your proposal was viewed!</h2>
+           <p>Your client just opened your proposal: <strong>${proposal.title}</strong>.</p>
+           <p>This is a great sign — consider following up if you don't hear back within 24 hours.</p>
+           <a href="${getBaseUrl()}/proposals" style="background:#6366f1;color:white;padding:12px 24px;border-radius:6px;text-decoration:none;display:inline-block;margin-top:16px;">View Proposals</a>`
+        )
+      }
     }
 
     res.json({ proposal })
@@ -61,23 +97,6 @@ router.get('/proposal/:token/comments', async (req, res) => {
     res.status(500).json({ error: 'Failed to get comments' })
   }
 })
-
-async function sendFreelancerEmail(to: string, subject: string, html: string) {
-  const resendKey = process.env.RESEND_API_KEY
-  if (!resendKey) return
-  try {
-    const { Resend } = await import('resend')
-    const resend = new Resend(resendKey)
-    await resend.emails.send({
-      from: 'ProposalForge <noreply@proposalforge.app>',
-      to,
-      subject,
-      html,
-    })
-  } catch (err) {
-    console.error('Notification email failed:', err)
-  }
-}
 
 // Accept proposal
 router.post('/proposal/:token/accept', async (req, res) => {
@@ -139,7 +158,7 @@ router.post('/proposal/:token/accept', async (req, res) => {
       `<h2>Great news! Your proposal was accepted.</h2>
        <p><strong>${signerName}</strong> (${proposal.client_name || 'your client'}) has accepted your proposal: <strong>${proposal.title}</strong>.</p>
        <p>An invoice has been automatically generated. Log in to your dashboard to view it.</p>
-       <a href="${process.env.REPLIT_DOMAINS ? `https://${process.env.REPLIT_DOMAINS.split(',')[0]}` : 'http://localhost:5000'}/dashboard" style="background:#6366f1;color:white;padding:12px 24px;border-radius:6px;text-decoration:none;display:inline-block;margin-top:16px;">View Dashboard</a>`
+       <a href="${getBaseUrl()}/dashboard" style="background:#6366f1;color:white;padding:12px 24px;border-radius:6px;text-decoration:none;display:inline-block;margin-top:16px;">View Dashboard</a>`
     )
 
     res.json({ success: true, message: 'Proposal accepted!' })
@@ -170,16 +189,13 @@ router.post('/proposal/:token/comment', async (req, res) => {
     )
 
     // Notify the freelancer
-    const baseUrl = process.env.REPLIT_DOMAINS
-      ? `https://${process.env.REPLIT_DOMAINS.split(',')[0]}`
-      : 'http://localhost:5000'
     sendFreelancerEmail(
       proposal.owner_email,
       `💬 Change request on: ${proposal.title}`,
       `<h2>Your client has requested changes.</h2>
        <p><strong>${commenterName || proposal.client_name || 'Your client'}</strong> has left feedback on your proposal: <strong>${proposal.title}</strong>.</p>
        <blockquote style="border-left:3px solid #6366f1;padding:12px 16px;background:#f5f3ff;margin:16px 0;border-radius:0 8px 8px 0;">${comment}</blockquote>
-       <a href="${baseUrl}/proposals" style="background:#6366f1;color:white;padding:12px 24px;border-radius:6px;text-decoration:none;display:inline-block;margin-top:8px;">View Proposals</a>`
+       <a href="${getBaseUrl()}/proposals" style="background:#6366f1;color:white;padding:12px 24px;border-radius:6px;text-decoration:none;display:inline-block;margin-top:8px;">View Proposals</a>`
     )
 
     res.json({ success: true })
@@ -216,17 +232,13 @@ router.post('/proposal/:token/decline', async (req, res) => {
       [proposal.id, 'declined', reason || null, req.ip]
     )
 
-    const baseUrl = process.env.REPLIT_DOMAINS
-      ? `https://${process.env.REPLIT_DOMAINS.split(',')[0]}`
-      : 'http://localhost:5000'
-
     sendFreelancerEmail(
       proposal.owner_email,
       `Proposal declined: ${proposal.title}`,
       `<h2>Your proposal was declined.</h2>
        <p><strong>${proposal.client_name || 'Your client'}</strong> has declined your proposal: <strong>${proposal.title}</strong>.</p>
        ${reason ? `<p>Reason: <em>${reason}</em></p>` : ''}
-       <a href="${baseUrl}/proposals" style="background:#6366f1;color:white;padding:12px 24px;border-radius:6px;text-decoration:none;display:inline-block;margin-top:16px;">View Proposals</a>`
+       <a href="${getBaseUrl()}/proposals" style="background:#6366f1;color:white;padding:12px 24px;border-radius:6px;text-decoration:none;display:inline-block;margin-top:16px;">View Proposals</a>`
     )
 
     res.json({ success: true })

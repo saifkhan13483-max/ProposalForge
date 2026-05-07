@@ -16,6 +16,7 @@ import { ProposalDetail } from '@/pages/ProposalDetail'
 import { Invoices } from '@/pages/Invoices'
 import { InvoiceDetail } from '@/pages/InvoiceDetail'
 import { Clients } from '@/pages/Clients'
+import { ClientDetail } from '@/pages/ClientDetail'
 import { Settings } from '@/pages/Settings'
 import { PublicProposal } from '@/pages/PublicProposal'
 import { Demo } from '@/pages/Demo'
@@ -95,11 +96,20 @@ function AppRoutes() {
       <Route path="/proposals">
         <ProtectedRoute><Proposals /></ProtectedRoute>
       </Route>
+      <Route path="/invoices/new">
+        <ProtectedRoute><Invoices /></ProtectedRoute>
+      </Route>
       <Route path="/invoices/:id">
         <ProtectedRoute><InvoiceDetail /></ProtectedRoute>
       </Route>
       <Route path="/invoices">
         <ProtectedRoute><Invoices /></ProtectedRoute>
+      </Route>
+      <Route path="/clients/new">
+        <ProtectedRoute><Clients /></ProtectedRoute>
+      </Route>
+      <Route path="/clients/:id">
+        <ProtectedRoute><ClientDetail /></ProtectedRoute>
       </Route>
       <Route path="/clients">
         <ProtectedRoute><Clients /></ProtectedRoute>

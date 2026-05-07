@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { useRoute, useLocation } from 'wouter'
+import { useRoute, useLocation, useSearch } from 'wouter'
 import { api } from '@/lib/api'
 import { formatCurrency, formatDate, getStatusColor } from '@/lib/utils'
 import { Button } from '@/components/ui/button'
@@ -50,6 +50,7 @@ const PROJECT_TYPES = ['web-development', 'design', 'marketing', 'consulting', '
 export function ProposalDetail() {
   const [, params] = useRoute('/proposals/:id')
   const [, setLocation] = useLocation()
+  const searchString = useSearch()
   const { toast } = useToast()
 
   const [proposal, setProposal] = useState<Proposal | null>(null)
@@ -66,6 +67,7 @@ export function ProposalDetail() {
   const [regenerateInstructions, setRegenerateInstructions] = useState('')
   const [showRegenerateDialog, setShowRegenerateDialog] = useState<string | null>(null)
   const [comments, setComments] = useState<{ id: string; comment: string; commenter_name: string | null; created_at: string }[]>([])
+  const [timelineContent, setTimelineContent] = useState('')
 
   const [form, setForm] = useState({
     title: '',
@@ -114,6 +116,7 @@ export function ProposalDetail() {
         executiveSummaryEditor?.commands.setContent((content.executiveSummary as string) || '')
         scopeEditor?.commands.setContent((content.scopeOfWork as string) || '')
         termsEditor?.commands.setContent((content.terms as string) || '')
+        setTimelineContent((content.timeline as string) || '')
         if (data.proposal.content && Object.keys(data.proposal.content).length > 0) {
           setActiveTab('proposal')
         }
@@ -125,6 +128,13 @@ export function ProposalDetail() {
       .then(data => setComments(data.comments || []))
       .catch(() => {})
   }, [params?.id])
+
+  // Auto-open send dialog if ?action=send is in URL
+  useEffect(() => {
+    if (searchString?.includes('action=send') && !loading && proposal) {
+      setShowSendDialog(true)
+    }
+  }, [searchString, loading, proposal])
 
   async function saveBasics() {
     if (!proposal) return
@@ -178,6 +188,7 @@ export function ProposalDetail() {
         executiveSummary: executiveSummaryEditor?.getHTML() || '',
         scopeOfWork: scopeEditor?.getHTML() || '',
         terms: termsEditor?.getHTML() || '',
+        timeline: timelineContent,
       }
       await api.put(`/proposals/${proposal.id}`, { content })
       await api.put(`/proposals/${proposal.id}/line-items`, { lineItems })
@@ -199,6 +210,7 @@ export function ProposalDetail() {
       if (section === 'executiveSummary') executiveSummaryEditor?.commands.setContent((data.content.executiveSummary as string) || '')
       if (section === 'scopeOfWork') scopeEditor?.commands.setContent((data.content.scopeOfWork as string) || '')
       if (section === 'terms') termsEditor?.commands.setContent((data.content.terms as string) || '')
+      if (section === 'timeline') setTimelineContent((data.content.timeline as string) || '')
       toast({ title: 'Section regenerated' })
     } catch (err) {
       toast({ title: 'Error', description: (err as Error).message, variant: 'destructive' })
@@ -333,7 +345,8 @@ export function ProposalDetail() {
               className="gap-2"
               data-testid="button-send-proposal"
             >
-              <Send className="h-4 w-4" /> Send
+              <Send className="h-4 w-4" />
+              {proposal.status === 'draft' ? 'Send' : 'Resend'}
             </Button>
           )}
         </div>
@@ -470,6 +483,36 @@ export function ProposalDetail() {
                   </CardContent>
                 </Card>
               ))}
+
+              {/* Timeline */}
+              <Card>
+                <CardHeader className="pb-2 flex-row items-center justify-between space-y-0">
+                  <CardTitle className="text-sm font-semibold">Project Timeline</CardTitle>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => setShowRegenerateDialog('timeline')}
+                    disabled={regeneratingSection === 'timeline'}
+                    className="gap-1.5 text-xs"
+                    data-testid="button-regenerate-timeline"
+                  >
+                    {regeneratingSection === 'timeline'
+                      ? <Loader2 className="h-3 w-3 animate-spin" />
+                      : <RotateCw className="h-3 w-3" />
+                    }
+                    Regenerate
+                  </Button>
+                </CardHeader>
+                <CardContent>
+                  <Textarea
+                    value={timelineContent}
+                    onChange={e => setTimelineContent(e.target.value)}
+                    placeholder="Describe the project timeline and milestones..."
+                    className="min-h-[100px] text-sm"
+                    data-testid="textarea-timeline"
+                  />
+                </CardContent>
+              </Card>
 
               {/* Deliverables */}
               {proposal.content?.deliverables && (

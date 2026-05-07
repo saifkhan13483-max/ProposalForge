@@ -5,7 +5,6 @@ import { api } from '@/lib/api'
 import { formatCurrency, formatDate, getStatusColor } from '@/lib/utils'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
-import { Badge } from '@/components/ui/badge'
 import {
   DollarSign, FileText, TrendingUp, Users, Plus, ArrowRight,
   Loader2, Sparkles, Receipt, Clock
@@ -134,8 +133,8 @@ export function Dashboard() {
         <Card className="lg:col-span-2">
           <CardHeader className="flex flex-row items-center justify-between pb-3">
             <CardTitle className="text-base font-semibold">Recent Activity</CardTitle>
-            <Link href="/proposals">
-              <a className="text-xs text-primary hover:underline flex items-center gap-1">View all <ArrowRight className="h-3 w-3" /></a>
+            <Link href="/proposals" className="text-xs text-primary hover:underline flex items-center gap-1">
+              View all <ArrowRight className="h-3 w-3" />
             </Link>
           </CardHeader>
           <CardContent>
@@ -152,30 +151,32 @@ export function Dashboard() {
             ) : (
               <div className="space-y-2">
                 {activity.map((item, i) => (
-                  <Link key={i} href={`/${item.type}s/${item.id}`}>
-                    <a className="flex items-center justify-between p-3 rounded-lg hover:bg-muted/50 transition-colors group">
-                      <div className="flex items-center gap-3">
-                        <div className={cn(
-                          'h-8 w-8 rounded-lg flex items-center justify-center',
-                          item.type === 'proposal' ? 'bg-blue-50 dark:bg-blue-900/20' : 'bg-green-50 dark:bg-green-900/20'
-                        )}>
-                          {item.type === 'proposal'
-                            ? <FileText className="h-4 w-4 text-blue-600" />
-                            : <Receipt className="h-4 w-4 text-green-600" />
-                          }
-                        </div>
-                        <div>
-                          <p className="text-sm font-medium group-hover:text-primary transition-colors">{item.title}</p>
-                          <p className="text-xs text-muted-foreground">{formatDate(item.date)}</p>
-                        </div>
+                  <Link
+                    key={i}
+                    href={`/${item.type}s/${item.id}`}
+                    className="flex items-center justify-between p-3 rounded-lg hover:bg-muted/50 transition-colors group"
+                  >
+                    <div className="flex items-center gap-3">
+                      <div className={cn(
+                        'h-8 w-8 rounded-lg flex items-center justify-center',
+                        item.type === 'proposal' ? 'bg-blue-50 dark:bg-blue-900/20' : 'bg-green-50 dark:bg-green-900/20'
+                      )}>
+                        {item.type === 'proposal'
+                          ? <FileText className="h-4 w-4 text-blue-600" />
+                          : <Receipt className="h-4 w-4 text-green-600" />
+                        }
                       </div>
-                      <div className="flex items-center gap-3">
-                        <span className={cn('text-xs px-2 py-0.5 rounded-full font-medium capitalize', getStatusColor(item.status))}>
-                          {item.status}
-                        </span>
-                        <span className="text-sm font-semibold">{formatCurrency(item.amount || 0)}</span>
+                      <div>
+                        <p className="text-sm font-medium group-hover:text-primary transition-colors">{item.title}</p>
+                        <p className="text-xs text-muted-foreground">{formatDate(item.date)}</p>
                       </div>
-                    </a>
+                    </div>
+                    <div className="flex items-center gap-3">
+                      <span className={cn('text-xs px-2 py-0.5 rounded-full font-medium capitalize', getStatusColor(item.status))}>
+                        {item.status}
+                      </span>
+                      <span className="text-sm font-semibold">{formatCurrency(item.amount || 0)}</span>
+                    </div>
                   </Link>
                 ))}
               </div>
@@ -192,23 +193,23 @@ export function Dashboard() {
             <CardContent className="space-y-2">
               {[
                 { href: '/proposals/new', icon: FileText, label: 'New Proposal', desc: 'AI-powered in 60s' },
-                { href: '/invoices/new', icon: Receipt, label: 'New Invoice', desc: 'Manual invoice' },
-                { href: '/clients/new', icon: Users, label: 'Add Client', desc: 'Save client info' },
+                { href: '/invoices', icon: Receipt, label: 'New Invoice', desc: 'Manual invoice' },
+                { href: '/clients', icon: Users, label: 'Add Client', desc: 'Save client info' },
               ].map(({ href, icon: Icon, label, desc }) => (
-                <Link key={href} href={href}>
-                  <a
-                    data-testid={`quick-action-${label.toLowerCase().replace(' ', '-')}`}
-                    className="flex items-center gap-3 p-3 rounded-lg hover:bg-muted/50 transition-colors group border border-transparent hover:border-border"
-                  >
-                    <div className="h-8 w-8 rounded-lg bg-primary/10 flex items-center justify-center">
-                      <Icon className="h-4 w-4 text-primary" />
-                    </div>
-                    <div>
-                      <p className="text-sm font-medium">{label}</p>
-                      <p className="text-xs text-muted-foreground">{desc}</p>
-                    </div>
-                    <ArrowRight className="h-4 w-4 text-muted-foreground ml-auto opacity-0 group-hover:opacity-100 transition-opacity" />
-                  </a>
+                <Link
+                  key={href}
+                  href={href}
+                  data-testid={`quick-action-${label.toLowerCase().replace(' ', '-')}`}
+                  className="flex items-center gap-3 p-3 rounded-lg hover:bg-muted/50 transition-colors group border border-transparent hover:border-border"
+                >
+                  <div className="h-8 w-8 rounded-lg bg-primary/10 flex items-center justify-center">
+                    <Icon className="h-4 w-4 text-primary" />
+                  </div>
+                  <div>
+                    <p className="text-sm font-medium">{label}</p>
+                    <p className="text-xs text-muted-foreground">{desc}</p>
+                  </div>
+                  <ArrowRight className="h-4 w-4 text-muted-foreground ml-auto opacity-0 group-hover:opacity-100 transition-opacity" />
                 </Link>
               ))}
             </CardContent>

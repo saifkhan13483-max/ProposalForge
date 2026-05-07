@@ -6,11 +6,11 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from '@/components/ui/dropdown-menu'
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog'
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogDescription } from '@/components/ui/dialog'
 import { Label } from '@/components/ui/label'
 import {
   Plus, Search, MoreHorizontal, Trash2, CheckCircle,
-  Loader2, Receipt, CreditCard, ExternalLink
+  Loader2, Receipt, CreditCard
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { useToast } from '@/hooks/use-toast'
@@ -186,10 +186,11 @@ export function Invoices() {
                 <Receipt className="h-5 w-5 text-green-600" />
               </div>
               <div className="flex-1 min-w-0">
-                <Link href={`/invoices/${invoice.id}`}>
-                  <a className="font-semibold text-sm hover:text-primary transition-colors">
-                    {invoice.invoice_number}
-                  </a>
+                <Link
+                  href={`/invoices/${invoice.id}`}
+                  className="font-semibold text-sm hover:text-primary transition-colors"
+                >
+                  {invoice.invoice_number}
                 </Link>
                 <p className="text-xs text-muted-foreground mt-0.5">
                   {invoice.client_name || 'No client'} · Due {formatDate(invoice.due_date)}
@@ -240,6 +241,7 @@ export function Invoices() {
         <DialogContent>
           <DialogHeader>
             <DialogTitle>Create Invoice</DialogTitle>
+            <DialogDescription>Fill in the client details to create a new invoice.</DialogDescription>
           </DialogHeader>
           <div className="space-y-4 py-2">
             <div className="space-y-2">

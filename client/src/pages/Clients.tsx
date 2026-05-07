@@ -4,7 +4,7 @@ import { api } from '@/lib/api'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog'
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogDescription } from '@/components/ui/dialog'
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu'
 import { Card, CardContent } from '@/components/ui/card'
 import { Plus, Search, MoreHorizontal, Trash2, Users, Loader2, FileText, Receipt, Pencil } from 'lucide-react'
@@ -151,18 +151,18 @@ export function Clients() {
       ) : (
         <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4">
           {filtered.map(client => (
-            <Card key={client.id} data-testid={`client-card-${client.id}`} className="hover:shadow-md transition-shadow">
+            <Card key={client.id} data-testid={`client-card-${client.id}`} className="hover:shadow-md transition-shadow cursor-pointer group">
               <CardContent className="p-5">
                 <div className="flex items-start justify-between gap-2">
-                  <div className="flex items-center gap-3">
+                  <Link href={`/clients/${client.id}`} className="flex items-center gap-3 flex-1 min-w-0">
                     <div className="h-10 w-10 rounded-full bg-primary/10 flex items-center justify-center text-primary font-semibold text-sm shrink-0">
                       {client.name[0]?.toUpperCase()}
                     </div>
                     <div className="min-w-0">
-                      <p className="font-semibold text-sm truncate">{client.name}</p>
+                      <p className="font-semibold text-sm truncate group-hover:text-primary transition-colors">{client.name}</p>
                       {client.company && <p className="text-xs text-muted-foreground truncate">{client.company}</p>}
                     </div>
-                  </div>
+                  </Link>
                   <DropdownMenu>
                     <DropdownMenuTrigger asChild>
                       <Button variant="ghost" size="icon" className="h-8 w-8 shrink-0">
@@ -208,6 +208,7 @@ export function Clients() {
         <DialogContent>
           <DialogHeader>
             <DialogTitle>{editingId ? 'Edit Client' : 'Add Client'}</DialogTitle>
+            <DialogDescription>Fill in the client's contact information.</DialogDescription>
           </DialogHeader>
           <div className="space-y-4 py-2">
             <div className="space-y-2">

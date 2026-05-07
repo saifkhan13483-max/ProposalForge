@@ -61,6 +61,53 @@ router.get('/:id', async (req: AuthRequest, res) => {
   }
 })
 
+// Get proposals for a client
+router.get('/:id/proposals', async (req: AuthRequest, res) => {
+  try {
+    const clientCheck = await query(
+      'SELECT id FROM clients WHERE id = $1 AND user_id = $2',
+      [req.params.id, req.userId]
+    )
+    if (clientCheck.rows.length === 0) return res.status(404).json({ error: 'Client not found' })
+
+    const result = await query(
+      `SELECT id, title, status, total_amount, created_at, sent_at, accepted_at
+       FROM proposals
+       WHERE (client_id = $1 OR (user_id = $2 AND client_email = (SELECT email FROM clients WHERE id = $1)))
+         AND (archived = FALSE OR archived IS NULL)
+       ORDER BY created_at DESC`,
+      [req.params.id, req.userId]
+    )
+    res.json({ proposals: result.rows })
+  } catch (err) {
+    console.error('Get client proposals error:', err)
+    res.status(500).json({ error: 'Failed to get client proposals' })
+  }
+})
+
+// Get invoices for a client
+router.get('/:id/invoices', async (req: AuthRequest, res) => {
+  try {
+    const clientCheck = await query(
+      'SELECT id FROM clients WHERE id = $1 AND user_id = $2',
+      [req.params.id, req.userId]
+    )
+    if (clientCheck.rows.length === 0) return res.status(404).json({ error: 'Client not found' })
+
+    const result = await query(
+      `SELECT id, invoice_number, status, total, due_date, paid_at, created_at
+       FROM invoices
+       WHERE (client_id = $1 OR (user_id = $2 AND client_email = (SELECT email FROM clients WHERE id = $1)))
+       ORDER BY created_at DESC`,
+      [req.params.id, req.userId]
+    )
+    res.json({ invoices: result.rows })
+  } catch (err) {
+    console.error('Get client invoices error:', err)
+    res.status(500).json({ error: 'Failed to get client invoices' })
+  }
+})
+
 // Update client
 router.put('/:id', async (req: AuthRequest, res) => {
   try {

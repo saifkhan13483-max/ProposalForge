@@ -4,7 +4,6 @@ import { api } from '@/lib/api'
 import { formatCurrency, formatDate, getStatusColor } from '@/lib/utils'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
-import { Badge } from '@/components/ui/badge'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from '@/components/ui/dropdown-menu'
 import {
@@ -213,10 +212,11 @@ export function Proposals() {
               </div>
 
               <div className="flex-1 min-w-0">
-                <Link href={`/proposals/${proposal.id}`}>
-                  <a className="font-medium text-sm hover:text-primary transition-colors truncate block">
-                    {proposal.title}
-                  </a>
+                <Link
+                  href={`/proposals/${proposal.id}`}
+                  className="font-medium text-sm hover:text-primary transition-colors truncate block"
+                >
+                  {proposal.title}
                 </Link>
                 <div className="flex items-center gap-2 mt-0.5">
                   <span className="text-xs text-muted-foreground truncate">
@@ -251,9 +251,9 @@ export function Proposals() {
                   <DropdownMenuItem onClick={() => setLocation(`/proposals/${proposal.id}`)}>
                     <Eye className="h-4 w-4" /> View / Edit
                   </DropdownMenuItem>
-                  {!showArchived && proposal.status === 'draft' && (
+                  {!showArchived && proposal.status !== 'accepted' && (
                     <DropdownMenuItem onClick={() => setLocation(`/proposals/${proposal.id}?action=send`)}>
-                      <Send className="h-4 w-4" /> Send to Client
+                      <Send className="h-4 w-4" /> {proposal.status === 'draft' ? 'Send to Client' : 'Resend to Client'}
                     </DropdownMenuItem>
                   )}
                   {!showArchived && (proposal.total_amount || 0) > 0 && (

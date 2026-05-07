@@ -62,13 +62,14 @@ AI-powered client proposal and invoice generator SaaS for freelancers — turns 
 - **Auth**: Email/password + Google OAuth; registration triggers 3-step onboarding wizard
 - **Onboarding**: 3-step wizard (business name → logo + accent color → default currency) at `/onboarding`
 - **Dashboard**: Revenue, acceptance rate, outstanding invoices, activity feed; time-aware greeting
-- **Proposals**: Create → AI-generate → edit with Tiptap → regenerate sections → download PDF → send via email → client accepts with e-signature; archive/unarchive support; PDF download in list dropdown; client feedback panel shows change requests from clients
+- **Proposals**: Create → AI-generate → edit with Tiptap + timeline textarea → regenerate sections → download PDF → send via email → client accepts with e-signature; archive/unarchive support; PDF download in list dropdown; client feedback panel shows change requests; "Resend" button for already-sent proposals; `?action=send` URL param auto-opens send dialog
 - **Invoices**: Manual creation or auto-generated on proposal acceptance; Stripe checkout links; PDF download; "Send" button emails invoice to client; overdue auto-detection in list
-- **Clients**: Contact book with proposal/invoice counts
+- **Clients**: Contact book with proposal/invoice counts; client cards link to detail page at `/clients/:id`
+- **Client Detail**: `/clients/:id` — contact info + all associated proposals + all invoices for that client; edit client inline
 - **Settings**: Logo upload, business profile (name, color, currency) + Pro upgrade (Stripe)
 - **Public page**: Branded proposal view with accept/e-signature + PDF download; comment thread (Pro only); free-tier branding banner for non-Pro users
 - **Demo**: `/demo` — anonymous try-without-signup experience (1 proposal per IP/day)
-- **Email notifications**: Freelancer receives email (via Resend) when client accepts proposal or submits change request
+- **Email notifications**: Freelancer receives email (via Resend) when client views, accepts, requests changes, or declines a proposal
 
 ## User preferences
 

@@ -43,20 +43,20 @@ export function Layout({ children }: { children: React.ReactNode }) {
           {navItems.map(({ href, label, icon: Icon }) => {
             const active = location === href || location.startsWith(href + '/')
             return (
-              <Link key={href} href={href}>
-                <a
-                  onClick={() => setMobileOpen(false)}
-                  className={cn(
-                    'flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors',
-                    active
-                      ? 'bg-sidebar-accent text-sidebar-accent-foreground'
-                      : 'text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground'
-                  )}
-                  data-testid={`nav-${label.toLowerCase()}`}
-                >
-                  <Icon className="h-4 w-4 shrink-0" />
-                  {label}
-                </a>
+              <Link
+                key={href}
+                href={href}
+                onClick={() => setMobileOpen(false)}
+                className={cn(
+                  'flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors',
+                  active
+                    ? 'bg-sidebar-accent text-sidebar-accent-foreground'
+                    : 'text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground'
+                )}
+                data-testid={`nav-${label.toLowerCase()}`}
+              >
+                <Icon className="h-4 w-4 shrink-0" />
+                {label}
               </Link>
             )
           })}
@@ -72,8 +72,8 @@ export function Layout({ children }: { children: React.ReactNode }) {
             <p className="text-xs text-sidebar-foreground/70 mb-2">
               {user.proposals_this_month}/3 proposals used
             </p>
-            <Link href="/settings">
-              <a className="text-xs font-medium text-primary hover:underline">Upgrade now →</a>
+            <Link href="/settings" className="text-xs font-medium text-primary hover:underline">
+              Upgrade now →
             </Link>
           </div>
         )}
@@ -100,10 +100,8 @@ export function Layout({ children }: { children: React.ReactNode }) {
             </DropdownMenuTrigger>
             <DropdownMenuContent className="w-52" align="end" side="top">
               <DropdownMenuItem asChild>
-                <Link href="/settings">
-                  <a className="flex items-center gap-2 cursor-pointer">
-                    <Settings className="h-4 w-4" /> Settings
-                  </a>
+                <Link href="/settings" className="flex items-center gap-2 cursor-pointer">
+                  <Settings className="h-4 w-4" /> Settings
                 </Link>
               </DropdownMenuItem>
               <DropdownMenuSeparator />
