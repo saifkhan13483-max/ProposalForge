@@ -500,7 +500,7 @@ export function ProposalDetail() {
                   {saving ? <Loader2 className="h-4 w-4 animate-spin" /> : <Save className="h-4 w-4" />}
                   Save Details
                 </Button>
-                <Button onClick={generateAI} disabled={generating || !form.projectDescription} className="gap-2 min-w-[220px]" data-testid="button-generate">
+                <Button onClick={generateAI} disabled={generating || !form.projectDescription} className="gap-2 flex-1 sm:flex-none sm:min-w-[220px]" data-testid="button-generate">
                   {generating ? <Loader2 className="h-4 w-4 animate-spin" /> : <Sparkles className="h-4 w-4" />}
                   {generating ? generatingStep || 'Generating...' : 'Generate Proposal with AI'}
                 </Button>

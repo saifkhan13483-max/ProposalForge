@@ -105,28 +105,28 @@ export function ClientDetail() {
   if (!client) return <div className="p-8 text-center text-muted-foreground">Client not found</div>
 
   return (
-    <div className="max-w-5xl mx-auto p-6 lg:p-8 space-y-6">
+    <div className="max-w-5xl mx-auto p-4 sm:p-6 lg:p-8 space-y-6">
       {/* Header */}
-      <div className="flex items-start gap-4">
+      <div className="flex items-start gap-3 sm:gap-4">
         <Button variant="ghost" size="icon" onClick={() => setLocation('/clients')} className="shrink-0 mt-1">
           <ArrowLeft className="h-4 w-4" />
         </Button>
         <div className="flex-1 min-w-0">
-          <h1 className="text-2xl font-bold truncate" style={{ fontFamily: 'Bricolage Grotesque, sans-serif' }}>
+          <h1 className="text-xl sm:text-2xl font-bold truncate" style={{ fontFamily: 'Bricolage Grotesque, sans-serif' }}>
             {client.name}
           </h1>
           {client.company && (
-            <p className="text-muted-foreground mt-0.5">{client.company}</p>
+            <p className="text-muted-foreground mt-0.5 text-sm sm:text-base">{client.company}</p>
           )}
         </div>
-        <div className="flex items-center gap-2 shrink-0">
+        <div className="flex items-center gap-1.5 sm:gap-2 shrink-0">
           <Link href="/proposals/new">
-            <Button variant="outline" className="gap-2">
-              <Plus className="h-4 w-4" /> New Proposal
+            <Button variant="outline" size="sm" className="gap-1.5 sm:gap-2 text-xs sm:text-sm px-2 sm:px-3">
+              <Plus className="h-3.5 w-3.5 sm:h-4 sm:w-4" /> <span className="hidden sm:inline">New </span>Proposal
             </Button>
           </Link>
-          <Button variant="outline" onClick={() => setShowEdit(true)} className="gap-2">
-            <Pencil className="h-4 w-4" /> Edit
+          <Button variant="outline" size="sm" onClick={() => setShowEdit(true)} className="gap-1.5 sm:gap-2 text-xs sm:text-sm px-2 sm:px-3">
+            <Pencil className="h-3.5 w-3.5 sm:h-4 sm:w-4" /> Edit
           </Button>
         </div>
       </div>
@@ -289,7 +289,7 @@ export function ClientDetail() {
               <Label>Name *</Label>
               <Input value={form.name} onChange={e => setForm(f => ({ ...f, name: e.target.value }))} placeholder="John Smith" />
             </div>
-            <div className="grid grid-cols-2 gap-3">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
               <div className="space-y-2">
                 <Label>Email</Label>
                 <Input type="email" value={form.email} onChange={e => setForm(f => ({ ...f, email: e.target.value }))} placeholder="john@example.com" />

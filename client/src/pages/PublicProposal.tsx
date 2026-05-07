@@ -187,55 +187,55 @@ export function PublicProposal() {
 
       {/* Header bar */}
       <div className="border-b bg-white sticky top-0 z-10 shadow-sm">
-        <div className="max-w-4xl mx-auto px-6 py-4 flex items-center justify-between">
-          <div className="flex items-center gap-3">
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 py-3 sm:py-4 flex items-center justify-between gap-3">
+          <div className="flex items-center gap-2 sm:gap-3 min-w-0">
             {proposal.logo_url ? (
-              <img src={proposal.logo_url} alt={proposal.business_name} className="h-8 w-auto object-contain" />
+              <img src={proposal.logo_url} alt={proposal.business_name} className="h-7 sm:h-8 w-auto object-contain shrink-0" />
             ) : (
-              <div className="h-8 w-8 rounded-lg flex items-center justify-center" style={{ backgroundColor: accentColor }}>
-                <Sparkles className="h-4 w-4 text-white" />
+              <div className="h-7 w-7 sm:h-8 sm:w-8 rounded-lg flex items-center justify-center shrink-0" style={{ backgroundColor: accentColor }}>
+                <Sparkles className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-white" />
               </div>
             )}
-            <span className="font-semibold text-gray-900">{proposal.business_name || 'Proposal'}</span>
+            <span className="font-semibold text-gray-900 truncate text-sm sm:text-base">{proposal.business_name || 'Proposal'}</span>
           </div>
-          <div className="flex items-center gap-2 flex-wrap">
+          <div className="flex items-center gap-1.5 sm:gap-2 shrink-0 flex-wrap justify-end">
             <a
               href={`/api/public/proposal/${params?.token}/pdf`}
               download
-              className="inline-flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium rounded-md border bg-white hover:bg-gray-50 transition-colors text-gray-700"
+              className="inline-flex items-center gap-1 sm:gap-1.5 px-2 sm:px-3 py-1.5 text-xs sm:text-sm font-medium rounded-md border bg-white hover:bg-gray-50 transition-colors text-gray-700"
               data-testid="button-download-pdf"
             >
-              <Download className="h-4 w-4" /> Download PDF
+              <Download className="h-3.5 w-3.5 sm:h-4 sm:w-4" /> <span className="hidden sm:inline">Download </span>PDF
             </a>
             {!accepted && !declined && (
               <>
                 {proposal.plan === 'pro' && (
-                  <Button variant="outline" size="sm" onClick={() => setShowComment(true)} className="gap-2">
-                    <MessageSquare className="h-4 w-4" /> Request Changes
+                  <Button variant="outline" size="sm" onClick={() => setShowComment(true)} className="gap-1 sm:gap-2 text-xs sm:text-sm px-2 sm:px-3">
+                    <MessageSquare className="h-3.5 w-3.5 sm:h-4 sm:w-4" /> <span className="hidden sm:inline">Request </span>Changes
                   </Button>
                 )}
-                <Button variant="outline" size="sm" onClick={() => setShowDecline(true)} className="gap-2 text-red-600 border-red-200 hover:bg-red-50 hover:text-red-700">
+                <Button variant="outline" size="sm" onClick={() => setShowDecline(true)} className="gap-1 text-xs sm:text-sm px-2 sm:px-3 text-red-600 border-red-200 hover:bg-red-50 hover:text-red-700">
                   Decline
                 </Button>
                 <Button
                   size="sm"
                   onClick={() => setShowAccept(true)}
-                  className="gap-2"
+                  className="gap-1 sm:gap-2 text-xs sm:text-sm px-2 sm:px-3"
                   style={{ backgroundColor: accentColor, color: 'white', borderColor: accentColor }}
                   data-testid="button-accept-proposal"
                 >
-                  <CheckCircle className="h-4 w-4" /> Accept Proposal
+                  <CheckCircle className="h-3.5 w-3.5 sm:h-4 sm:w-4" /> Accept
                 </Button>
               </>
             )}
             {declined && (
-              <span className="inline-flex items-center text-sm font-medium text-red-700 bg-red-100 px-3 py-1.5 rounded-full">
+              <span className="inline-flex items-center text-xs sm:text-sm font-medium text-red-700 bg-red-100 px-2 sm:px-3 py-1.5 rounded-full">
                 Declined
               </span>
             )}
             {accepted && (
-              <span className="inline-flex items-center gap-2 text-sm font-medium text-green-700 bg-green-100 px-3 py-1.5 rounded-full">
-                <CheckCircle className="h-4 w-4" /> Accepted
+              <span className="inline-flex items-center gap-1 sm:gap-2 text-xs sm:text-sm font-medium text-green-700 bg-green-100 px-2 sm:px-3 py-1.5 rounded-full">
+                <CheckCircle className="h-3.5 w-3.5 sm:h-4 sm:w-4" /> Accepted
               </span>
             )}
           </div>
@@ -243,12 +243,12 @@ export function PublicProposal() {
       </div>
 
       {/* Main content */}
-      <div className="max-w-4xl mx-auto px-6 py-10 space-y-8" style={{ fontFamily: bodyFont }}>
+      <div className="max-w-4xl mx-auto px-4 sm:px-6 py-6 sm:py-10 space-y-5 sm:space-y-8" style={{ fontFamily: bodyFont }}>
         {/* Title */}
-        <div className="bg-white rounded-2xl border p-8 shadow-sm">
-          <div className="flex items-start justify-between gap-4">
-            <div>
-              <h1 className="text-3xl font-bold text-gray-900 mb-2" style={{ fontFamily: 'Bricolage Grotesque, sans-serif' }}>
+        <div className="bg-white rounded-2xl border p-4 sm:p-8 shadow-sm">
+          <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3 sm:gap-4">
+            <div className="min-w-0">
+              <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-2" style={{ fontFamily: 'Bricolage Grotesque, sans-serif' }}>
                 {proposal.title}
               </h1>
               <p className="text-gray-500">Prepared for {proposal.client_name}</p>
@@ -256,9 +256,9 @@ export function PublicProposal() {
                 <p className="text-sm text-green-600 mt-1">Accepted on {formatDate(proposal.accepted_at)}</p>
               )}
             </div>
-            <div className="text-right">
+            <div className="sm:text-right shrink-0">
               <p className="text-xs text-gray-400 uppercase tracking-wide mb-1">Total Value</p>
-              <p className="text-2xl font-bold text-gray-900">{formatCurrency(proposal.total_amount || 0)}</p>
+              <p className="text-xl sm:text-2xl font-bold text-gray-900">{formatCurrency(proposal.total_amount || 0)}</p>
             </div>
           </div>
 
@@ -272,32 +272,32 @@ export function PublicProposal() {
 
         {/* Executive Summary */}
         {content.executiveSummary && (
-          <div className="bg-white rounded-2xl border p-8 shadow-sm">
-            <h2 className="text-xl font-bold mb-4" style={{ fontFamily: 'Bricolage Grotesque, sans-serif' }}>Executive Summary</h2>
+          <div className="bg-white rounded-2xl border p-4 sm:p-8 shadow-sm">
+            <h2 className="text-lg sm:text-xl font-bold mb-3 sm:mb-4" style={{ fontFamily: 'Bricolage Grotesque, sans-serif' }}>Executive Summary</h2>
             <div className="prose prose-gray max-w-none" dangerouslySetInnerHTML={{ __html: content.executiveSummary as string }} />
           </div>
         )}
 
         {/* Scope of Work */}
         {content.scopeOfWork && (
-          <div className="bg-white rounded-2xl border p-8 shadow-sm">
-            <h2 className="text-xl font-bold mb-4" style={{ fontFamily: 'Bricolage Grotesque, sans-serif' }}>Scope of Work</h2>
+          <div className="bg-white rounded-2xl border p-4 sm:p-8 shadow-sm">
+            <h2 className="text-lg sm:text-xl font-bold mb-3 sm:mb-4" style={{ fontFamily: 'Bricolage Grotesque, sans-serif' }}>Scope of Work</h2>
             <div className="prose prose-gray max-w-none" dangerouslySetInnerHTML={{ __html: content.scopeOfWork as string }} />
           </div>
         )}
 
         {/* Timeline */}
         {content.timeline && (
-          <div className="bg-white rounded-2xl border p-8 shadow-sm">
-            <h2 className="text-xl font-bold mb-4" style={{ fontFamily: 'Bricolage Grotesque, sans-serif' }}>Project Timeline</h2>
+          <div className="bg-white rounded-2xl border p-4 sm:p-8 shadow-sm">
+            <h2 className="text-lg sm:text-xl font-bold mb-3 sm:mb-4" style={{ fontFamily: 'Bricolage Grotesque, sans-serif' }}>Project Timeline</h2>
             <div className="prose prose-gray max-w-none" dangerouslySetInnerHTML={{ __html: content.timeline as string }} />
           </div>
         )}
 
         {/* Deliverables */}
         {content.deliverables && (
-          <div className="bg-white rounded-2xl border p-8 shadow-sm">
-            <h2 className="text-xl font-bold mb-4" style={{ fontFamily: 'Bricolage Grotesque, sans-serif' }}>Deliverables</h2>
+          <div className="bg-white rounded-2xl border p-4 sm:p-8 shadow-sm">
+            <h2 className="text-lg sm:text-xl font-bold mb-3 sm:mb-4" style={{ fontFamily: 'Bricolage Grotesque, sans-serif' }}>Deliverables</h2>
             <ul className="space-y-2">
               {(content.deliverables as string[]).map((d, i) => (
                 <li key={i} className="flex items-start gap-3">
@@ -311,49 +311,51 @@ export function PublicProposal() {
 
         {/* Quote */}
         {proposal.line_items?.length > 0 && (
-          <div className="bg-white rounded-2xl border p-8 shadow-sm">
-            <h2 className="text-xl font-bold mb-6" style={{ fontFamily: 'Bricolage Grotesque, sans-serif' }}>Project Quote</h2>
-            <table className="w-full">
-              <thead>
-                <tr className="border-b">
-                  <th className="text-left text-sm font-medium text-gray-500 pb-3">Description</th>
-                  <th className="text-right text-sm font-medium text-gray-500 pb-3">Qty</th>
-                  <th className="text-right text-sm font-medium text-gray-500 pb-3">Unit Price</th>
-                  <th className="text-right text-sm font-medium text-gray-500 pb-3">Total</th>
-                </tr>
-              </thead>
-              <tbody>
-                {proposal.line_items.map((item, i) => (
-                  <tr key={i} className="border-b last:border-0">
-                    <td className="py-3 text-gray-700">{item.description}</td>
-                    <td className="py-3 text-right text-gray-500">{item.quantity}</td>
-                    <td className="py-3 text-right text-gray-500">{formatCurrency(item.unit_price)}</td>
-                    <td className="py-3 text-right font-medium">{formatCurrency(item.quantity * item.unit_price)}</td>
+          <div className="bg-white rounded-2xl border p-4 sm:p-8 shadow-sm">
+            <h2 className="text-lg sm:text-xl font-bold mb-4 sm:mb-6" style={{ fontFamily: 'Bricolage Grotesque, sans-serif' }}>Project Quote</h2>
+            <div className="overflow-x-auto -mx-4 sm:mx-0 px-4 sm:px-0">
+              <table className="w-full min-w-[400px]">
+                <thead>
+                  <tr className="border-b">
+                    <th className="text-left text-sm font-medium text-gray-500 pb-3">Description</th>
+                    <th className="text-right text-sm font-medium text-gray-500 pb-3">Qty</th>
+                    <th className="text-right text-sm font-medium text-gray-500 pb-3">Unit Price</th>
+                    <th className="text-right text-sm font-medium text-gray-500 pb-3">Total</th>
                   </tr>
-                ))}
-              </tbody>
-              <tfoot>
-                <tr>
-                  <td colSpan={3} className="pt-4 text-right font-bold text-lg">Total</td>
-                  <td className="pt-4 text-right font-bold text-lg">{formatCurrency(proposal.total_amount || 0)}</td>
-                </tr>
-              </tfoot>
-            </table>
+                </thead>
+                <tbody>
+                  {proposal.line_items.map((item, i) => (
+                    <tr key={i} className="border-b last:border-0">
+                      <td className="py-3 text-gray-700 text-sm">{item.description}</td>
+                      <td className="py-3 text-right text-gray-500 text-sm">{item.quantity}</td>
+                      <td className="py-3 text-right text-gray-500 text-sm">{formatCurrency(item.unit_price)}</td>
+                      <td className="py-3 text-right font-medium text-sm">{formatCurrency(item.quantity * item.unit_price)}</td>
+                    </tr>
+                  ))}
+                </tbody>
+                <tfoot>
+                  <tr>
+                    <td colSpan={3} className="pt-4 text-right font-bold text-base sm:text-lg">Total</td>
+                    <td className="pt-4 text-right font-bold text-base sm:text-lg">{formatCurrency(proposal.total_amount || 0)}</td>
+                  </tr>
+                </tfoot>
+              </table>
+            </div>
           </div>
         )}
 
         {/* Terms */}
         {content.terms && (
-          <div className="bg-white rounded-2xl border p-8 shadow-sm">
-            <h2 className="text-xl font-bold mb-4" style={{ fontFamily: 'Bricolage Grotesque, sans-serif' }}>Terms & Conditions</h2>
+          <div className="bg-white rounded-2xl border p-4 sm:p-8 shadow-sm">
+            <h2 className="text-lg sm:text-xl font-bold mb-3 sm:mb-4" style={{ fontFamily: 'Bricolage Grotesque, sans-serif' }}>Terms & Conditions</h2>
             <div className="prose prose-gray max-w-none text-sm" dangerouslySetInnerHTML={{ __html: content.terms as string }} />
           </div>
         )}
 
         {/* Comment Thread — Pro only */}
         {proposal.plan === 'pro' && comments.length > 0 && (
-          <div className="bg-white rounded-2xl border p-8 shadow-sm">
-            <h2 className="text-xl font-bold mb-6 flex items-center gap-2" style={{ fontFamily: 'Bricolage Grotesque, sans-serif' }}>
+          <div className="bg-white rounded-2xl border p-4 sm:p-8 shadow-sm">
+            <h2 className="text-lg sm:text-xl font-bold mb-4 sm:mb-6 flex items-center gap-2" style={{ fontFamily: 'Bricolage Grotesque, sans-serif' }}>
               <MessageSquare className="h-5 w-5 text-gray-500" />
               Change Requests ({comments.length})
             </h2>
@@ -363,8 +365,8 @@ export function PublicProposal() {
                   <div className="h-8 w-8 rounded-full bg-gray-100 flex items-center justify-center shrink-0 text-sm font-medium text-gray-600">
                     {c.commenter_name ? c.commenter_name[0].toUpperCase() : '?'}
                   </div>
-                  <div className="flex-1 bg-gray-50 rounded-xl p-4">
-                    <div className="flex items-center gap-2 mb-1">
+                  <div className="flex-1 bg-gray-50 rounded-xl p-3 sm:p-4 min-w-0">
+                    <div className="flex items-center gap-2 mb-1 flex-wrap">
                       <span className="font-medium text-sm text-gray-900">
                         {c.commenter_name || 'Anonymous'}
                       </span>
@@ -383,22 +385,22 @@ export function PublicProposal() {
 
         {/* CTA */}
         {!accepted && !declined && (
-          <div className="bg-white rounded-2xl border p-8 shadow-sm text-center">
-            <h2 className="text-xl font-bold mb-2" style={{ fontFamily: 'Bricolage Grotesque, sans-serif' }}>Ready to move forward?</h2>
-            <p className="text-gray-500 mb-6">Accept this proposal to get started. An invoice will be generated automatically.</p>
-            <div className="flex items-center justify-center gap-3 flex-wrap">
+          <div className="bg-white rounded-2xl border p-4 sm:p-8 shadow-sm text-center">
+            <h2 className="text-lg sm:text-xl font-bold mb-2" style={{ fontFamily: 'Bricolage Grotesque, sans-serif' }}>Ready to move forward?</h2>
+            <p className="text-gray-500 mb-5 sm:mb-6 text-sm sm:text-base">Accept this proposal to get started. An invoice will be generated automatically.</p>
+            <div className="flex flex-col sm:flex-row items-center justify-center gap-2 sm:gap-3">
               {proposal.plan === 'pro' && (
-                <Button variant="outline" onClick={() => setShowComment(true)} className="gap-2">
+                <Button variant="outline" onClick={() => setShowComment(true)} className="gap-2 w-full sm:w-auto">
                   <MessageSquare className="h-4 w-4" /> Request Changes
                 </Button>
               )}
-              <Button variant="outline" onClick={() => setShowDecline(true)} className="gap-2 text-red-600 border-red-200 hover:bg-red-50 hover:text-red-700">
+              <Button variant="outline" onClick={() => setShowDecline(true)} className="gap-2 w-full sm:w-auto text-red-600 border-red-200 hover:bg-red-50 hover:text-red-700">
                 Decline
               </Button>
               <Button
                 onClick={() => setShowAccept(true)}
                 size="lg"
-                className="gap-2"
+                className="gap-2 w-full sm:w-auto"
                 style={{ backgroundColor: accentColor, color: 'white', borderColor: accentColor }}
                 data-testid="button-accept-proposal-bottom"
               >
@@ -409,17 +411,17 @@ export function PublicProposal() {
         )}
 
         {accepted && (
-          <div className="bg-green-50 border border-green-200 rounded-2xl p-8 text-center">
-            <CheckCircle className="h-12 w-12 text-green-600 mx-auto mb-4" />
-            <h2 className="text-xl font-bold text-green-800 mb-2">Proposal Accepted!</h2>
-            <p className="text-green-700">Thank you! The team has been notified and will be in touch soon.</p>
+          <div className="bg-green-50 border border-green-200 rounded-2xl p-4 sm:p-8 text-center">
+            <CheckCircle className="h-10 w-10 sm:h-12 sm:w-12 text-green-600 mx-auto mb-3 sm:mb-4" />
+            <h2 className="text-lg sm:text-xl font-bold text-green-800 mb-2">Proposal Accepted!</h2>
+            <p className="text-green-700 text-sm sm:text-base">Thank you! The team has been notified and will be in touch soon.</p>
           </div>
         )}
 
         {declined && (
-          <div className="bg-red-50 border border-red-200 rounded-2xl p-8 text-center">
-            <h2 className="text-xl font-bold text-red-800 mb-2">Proposal Declined</h2>
-            <p className="text-red-700">You have declined this proposal. The freelancer has been notified.</p>
+          <div className="bg-red-50 border border-red-200 rounded-2xl p-4 sm:p-8 text-center">
+            <h2 className="text-lg sm:text-xl font-bold text-red-800 mb-2">Proposal Declined</h2>
+            <p className="text-red-700 text-sm sm:text-base">You have declined this proposal. The freelancer has been notified.</p>
           </div>
         )}
 

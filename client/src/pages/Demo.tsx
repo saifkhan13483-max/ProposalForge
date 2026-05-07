@@ -67,10 +67,10 @@ export function Demo() {
   return (
     <div className="min-h-screen bg-white">
       <header className="sticky top-0 z-50 border-b bg-white/80 backdrop-blur-sm">
-        <div className="max-w-6xl mx-auto px-6 h-16 flex items-center justify-between">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">
           <Link href="/">
-            <div className="flex items-center gap-2.5 cursor-pointer">
-              <div className="h-8 w-8 rounded-lg bg-indigo-600 flex items-center justify-center">
+            <div className="flex items-center gap-2 sm:gap-2.5 cursor-pointer">
+              <div className="h-8 w-8 rounded-lg bg-indigo-600 flex items-center justify-center shrink-0">
                 <Sparkles className="h-4 w-4 text-white" />
               </div>
               <span className="font-bold text-lg" style={{ fontFamily: 'Bricolage Grotesque, sans-serif' }}>
@@ -78,36 +78,36 @@ export function Demo() {
               </span>
             </div>
           </Link>
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-2 sm:gap-3">
             <Link href="/auth">
-              <Button variant="ghost" size="sm">Sign in</Button>
+              <Button variant="ghost" size="sm" className="hidden sm:inline-flex">Sign in</Button>
             </Link>
             <Link href="/auth">
-              <Button size="sm" className="gap-1.5">
-                Get started free <ArrowRight className="h-3.5 w-3.5" />
+              <Button size="sm" className="gap-1 sm:gap-1.5 text-xs sm:text-sm px-2 sm:px-3">
+                Get started <span className="hidden sm:inline">free</span> <ArrowRight className="h-3 w-3 sm:h-3.5 sm:w-3.5" />
               </Button>
             </Link>
           </div>
         </div>
       </header>
 
-      <div className="max-w-4xl mx-auto px-6 py-12">
+      <div className="max-w-4xl mx-auto px-4 sm:px-6 py-8 sm:py-12">
         {!result && !limitReached ? (
           <>
-            <div className="text-center mb-10">
+            <div className="text-center mb-8 sm:mb-10">
               <div className="inline-flex items-center gap-2 bg-indigo-50 text-indigo-700 rounded-full px-4 py-1.5 text-sm font-medium mb-4">
                 <Sparkles className="h-3.5 w-3.5" />
                 Live AI Demo — no account needed
               </div>
-              <h1 className="text-4xl font-extrabold tracking-tight mb-3" style={{ fontFamily: 'Bricolage Grotesque, sans-serif' }}>
+              <h1 className="text-2xl sm:text-4xl font-extrabold tracking-tight mb-3" style={{ fontFamily: 'Bricolage Grotesque, sans-serif' }}>
                 Generate a proposal in 60 seconds
               </h1>
-              <p className="text-muted-foreground text-lg max-w-xl mx-auto">
+              <p className="text-muted-foreground text-base sm:text-lg max-w-xl mx-auto">
                 Describe your project and watch AI create a full client proposal with scope, deliverables, and pricing.
               </p>
             </div>
 
-            <div className="bg-white border rounded-2xl shadow-sm p-8 space-y-5">
+            <div className="bg-white border rounded-2xl shadow-sm p-5 sm:p-8 space-y-5">
               <div className="space-y-2">
                 <Label htmlFor="desc">Describe the project *</Label>
                 <Textarea
@@ -185,41 +185,41 @@ export function Demo() {
             </Link>
           </div>
         ) : (
-          <div className="space-y-6">
-            <div className="flex items-center justify-between">
+          <div className="space-y-5 sm:space-y-6">
+            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
               <div>
                 <div className="inline-flex items-center gap-2 bg-green-50 text-green-700 rounded-full px-3 py-1 text-sm font-medium mb-2">
                   <CheckCircle className="h-3.5 w-3.5" /> Proposal generated!
                 </div>
-                <h2 className="text-2xl font-bold" style={{ fontFamily: 'Bricolage Grotesque, sans-serif' }}>
+                <h2 className="text-xl sm:text-2xl font-bold" style={{ fontFamily: 'Bricolage Grotesque, sans-serif' }}>
                   Your AI-Generated Proposal
                 </h2>
               </div>
-              <div className="flex gap-2">
-                <Button variant="outline" onClick={() => setResult(null)}>Try Again</Button>
+              <div className="flex gap-2 shrink-0">
+                <Button variant="outline" onClick={() => setResult(null)} size="sm">Try Again</Button>
                 <Link href="/auth">
-                  <Button className="gap-2">
-                    Save & Send <ChevronRight className="h-4 w-4" />
+                  <Button className="gap-1.5" size="sm">
+                    Save & Send <ChevronRight className="h-3.5 w-3.5" />
                   </Button>
                 </Link>
               </div>
             </div>
 
             {result.executiveSummary && (
-              <div className="bg-white rounded-2xl border p-6 shadow-sm">
-                <h3 className="font-bold text-lg mb-3" style={{ fontFamily: 'Bricolage Grotesque, sans-serif' }}>Executive Summary</h3>
-                <p className="text-gray-700 leading-relaxed whitespace-pre-line">{result.executiveSummary}</p>
+              <div className="bg-white rounded-2xl border p-4 sm:p-6 shadow-sm">
+                <h3 className="font-bold text-base sm:text-lg mb-3" style={{ fontFamily: 'Bricolage Grotesque, sans-serif' }}>Executive Summary</h3>
+                <p className="text-gray-700 leading-relaxed whitespace-pre-line text-sm sm:text-base">{result.executiveSummary}</p>
               </div>
             )}
 
             {result.deliverables?.length > 0 && (
-              <div className="bg-white rounded-2xl border p-6 shadow-sm">
-                <h3 className="font-bold text-lg mb-3" style={{ fontFamily: 'Bricolage Grotesque, sans-serif' }}>Deliverables</h3>
+              <div className="bg-white rounded-2xl border p-4 sm:p-6 shadow-sm">
+                <h3 className="font-bold text-base sm:text-lg mb-3" style={{ fontFamily: 'Bricolage Grotesque, sans-serif' }}>Deliverables</h3>
                 <ul className="space-y-2">
                   {result.deliverables.map((d, i) => (
                     <li key={i} className="flex items-start gap-3">
                       <CheckCircle className="h-5 w-5 mt-0.5 shrink-0 text-indigo-500" />
-                      <span className="text-gray-700">{d}</span>
+                      <span className="text-gray-700 text-sm sm:text-base">{d}</span>
                     </li>
                   ))}
                 </ul>
@@ -227,38 +227,40 @@ export function Demo() {
             )}
 
             {result.lineItems?.length > 0 && (
-              <div className="bg-white rounded-2xl border p-6 shadow-sm">
-                <h3 className="font-bold text-lg mb-4" style={{ fontFamily: 'Bricolage Grotesque, sans-serif' }}>Project Quote</h3>
-                <table className="w-full">
-                  <thead>
-                    <tr className="border-b">
-                      <th className="text-left text-sm text-muted-foreground pb-3">Description</th>
-                      <th className="text-right text-sm text-muted-foreground pb-3">Qty</th>
-                      <th className="text-right text-sm text-muted-foreground pb-3">Unit Price</th>
-                      <th className="text-right text-sm text-muted-foreground pb-3">Total</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {result.lineItems.map((item, i) => (
-                      <tr key={i} className="border-b last:border-0">
-                        <td className="py-3 text-gray-700">{item.description}</td>
-                        <td className="py-3 text-right text-muted-foreground">{item.quantity}</td>
-                        <td className="py-3 text-right text-muted-foreground">{formatCurrency(item.unitPrice)}</td>
-                        <td className="py-3 text-right font-medium">{formatCurrency(item.quantity * item.unitPrice)}</td>
+              <div className="bg-white rounded-2xl border p-4 sm:p-6 shadow-sm">
+                <h3 className="font-bold text-base sm:text-lg mb-4" style={{ fontFamily: 'Bricolage Grotesque, sans-serif' }}>Project Quote</h3>
+                <div className="overflow-x-auto -mx-4 sm:mx-0 px-4 sm:px-0">
+                  <table className="w-full min-w-[380px]">
+                    <thead>
+                      <tr className="border-b">
+                        <th className="text-left text-sm text-muted-foreground pb-3">Description</th>
+                        <th className="text-right text-sm text-muted-foreground pb-3">Qty</th>
+                        <th className="text-right text-sm text-muted-foreground pb-3">Unit Price</th>
+                        <th className="text-right text-sm text-muted-foreground pb-3">Total</th>
                       </tr>
-                    ))}
-                  </tbody>
-                  <tfoot>
-                    <tr>
-                      <td colSpan={3} className="pt-4 text-right font-bold text-lg">Total</td>
-                      <td className="pt-4 text-right font-bold text-lg text-indigo-600">{formatCurrency(result.totalEstimate)}</td>
-                    </tr>
-                  </tfoot>
-                </table>
+                    </thead>
+                    <tbody>
+                      {result.lineItems.map((item, i) => (
+                        <tr key={i} className="border-b last:border-0">
+                          <td className="py-3 text-gray-700 text-sm">{item.description}</td>
+                          <td className="py-3 text-right text-muted-foreground text-sm">{item.quantity}</td>
+                          <td className="py-3 text-right text-muted-foreground text-sm">{formatCurrency(item.unitPrice)}</td>
+                          <td className="py-3 text-right font-medium text-sm">{formatCurrency(item.quantity * item.unitPrice)}</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                    <tfoot>
+                      <tr>
+                        <td colSpan={3} className="pt-4 text-right font-bold text-base sm:text-lg">Total</td>
+                        <td className="pt-4 text-right font-bold text-base sm:text-lg text-indigo-600">{formatCurrency(result.totalEstimate)}</td>
+                      </tr>
+                    </tfoot>
+                  </table>
+                </div>
               </div>
             )}
 
-            <div className="bg-indigo-50 border border-indigo-100 rounded-2xl p-8 text-center">
+            <div className="bg-indigo-50 border border-indigo-100 rounded-2xl p-5 sm:p-8 text-center">
               <FileText className="h-10 w-10 text-indigo-500 mx-auto mb-3" />
               <h3 className="font-bold text-lg mb-2" style={{ fontFamily: 'Bricolage Grotesque, sans-serif' }}>
                 Want to send this to a client?
