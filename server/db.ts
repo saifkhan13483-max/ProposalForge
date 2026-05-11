@@ -4,9 +4,12 @@ dotenv.config()
 
 const { Pool } = pg
 
+const dbUrl = process.env.DATABASE_URL || ''
+const needsSsl = dbUrl.includes('sslmode=require') || dbUrl.includes('neon.tech') || dbUrl.includes('amazonaws.com')
+
 export const pool = new Pool({
-  connectionString: process.env.DATABASE_URL,
-  ssl: process.env.DATABASE_URL?.includes('sslmode=require') ? { rejectUnauthorized: false } : false,
+  connectionString: dbUrl,
+  ssl: needsSsl ? { rejectUnauthorized: false } : false,
 })
 
 export async function query(text: string, params?: unknown[]) {

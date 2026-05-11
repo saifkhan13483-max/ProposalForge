@@ -127,8 +127,9 @@ app.get('/api/health', (_req, res) => {
   res.json({ status: 'ok', timestamp: new Date().toISOString() })
 })
 
-// Serve React client in production
-if (isProd) {
+// Serve React client in production ONLY when frontend is not separately hosted
+// (i.e. not deployed to Vercel/Netlify — set FRONTEND_URL to skip this)
+if (isProd && !process.env.FRONTEND_URL) {
   const clientDist = path.join(__dirname, '../../client/dist')
   app.use(express.static(clientDist, { maxAge: '1y', etag: true }))
   // SPA fallback — serve index.html for all non-API routes
