@@ -5,11 +5,22 @@ import { auth } from '@/lib/firebase'
 //   "https://x.up.railway.app/"     → "https://x.up.railway.app/api"  ✓ (trailing slash)
 //   "https://x.up.railway.app/api"  → "https://x.up.railway.app/api"  ✓ (already has /api)
 //   "https://x.up.railway.app/api/" → "https://x.up.railway.app/api"  ✓ (trailing slash + /api)
+//   "x.up.railway.app"              → "https://x.up.railway.app/api"  ✓ (missing https://)
+//   "http://x.up.railway.app"       → "https://x.up.railway.app/api"  ✓ (upgrades http → https)
 function buildBaseUrl(): string {
   const raw = (import.meta.env.VITE_API_URL as string | undefined) || ''
   if (!raw) return '/api'
-  const stripped = raw.replace(/\/+$/, '') // remove trailing slashes
-  return stripped.endsWith('/api') ? stripped : `${stripped}/api`
+
+  let normalized = raw.trim().replace(/\/+$/, '') // trim whitespace + trailing slashes
+
+  // Auto-add https:// if no protocol is present
+  if (!normalized.startsWith('http://') && !normalized.startsWith('https://')) {
+    normalized = `https://${normalized}`
+  }
+  // Upgrade http → https (Railway always uses https)
+  normalized = normalized.replace(/^http:\/\//, 'https://')
+
+  return normalized.endsWith('/api') ? normalized : `${normalized}/api`
 }
 
 export const BASE_URL = buildBaseUrl()
