@@ -10,7 +10,7 @@ restartPolicyType = "on_failure"
 restartPolicyMaxRetries = 10
 
 # ─────────────────────────────────────────────────────────────────────────────
-# Required environment variables — set these in the Railway project dashboard
+# REQUIRED environment variables — set these in the Railway project dashboard
 # ─────────────────────────────────────────────────────────────────────────────
 #
 # DATABASE_URL
@@ -22,21 +22,19 @@ restartPolicyMaxRetries = 10
 #
 # FRONTEND_URL
 #   Your Vercel frontend URL. Used for CORS and for building links in emails.
-#   Example: https://proposal-forge-mu.vercel.app
+#   Example: https://your-app.vercel.app
+#   If you use a custom domain on Vercel, put that here instead.
 #
 # PUBLIC_URL
 #   Your Railway backend's own public URL. Used for Stripe webhook registration.
-#   Example: https://proposalforge-api.up.railway.app
+#   Example: https://your-app.up.railway.app
 #
 # FIREBASE_SERVICE_ACCOUNT_JSON
-#   The full JSON of your Firebase service account credentials (single line).
+#   Full JSON of your Firebase service account (on one line, no line breaks).
 #   Download from: Firebase Console → Project Settings → Service Accounts → Generate new private key
 #
-# PUPPETEER_SKIP_CHROMIUM_DOWNLOAD
-#   Set to: true  (PDF generation uses pdfmake, not Puppeteer — skip the download)
-#
 # ─────────────────────────────────────────────────────────────────────────────
-# Optional environment variables
+# OPTIONAL environment variables
 # ─────────────────────────────────────────────────────────────────────────────
 #
 # GEMINI_API_KEY
@@ -44,14 +42,13 @@ restartPolicyMaxRetries = 10
 #   Get one at: https://aistudio.google.com/app/apikey
 #
 # RESEND_API_KEY
-#   Resend API key for sending emails (proposal delivery, notifications).
+#   Resend API key for sending proposal emails to clients.
 #   Get one at: https://resend.com
 #
 # STRIPE_SECRET_KEY
-#   Stripe secret key for payment processing.
+#   Stripe secret key for payment processing (Pro plan subscriptions).
 #   Get from: https://dashboard.stripe.com/apikeys
-#   (Only needed if you want Stripe payments; app works without it)
 #
 # STRIPE_WEBHOOK_SECRET
 #   Stripe webhook signing secret for verifying webhook events.
-#   Created automatically when you register the webhook endpoint in Stripe dashboard.
+#   Created in the Stripe dashboard when you add a webhook endpoint.
