@@ -168,31 +168,46 @@ app.use((err: Error, _req: express.Request, res: express.Response, _next: expres
   res.status(500).json({ error: 'Internal server error' })
 })
 
+async function initStripe() {
+  // stripe-replit-sync only works in Replit environments.
+  // On Railway/other hosts it will hang trying to reach Replit connectors, so skip it.
+  const isReplit = !!(process.env.REPLIT_DOMAINS || process.env.REPL_ID)
+
+  if (isReplit) {
+    const { runMigrations } = await import('stripe-replit-sync')
+    await runMigrations({ databaseUrl: process.env.DATABASE_URL! })
+    console.log('Stripe schema ready')
+
+    const { getStripeSync } = await import('./stripeClient.js')
+    const stripeSync = await getStripeSync()
+
+    const baseUrl = process.env.PUBLIC_URL
+      || (process.env.REPLIT_DOMAINS ? `https://${process.env.REPLIT_DOMAINS.split(',')[0]}` : `http://localhost:${PORT}`)
+
+    await stripeSync.findOrCreateManagedWebhook(`${baseUrl}/api/stripe/webhook`)
+    stripeSync.syncBackfill().catch(err => console.error('Stripe backfill error:', err))
+    console.log('Stripe initialized (Replit)')
+  } else if (process.env.STRIPE_SECRET_KEY) {
+    // On Railway: just validate the key is usable, no webhook registration needed here
+    console.log('Stripe configured via STRIPE_SECRET_KEY')
+  } else {
+    console.log('Stripe not configured — skipping (set STRIPE_SECRET_KEY to enable)')
+  }
+}
+
 async function main() {
   try {
     await initDB()
 
-    // Try to initialize Stripe (non-fatal if not connected)
-    try {
-      const { runMigrations } = await import('stripe-replit-sync')
-      await runMigrations({ databaseUrl: process.env.DATABASE_URL! })
-      console.log('Stripe schema ready')
-
-      const { getStripeSync } = await import('./stripeClient.js')
-      const stripeSync = await getStripeSync()
-
-      const baseUrl = process.env.PUBLIC_URL
-        || (process.env.REPLIT_DOMAINS ? `https://${process.env.REPLIT_DOMAINS.split(',')[0]}` : `http://localhost:${PORT}`)
-
-      await stripeSync.findOrCreateManagedWebhook(`${baseUrl}/api/stripe/webhook`)
-      stripeSync.syncBackfill().catch(err => console.error('Stripe backfill error:', err))
-      console.log('Stripe initialized')
-    } catch (stripeErr) {
-      console.warn('Stripe not configured (optional):', (stripeErr as Error).message)
-    }
-
+    // Start listening IMMEDIATELY — never block server startup on Stripe.
+    // Stripe initialization runs in the background after the server is already serving requests.
     app.listen(PORT, '0.0.0.0', () => {
       console.log(`Server running on port ${PORT}`)
+    })
+
+    // Non-blocking Stripe setup — failures are logged but never crash the server
+    initStripe().catch(err => {
+      console.warn('Stripe init failed (optional):', (err as Error).message)
     })
   } catch (err) {
     console.error('Failed to start server:', err)
