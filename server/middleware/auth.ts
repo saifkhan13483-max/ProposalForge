@@ -1,26 +1,13 @@
 import type { Request, Response, NextFunction } from 'express'
-import jwt from 'jsonwebtoken'
-
-const JWT_SECRET = process.env.JWT_SECRET || 'proposalforge-secret-key-change-in-production'
+import { verifyFirebaseToken } from '../firebaseAdmin.js'
+import { query } from '../db.js'
 
 export interface AuthRequest extends Request {
   userId?: string
   userPlan?: string
 }
 
-export function generateToken(userId: string, plan: string = 'free'): string {
-  return jwt.sign({ userId, plan }, JWT_SECRET, { expiresIn: '7d' })
-}
-
-export function verifyToken(token: string): { userId: string; plan: string } | null {
-  try {
-    return jwt.verify(token, JWT_SECRET) as { userId: string; plan: string }
-  } catch {
-    return null
-  }
-}
-
-export function requireAuth(req: AuthRequest, res: Response, next: NextFunction) {
+export async function requireAuth(req: AuthRequest, res: Response, next: NextFunction) {
   const authHeader = req.headers.authorization
   const token = authHeader?.startsWith('Bearer ') ? authHeader.slice(7) : null
 
@@ -29,24 +16,34 @@ export function requireAuth(req: AuthRequest, res: Response, next: NextFunction)
   }
 
   try {
-    const decoded = jwt.verify(token, JWT_SECRET) as { userId: string; plan: string }
-    req.userId = decoded.userId
-    req.userPlan = decoded.plan
+    const decoded = await verifyFirebaseToken(token)
+    const firebaseUid = decoded.uid
+
+    const result = await query('SELECT id, plan FROM users WHERE firebase_uid = $1', [firebaseUid])
+    if (result.rows.length === 0) {
+      return res.status(401).json({ error: 'User not found. Please log in again.' })
+    }
+
+    req.userId = result.rows[0].id
+    req.userPlan = result.rows[0].plan
     next()
-  } catch {
+  } catch (err) {
     return res.status(401).json({ error: 'Invalid or expired token' })
   }
 }
 
-export function optionalAuth(req: AuthRequest, _res: Response, next: NextFunction) {
+export async function optionalAuth(req: AuthRequest, _res: Response, next: NextFunction) {
   const authHeader = req.headers.authorization
   const token = authHeader?.startsWith('Bearer ') ? authHeader.slice(7) : null
 
   if (token) {
     try {
-      const decoded = jwt.verify(token, JWT_SECRET) as { userId: string; plan: string }
-      req.userId = decoded.userId
-      req.userPlan = decoded.plan
+      const decoded = await verifyFirebaseToken(token)
+      const result = await query('SELECT id, plan FROM users WHERE firebase_uid = $1', [decoded.uid])
+      if (result.rows.length > 0) {
+        req.userId = result.rows[0].id
+        req.userPlan = result.rows[0].plan
+      }
     } catch {
       // ignore
     }

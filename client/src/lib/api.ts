@@ -1,15 +1,15 @@
+import { auth } from '@/lib/firebase'
+
 const BASE_URL = '/api'
 
-export function getAuthToken(): string | null {
-  return localStorage.getItem('pf_token')
-}
-
-export function setAuthToken(token: string): void {
-  localStorage.setItem('pf_token', token)
-}
-
-export function clearAuthToken(): void {
-  localStorage.removeItem('pf_token')
+async function getToken(): Promise<string | null> {
+  const user = auth.currentUser
+  if (!user) return null
+  try {
+    return await user.getIdToken()
+  } catch {
+    return null
+  }
 }
 
 export async function apiRequest<T = unknown>(
@@ -18,7 +18,7 @@ export async function apiRequest<T = unknown>(
   body?: unknown,
   options?: RequestInit
 ): Promise<T> {
-  const token = getAuthToken()
+  const token = await getToken()
   const headers: HeadersInit = {
     'Content-Type': 'application/json',
     ...(token ? { Authorization: `Bearer ${token}` } : {}),
@@ -46,3 +46,8 @@ export const api = {
   put: <T>(path: string, body?: unknown) => apiRequest<T>('PUT', path, body),
   delete: <T>(path: string) => apiRequest<T>('DELETE', path),
 }
+
+// Legacy exports kept for any components that still import them
+export function getAuthToken(): string | null { return null }
+export function setAuthToken(_token: string): void {}
+export function clearAuthToken(): void {}

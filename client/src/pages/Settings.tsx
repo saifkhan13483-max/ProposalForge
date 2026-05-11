@@ -2,7 +2,8 @@ import { useEffect, useState, useRef } from 'react'
 import { useSearch } from 'wouter'
 import { useAuth } from '@/contexts/AuthContext'
 import { useSEO } from '@/hooks/useSEO'
-import { api, getAuthToken } from '@/lib/api'
+import { api } from '@/lib/api'
+import { getFirebaseIdToken } from '@/lib/firebase'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
@@ -73,10 +74,10 @@ export function Settings() {
     try {
       const formData = new FormData()
       formData.append('logo', file)
-      const token = getAuthToken()
+      const idToken = await getFirebaseIdToken()
       const res = await fetch('/api/auth/upload-logo', {
         method: 'POST',
-        headers: token ? { Authorization: `Bearer ${token}` } : {},
+        headers: idToken ? { Authorization: `Bearer ${idToken}` } : {},
         body: formData,
       })
       if (!res.ok) {

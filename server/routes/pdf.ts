@@ -398,17 +398,19 @@ function buildInvoicePdfContent(invoice: Record<string, unknown>, businessName: 
 // Download invoice PDF — exported for direct mounting in index.ts
 export async function handleInvoicePdf(req: import('express').Request & { userId?: string }, res: import('express').Response) {
   const authHeader = req.headers.authorization
-  const token = authHeader?.startsWith('Bearer ') ? authHeader.slice(7) : null
-  if (!token) return res.status(401).json({ error: 'Unauthorized' })
+  const idToken = authHeader?.startsWith('Bearer ') ? authHeader.slice(7) : null
+  if (!idToken) return res.status(401).json({ error: 'Unauthorized' })
 
   try {
-    const { verifyToken } = await import('../middleware/auth.js')
-    const payload = verifyToken(token)
-    if (!payload?.userId) return res.status(401).json({ error: 'Unauthorized' })
+    const { verifyFirebaseToken } = await import('../firebaseAdmin.js')
+    const decoded = await verifyFirebaseToken(idToken)
+    const userResult = await query('SELECT id FROM users WHERE firebase_uid = $1', [decoded.uid])
+    if (userResult.rows.length === 0) return res.status(401).json({ error: 'Unauthorized' })
+    const userId = userResult.rows[0].id
 
     const invoiceResult = await query(
       'SELECT i.*, u.business_name, u.logo_url, u.accent_color FROM invoices i JOIN users u ON u.id = i.user_id WHERE i.id = $1 AND i.user_id = $2',
-      [req.params.id, payload.userId]
+      [req.params.id, userId]
     )
     if (invoiceResult.rows.length === 0) return res.status(404).json({ error: 'Invoice not found' })
     const invoice = invoiceResult.rows[0]

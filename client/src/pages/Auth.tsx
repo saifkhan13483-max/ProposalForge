@@ -2,13 +2,13 @@ import { useState, useEffect } from 'react'
 import { useLocation } from 'wouter'
 import { useAuth } from '@/contexts/AuthContext'
 import { useSEO } from '@/hooks/useSEO'
+import { signInWithGoogle, signInWithEmail, signUpWithEmail } from '@/lib/firebase'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Sparkles, Loader2, ArrowRight, FileText, Zap, CheckCircle } from 'lucide-react'
 import { useToast } from '@/hooks/use-toast'
-import { setAuthToken } from '@/lib/api'
 
 function GoogleIcon() {
   return (
@@ -27,49 +27,55 @@ export function Auth() {
   const [password, setPassword] = useState('')
   const [businessName, setBusinessName] = useState('')
   const [loading, setLoading] = useState(false)
-  const { login, register, refreshUser } = useAuth()
+  const [googleLoading, setGoogleLoading] = useState(false)
+  const { user } = useAuth()
   const [, setLocation] = useLocation()
   const { toast } = useToast()
 
   useSEO({ title: 'Sign In', noindex: true })
 
   useEffect(() => {
-    const params = new URLSearchParams(window.location.search)
-    const error = params.get('error')
-    if (error === 'google_not_configured') {
-      toast({ title: 'Google login not configured', description: 'Please use email/password login.', variant: 'destructive' })
-    } else if (error === 'google_denied') {
-      toast({ title: 'Google sign-in cancelled', description: 'You can try again or use email/password.', variant: 'destructive' })
-    } else if (error === 'google_failed') {
-      toast({ title: 'Google sign-in failed', description: 'Please try again or use email/password.', variant: 'destructive' })
+    if (user) {
+      setLocation(user.onboarding_completed ? '/dashboard' : '/onboarding')
     }
-  }, [])
+  }, [user])
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
     setLoading(true)
     try {
       if (mode === 'login') {
-        await login(email, password)
-        setLocation('/dashboard')
+        await signInWithEmail(email, password)
+        // AuthContext will handle routing via the useEffect above
       } else {
-        await register(email, password, businessName)
-        setLocation('/onboarding')
+        await signUpWithEmail(email, password)
+        // AuthContext will handle routing via the useEffect above
+        // businessName will be set during onboarding
       }
-    } catch (err) {
-      toast({ title: 'Error', description: (err as Error).message, variant: 'destructive' })
+    } catch (err: unknown) {
+      const message = getFirebaseErrorMessage((err as { code?: string })?.code)
+      toast({ title: 'Error', description: message, variant: 'destructive' })
     } finally {
       setLoading(false)
     }
   }
 
-  function handleGoogleLogin() {
-    window.location.href = '/api/auth/google'
+  async function handleGoogleLogin() {
+    setGoogleLoading(true)
+    try {
+      await signInWithGoogle()
+      // AuthContext onAuthStateChanged handles the rest
+    } catch (err: unknown) {
+      const message = getFirebaseErrorMessage((err as { code?: string })?.code)
+      toast({ title: 'Google sign-in failed', description: message, variant: 'destructive' })
+    } finally {
+      setGoogleLoading(false)
+    }
   }
 
   return (
     <div className="min-h-screen flex">
-      {/* Left panel — dark side: light text, bright accents */}
+      {/* Left panel */}
       <div className="hidden lg:flex flex-col w-1/2 bg-gradient-to-br from-slate-900 via-indigo-950 to-slate-900 p-12 relative overflow-hidden">
         <div className="absolute inset-0 overflow-hidden">
           <div className="absolute -top-40 -right-40 w-80 h-80 bg-indigo-400/20 rounded-full blur-3xl" />
@@ -114,7 +120,7 @@ export function Auth() {
         </div>
       </div>
 
-      {/* Right panel — light side: dark text, bold labels, deep accents */}
+      {/* Right panel */}
       <div className="flex-1 flex items-center justify-center p-8 bg-white">
         <div className="w-full max-w-md">
           <div className="flex items-center gap-2 mb-8 lg:hidden">
@@ -139,8 +145,10 @@ export function Auth() {
                 variant="outline"
                 className="w-full h-10 gap-2 mb-4 border-slate-300 text-slate-800 font-medium hover:bg-slate-50 hover:border-slate-400"
                 onClick={handleGoogleLogin}
+                disabled={googleLoading || loading}
+                data-testid="button-google"
               >
-                <GoogleIcon />
+                {googleLoading ? <Loader2 className="h-4 w-4 animate-spin" /> : <GoogleIcon />}
                 Continue with Google
               </Button>
 
@@ -156,7 +164,7 @@ export function Auth() {
               <form onSubmit={handleSubmit} className="space-y-4">
                 {mode === 'register' && (
                   <div className="space-y-2">
-                    <Label htmlFor="business-name" className="text-slate-800 font-semibold text-sm">Business name</Label>
+                    <Label htmlFor="business-name" className="text-slate-800 font-semibold text-sm">Business name <span className="text-slate-400 font-normal">(optional)</span></Label>
                     <Input
                       id="business-name"
                       data-testid="input-business-name"
@@ -186,11 +194,11 @@ export function Auth() {
                     id="password"
                     data-testid="input-password"
                     type="password"
-                    placeholder="Min 8 characters"
+                    placeholder="Min 6 characters"
                     value={password}
                     onChange={e => setPassword(e.target.value)}
                     required
-                    minLength={8}
+                    minLength={6}
                     className="border-slate-300 text-slate-900 placeholder:text-slate-400 focus-visible:ring-indigo-500"
                   />
                 </div>
@@ -198,7 +206,7 @@ export function Auth() {
                 <Button
                   type="submit"
                   className="w-full h-10 gap-2 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold shadow-sm shadow-indigo-200"
-                  disabled={loading}
+                  disabled={loading || googleLoading}
                   data-testid="button-submit"
                 >
                   {loading ? (
@@ -237,4 +245,27 @@ export function Auth() {
       </div>
     </div>
   )
+}
+
+function getFirebaseErrorMessage(code?: string): string {
+  switch (code) {
+    case 'auth/user-not-found':
+    case 'auth/wrong-password':
+    case 'auth/invalid-credential':
+      return 'Invalid email or password.'
+    case 'auth/email-already-in-use':
+      return 'An account with this email already exists.'
+    case 'auth/weak-password':
+      return 'Password must be at least 6 characters.'
+    case 'auth/invalid-email':
+      return 'Please enter a valid email address.'
+    case 'auth/too-many-requests':
+      return 'Too many attempts. Please try again later.'
+    case 'auth/popup-closed-by-user':
+      return 'Sign-in popup was closed. Please try again.'
+    case 'auth/network-request-failed':
+      return 'Network error. Please check your connection.'
+    default:
+      return 'Something went wrong. Please try again.'
+  }
 }

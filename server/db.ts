@@ -139,5 +139,7 @@ export async function initDB() {
   await query(`ALTER TABLE acceptance_events ADD COLUMN IF NOT EXISTS commenter_name TEXT`)
   await query(`ALTER TABLE users ADD COLUMN IF NOT EXISTS invoice_prefix TEXT DEFAULT 'INV'`)
   await query(`ALTER TABLE users ADD COLUMN IF NOT EXISTS font_family TEXT DEFAULT 'inter'`)
+  await query(`ALTER TABLE users ADD COLUMN IF NOT EXISTS firebase_uid TEXT`)
+  await query(`CREATE UNIQUE INDEX IF NOT EXISTS users_firebase_uid_idx ON users(firebase_uid) WHERE firebase_uid IS NOT NULL`)
   console.log('Database initialized')
 }

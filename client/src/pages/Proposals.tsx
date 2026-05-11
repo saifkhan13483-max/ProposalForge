@@ -102,9 +102,10 @@ export function Proposals() {
 
   async function downloadPdf(proposal: Proposal) {
     try {
-      const token = localStorage.getItem('pf_token')
+      const { getFirebaseIdToken } = await import('@/lib/firebase')
+      const idToken = await getFirebaseIdToken()
       const res = await fetch(`/api/proposals/${proposal.id}/pdf`, {
-        headers: token ? { Authorization: `Bearer ${token}` } : {},
+        headers: idToken ? { Authorization: `Bearer ${idToken}` } : {},
       })
       if (!res.ok) throw new Error('Failed to generate PDF')
       const blob = await res.blob()

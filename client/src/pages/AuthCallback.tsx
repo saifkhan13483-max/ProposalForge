@@ -1,30 +1,23 @@
 import { useEffect } from 'react'
 import { useLocation } from 'wouter'
-import { setAuthToken } from '@/lib/api'
 import { useAuth } from '@/contexts/AuthContext'
 import { Loader2 } from 'lucide-react'
 
+// This page is kept for backward compatibility but Firebase auth no longer
+// uses server-side redirects. The AuthContext handles sign-in state automatically.
 export function AuthCallback() {
   const [, setLocation] = useLocation()
-  const { refreshUser } = useAuth()
+  const { user, loading } = useAuth()
 
   useEffect(() => {
-    const params = new URLSearchParams(window.location.search)
-    const token = params.get('token')
-    const isNew = params.get('new') === '1'
-
-    if (!token) {
-      setLocation('/auth?error=google_failed')
-      return
+    if (!loading) {
+      if (user) {
+        setLocation(user.onboarding_completed ? '/dashboard' : '/onboarding')
+      } else {
+        setLocation('/auth')
+      }
     }
-
-    setAuthToken(token)
-    refreshUser().then(() => {
-      setLocation(isNew ? '/onboarding' : '/dashboard')
-    }).catch(() => {
-      setLocation('/auth?error=google_failed')
-    })
-  }, [])
+  }, [user, loading])
 
   return (
     <div className="min-h-screen flex items-center justify-center">

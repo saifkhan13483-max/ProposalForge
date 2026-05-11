@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { Link } from 'wouter'
 import { useSEO } from '@/hooks/useSEO'
+import { sendFirebasePasswordReset } from '@/lib/firebase'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
@@ -20,16 +21,21 @@ export function ForgotPassword() {
     e.preventDefault()
     setLoading(true)
     try {
-      const res = await fetch('/api/auth/forgot-password', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email }),
-      })
-      const data = await res.json()
-      if (!res.ok) throw new Error(data.error)
+      await sendFirebasePasswordReset(email)
       setSent(true)
-    } catch (err) {
-      toast({ title: 'Error', description: (err as Error).message, variant: 'destructive' })
+    } catch (err: unknown) {
+      const code = (err as { code?: string })?.code
+      let message = 'Failed to send reset email. Please try again.'
+      if (code === 'auth/user-not-found') {
+        // Show success anyway to prevent email enumeration
+        setSent(true)
+        return
+      } else if (code === 'auth/invalid-email') {
+        message = 'Please enter a valid email address.'
+      } else if (code === 'auth/too-many-requests') {
+        message = 'Too many attempts. Please try again later.'
+      }
+      toast({ title: 'Error', description: message, variant: 'destructive' })
     } finally {
       setLoading(false)
     }
