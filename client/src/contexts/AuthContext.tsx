@@ -56,14 +56,13 @@ async function syncWithBackend(firebaseUser: FirebaseUser): Promise<{ user: User
   if (!contentType.includes('application/json')) {
     // Got a non-JSON response — wrong URL, server crash, or misconfigured proxy
     if (res.status === 405) {
-      // 405 from Vercel itself: VITE_API_URL is not set so the frontend is calling
-      // its own domain (/api/...) which Vercel tries to serve as a static file (index.html).
-      // Fix: add VITE_API_URL in Vercel → Project Settings → Environment Variables
-      // pointing to your Railway backend URL, then redeploy on Vercel.
+      // 405 means a POST landed somewhere that only accepts GET (e.g. a static file server).
+      // Most common cause: VITE_API_URL is missing or wrong so the request never
+      // reaches Railway — it hits Vercel's static file hosting instead.
       throw new Error(
         isUnconfigured
-          ? 'The backend API URL is not configured. Go to Vercel → your project → Settings → Environment Variables, add VITE_API_URL pointing to your Railway backend URL (e.g. https://your-app.up.railway.app), then redeploy on Vercel.'
-          : 'The server returned "Method Not Allowed" (HTTP 405). Your VITE_API_URL may be pointing to the wrong URL. Make sure VITE_API_URL in Vercel points to your Railway backend, then redeploy.'
+          ? `Backend API URL is not configured (calling ${endpoint}). In Vercel → your project → Settings → Environment Variables, add VITE_API_URL set to your Railway backend URL (e.g. https://your-app.up.railway.app) — no trailing slash, no /api suffix — then redeploy Vercel.`
+          : `HTTP 405 from ${endpoint}. VITE_API_URL may be wrong — check it does not end with /api and points to your Railway backend. Current value after normalization: ${BASE_URL.replace('/api', '')}`
       )
     }
     throw new Error(

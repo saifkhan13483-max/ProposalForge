@@ -1,10 +1,18 @@
 import { auth } from '@/lib/firebase'
 
-// Strip any trailing slashes from VITE_API_URL to prevent double-slash URLs
-// e.g. "https://x.up.railway.app/" → "https://x.up.railway.app/api"
-export const BASE_URL = import.meta.env.VITE_API_URL
-  ? `${(import.meta.env.VITE_API_URL as string).replace(/\/+$/, '')}/api`
-  : '/api'
+// Normalize VITE_API_URL so common mistakes don't break requests:
+//   "https://x.up.railway.app"      → "https://x.up.railway.app/api"  ✓
+//   "https://x.up.railway.app/"     → "https://x.up.railway.app/api"  ✓ (trailing slash)
+//   "https://x.up.railway.app/api"  → "https://x.up.railway.app/api"  ✓ (already has /api)
+//   "https://x.up.railway.app/api/" → "https://x.up.railway.app/api"  ✓ (trailing slash + /api)
+function buildBaseUrl(): string {
+  const raw = (import.meta.env.VITE_API_URL as string | undefined) || ''
+  if (!raw) return '/api'
+  const stripped = raw.replace(/\/+$/, '') // remove trailing slashes
+  return stripped.endsWith('/api') ? stripped : `${stripped}/api`
+}
+
+export const BASE_URL = buildBaseUrl()
 
 async function getToken(): Promise<string | null> {
   const user = auth.currentUser
