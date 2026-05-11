@@ -1,0 +1,8 @@
+uploads = []
+generated = []
+
+[[outputs]]
+id = "2hZbv4yN02dzCqACiSn77"
+uri = "file://DEPLOYMENT.md"
+type = "text"
+title = "ProposalForge Deployment Guide"
