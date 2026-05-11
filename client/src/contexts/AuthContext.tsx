@@ -48,17 +48,17 @@ async function syncWithBackend(firebaseUser: FirebaseUser): Promise<{ user: User
     throw new Error(
       isUnconfigured
         ? 'Backend URL is not configured. Set VITE_API_URL in Vercel → Project Settings → Environment Variables (pointing to your Railway URL), then redeploy.'
-        : 'Cannot reach the backend server. Check that your Railway service is running and CORS is allowing this origin.'
+        : `Cannot reach the backend at ${endpoint}. Check that your Railway service is running and the URL is correct.`
     )
   }
 
   const contentType = res.headers.get('content-type') || ''
   if (!contentType.includes('application/json')) {
-    // Got a response but it's HTML — almost always means the request hit the wrong server
+    // Got a response but it's HTML — wrong URL, server down, or CORS preflight rejected
     throw new Error(
       isUnconfigured
         ? 'Backend URL is not configured. Add VITE_API_URL in Vercel → Project Settings → Environment Variables (your Railway URL), then trigger a redeploy.'
-        : `Server returned an unexpected response (HTTP ${res.status}). The backend may be down or returning errors — check Railway logs.`
+        : `Unexpected response (HTTP ${res.status}) from ${endpoint}. Check Railway logs — the server may be crashing on startup or the URL is wrong.`
     )
   }
 

@@ -96,7 +96,7 @@ const TRUSTED_SUFFIXES = [
   '.replit.dev',
 ]
 
-app.use(cors({
+const corsOptions: cors.CorsOptions = {
   origin: isProd
     ? (origin, callback) => {
         if (
@@ -106,12 +106,21 @@ app.use(cors({
         ) {
           callback(null, true)
         } else {
+          console.warn(`CORS blocked origin: ${origin}`)
           callback(new Error(`CORS: origin ${origin} not allowed`))
         }
       }
     : true,
   credentials: true,
-}))
+  methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization'],
+}
+
+// Explicitly handle ALL OPTIONS preflight requests before any route or middleware.
+// This is the critical fix for HTTP 405 on cross-origin POST requests.
+app.options('*', cors(corsOptions))
+
+app.use(cors(corsOptions))
 app.use(express.json({ limit: '10mb' }))
 app.use(express.urlencoded({ extended: true }))
 
