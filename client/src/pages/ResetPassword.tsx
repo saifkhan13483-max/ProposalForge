@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import { useSearch, useLocation } from 'wouter'
 import { useSEO } from '@/hooks/useSEO'
+import { verifyFirebasePasswordResetCode, confirmFirebasePasswordReset } from '@/lib/firebase'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
@@ -12,7 +13,10 @@ export function ResetPassword() {
   const search = useSearch()
   const [, setLocation] = useLocation()
   const { toast } = useToast()
-  const token = new URLSearchParams(search).get('token') || ''
+
+  const params = new URLSearchParams(search)
+  const oobCode = params.get('oobCode') || ''
+  const mode = params.get('mode') || ''
 
   useSEO({ title: 'Set New Password', noindex: true })
 
@@ -20,15 +24,17 @@ export function ResetPassword() {
   const [confirm, setConfirm] = useState('')
   const [loading, setLoading] = useState(false)
   const [done, setDone] = useState(false)
-  const [tokenValid, setTokenValid] = useState<boolean | null>(null)
+  const [codeValid, setCodeValid] = useState<boolean | null>(null)
 
   useEffect(() => {
-    if (!token) { setTokenValid(false); return }
-    fetch(`/api/auth/reset-password/validate?token=${token}`)
-      .then(r => r.json())
-      .then(data => setTokenValid(!!data.valid))
-      .catch(() => setTokenValid(false))
-  }, [token])
+    if (!oobCode || mode !== 'resetPassword') {
+      setCodeValid(false)
+      return
+    }
+    verifyFirebasePasswordResetCode(oobCode)
+      .then(() => setCodeValid(true))
+      .catch(() => setCodeValid(false))
+  }, [oobCode, mode])
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
@@ -42,17 +48,20 @@ export function ResetPassword() {
     }
     setLoading(true)
     try {
-      const res = await fetch('/api/auth/reset-password', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ token, password }),
-      })
-      const data = await res.json()
-      if (!res.ok) throw new Error(data.error)
+      await confirmFirebasePasswordReset(oobCode, password)
       setDone(true)
       setTimeout(() => setLocation('/auth'), 3000)
-    } catch (err) {
-      toast({ title: 'Error', description: (err as Error).message, variant: 'destructive' })
+    } catch (err: unknown) {
+      const code = (err as { code?: string })?.code
+      let message = 'Failed to reset password. Please try again.'
+      if (code === 'auth/expired-action-code') {
+        message = 'This reset link has expired. Please request a new one.'
+      } else if (code === 'auth/invalid-action-code') {
+        message = 'This reset link is invalid or has already been used.'
+      } else if (code === 'auth/weak-password') {
+        message = 'Password must be at least 6 characters.'
+      }
+      toast({ title: 'Error', description: message, variant: 'destructive' })
     } finally {
       setLoading(false)
     }
@@ -78,13 +87,13 @@ export function ResetPassword() {
             </CardDescription>
           </CardHeader>
           <CardContent className="px-0">
-            {tokenValid === null && (
+            {codeValid === null && (
               <div className="flex items-center justify-center py-8">
                 <Loader2 className="h-6 w-6 animate-spin text-muted-foreground" />
               </div>
             )}
 
-            {tokenValid === false && (
+            {codeValid === false && (
               <div className="space-y-4">
                 <div className="flex flex-col items-center py-8 text-center gap-3">
                   <div className="h-14 w-14 rounded-full bg-red-100 flex items-center justify-center">
@@ -103,7 +112,7 @@ export function ResetPassword() {
               </div>
             )}
 
-            {tokenValid === true && !done && (
+            {codeValid === true && !done && (
               <form onSubmit={handleSubmit} className="space-y-4">
                 <div className="space-y-2">
                   <Label htmlFor="password">New password</Label>
@@ -116,6 +125,7 @@ export function ResetPassword() {
                     required
                     minLength={8}
                     autoFocus
+                    autoComplete="new-password"
                   />
                 </div>
                 <div className="space-y-2">
@@ -128,6 +138,7 @@ export function ResetPassword() {
                     onChange={e => setConfirm(e.target.value)}
                     required
                     minLength={8}
+                    autoComplete="new-password"
                   />
                 </div>
                 <Button type="submit" className="w-full" disabled={loading}>

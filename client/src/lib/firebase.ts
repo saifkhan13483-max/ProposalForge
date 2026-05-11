@@ -6,6 +6,8 @@ import {
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
   sendPasswordResetEmail,
+  verifyPasswordResetCode,
+  confirmPasswordReset,
   signOut,
   type User,
 } from 'firebase/auth'
@@ -51,4 +53,12 @@ export async function getFirebaseIdToken(): Promise<string | null> {
   const user = auth.currentUser
   if (!user) return null
   return user.getIdToken()
+}
+
+export async function verifyFirebasePasswordResetCode(oobCode: string): Promise<string> {
+  return verifyPasswordResetCode(auth, oobCode)
+}
+
+export async function confirmFirebasePasswordReset(oobCode: string, newPassword: string): Promise<void> {
+  return confirmPasswordReset(auth, oobCode, newPassword)
 }

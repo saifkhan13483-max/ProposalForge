@@ -1,26 +1,40 @@
 import admin from 'firebase-admin'
 
-let initialized = false
+let initPromise: Promise<admin.app.App> | null = null
 
-function getApp(): admin.app.App {
-  if (initialized) return admin.app()
+function getApp(): Promise<admin.app.App> {
+  if (initPromise) return initPromise
 
-  const serviceAccountJson = process.env.FIREBASE_SERVICE_ACCOUNT_JSON
-  if (!serviceAccountJson) {
-    throw new Error('FIREBASE_SERVICE_ACCOUNT_JSON is not set')
-  }
+  initPromise = new Promise((resolve, reject) => {
+    try {
+      if (admin.apps.length > 0) {
+        resolve(admin.app())
+        return
+      }
 
-  const serviceAccount = JSON.parse(serviceAccountJson)
+      const serviceAccountJson = process.env.FIREBASE_SERVICE_ACCOUNT_JSON
+      if (!serviceAccountJson) {
+        reject(new Error('FIREBASE_SERVICE_ACCOUNT_JSON is not set'))
+        return
+      }
 
-  admin.initializeApp({
-    credential: admin.credential.cert(serviceAccount),
+      const serviceAccount = JSON.parse(serviceAccountJson)
+
+      admin.initializeApp({
+        credential: admin.credential.cert(serviceAccount),
+      })
+
+      resolve(admin.app())
+    } catch (err) {
+      initPromise = null
+      reject(err)
+    }
   })
 
-  initialized = true
-  return admin.app()
+  return initPromise
 }
 
 export async function verifyFirebaseToken(idToken: string): Promise<admin.auth.DecodedIdToken> {
-  const app = getApp()
+  const app = await getApp()
   return app.auth().verifyIdToken(idToken)
 }
