@@ -31,17 +31,35 @@ const AuthContext = createContext<AuthContextType | null>(null)
 
 async function syncWithBackend(firebaseUser: FirebaseUser): Promise<{ user: User; isNew: boolean }> {
   const idToken = await firebaseUser.getIdToken()
-  const res = await fetch(`${BASE_URL}/auth/firebase-login`, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      Authorization: `Bearer ${idToken}`,
-    },
-  })
+  const endpoint = `${BASE_URL}/auth/firebase-login`
+  const isUnconfigured = BASE_URL === '/api'
+
+  let res: Response
+  try {
+    res = await fetch(endpoint, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${idToken}`,
+      },
+    })
+  } catch {
+    // fetch() itself threw — CORS preflight blocked, network error, or server unreachable
+    throw new Error(
+      isUnconfigured
+        ? 'Backend URL is not configured. Set VITE_API_URL in Vercel → Project Settings → Environment Variables (pointing to your Railway URL), then redeploy.'
+        : 'Cannot reach the backend server. Check that your Railway service is running and CORS is allowing this origin.'
+    )
+  }
 
   const contentType = res.headers.get('content-type') || ''
   if (!contentType.includes('application/json')) {
-    throw new Error('Cannot reach the server. Please try again later.')
+    // Got a response but it's HTML — almost always means the request hit the wrong server
+    throw new Error(
+      isUnconfigured
+        ? 'Backend URL is not configured. Add VITE_API_URL in Vercel → Project Settings → Environment Variables (your Railway URL), then trigger a redeploy.'
+        : `Server returned an unexpected response (HTTP ${res.status}). The backend may be down or returning errors — check Railway logs.`
+    )
   }
 
   if (!res.ok) {
