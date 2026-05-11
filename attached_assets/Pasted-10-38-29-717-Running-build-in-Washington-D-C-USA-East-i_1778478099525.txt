@@ -1,0 +1,61 @@
+10:38:29.717 Running build in Washington, D.C., USA (East) – iad1
+10:38:29.718 Build machine configuration: 2 cores, 8 GB
+10:38:29.987 Cloning github.com/saifkhan13483-max/ProposalForge (Branch: main, Commit: f7748f0)
+10:38:29.989 Previous build caches not available.
+10:38:30.574 Cloning completed: 587.000ms
+10:38:31.064 Running "vercel build"
+10:38:31.994 Vercel CLI 53.3.2
+10:38:32.557 Installing dependencies...
+10:38:35.879 npm warn deprecated rimraf@3.0.2: Rimraf versions prior to v4 are no longer supported
+10:38:36.428 npm warn deprecated npmlog@5.0.1: This package is no longer supported.
+10:38:36.739 npm warn deprecated inflight@1.0.6: This module is not supported, and leaks memory. Do not use it. Check out lru-cache if you want a good and tested way to coalesce async requests by a key value, which is much more comprehensive and powerful.
+10:38:36.872 npm warn deprecated multer@1.4.5-lts.2: Multer 1.x is impacted by a number of vulnerabilities, which have been patched in 2.x. You should upgrade to the latest 2.x version.
+10:38:37.142 npm warn deprecated gauge@3.0.2: This package is no longer supported.
+10:38:37.721 npm warn deprecated are-we-there-yet@2.0.0: This package is no longer supported.
+10:38:38.418 npm warn deprecated tar@6.2.1: Old versions of tar are not supported, and contain widely publicized security vulnerabilities, which have been fixed in the current version. Please update. Support for old versions may be purchased (at exorbitant rates) by contacting i@izs.me
+10:38:38.880 npm warn deprecated glob@7.2.3: Old versions of glob are not supported, and contain widely publicized security vulnerabilities, which have been fixed in the current version. Please update. Support for old versions may be purchased (at exorbitant rates) by contacting i@izs.me
+10:38:39.212 npm warn deprecated node-domexception@1.0.0: Use your platform's native DOMException instead
+10:38:40.425 npm warn deprecated puppeteer@22.15.0: < 24.15.0 is no longer supported
+10:38:40.705 npm warn deprecated uuid@8.3.2: uuid@10 and below is no longer supported.  For ESM codebases, update to uuid@latest.  For CommonJS codebases, use uuid@11 (but be aware this version will likely be deprecated in 2028).
+10:38:40.712 npm warn deprecated glob@10.5.0: Old versions of glob are not supported, and contain widely publicized security vulnerabilities, which have been fixed in the current version. Please update. Support for old versions may be purchased (at exorbitant rates) by contacting i@izs.me
+10:38:40.826 npm warn deprecated uuid@9.0.1: uuid@10 and below is no longer supported.  For ESM codebases, update to uuid@latest.  For CommonJS codebases, use uuid@11 (but be aware this version will likely be deprecated in 2028).
+10:38:40.846 npm warn deprecated uuid@9.0.1: uuid@10 and below is no longer supported.  For ESM codebases, update to uuid@latest.  For CommonJS codebases, use uuid@11 (but be aware this version will likely be deprecated in 2028).
+10:38:40.887 npm warn deprecated uuid@9.0.1: uuid@10 and below is no longer supported.  For ESM codebases, update to uuid@latest.  For CommonJS codebases, use uuid@11 (but be aware this version will likely be deprecated in 2028).
+10:38:40.899 npm warn deprecated uuid@10.0.0: uuid@10 and below is no longer supported.  For ESM codebases, update to uuid@latest.  For CommonJS codebases, use uuid@11 (but be aware this version will likely be deprecated in 2028).
+10:38:56.912 
+10:38:56.914 added 824 packages in 24s
+10:38:56.915 
+10:38:56.915 140 packages are looking for funding
+10:38:56.915   run `npm fund` for details
+10:38:57.050 Running "npm run build"
+10:38:57.200 
+10:38:57.200 > proposalforge@1.0.0 build
+10:38:57.200 > npm run build:client && npm run build:server
+10:38:57.200 
+10:38:57.326 
+10:38:57.327 > proposalforge@1.0.0 build:client
+10:38:57.327 > cd client && vite build
+10:38:57.330 
+10:38:57.729 vite v8.0.11 building client environment for production...
+10:38:58.947 
+transforming...✓ 2516 modules transformed.
+10:38:59.111 rendering chunks...
+10:38:59.533 computing gzip size...
+10:38:59.554 dist/index.html                     7.09 kB │ gzip:   1.87 kB
+10:38:59.555 dist/assets/index-BU7xwiVu.css     97.02 kB │ gzip:  15.06 kB
+10:38:59.555 dist/assets/index-gSWfUR9t.js   1,439.56 kB │ gzip: 422.44 kB
+10:38:59.555 
+10:38:59.556 [INEFFECTIVE_DYNAMIC_IMPORT] Warning: src/lib/firebase.ts is dynamically imported by src/pages/InvoiceDetail.tsx, src/pages/Onboarding.tsx, src/pages/ProposalDetail.tsx, src/pages/Proposals.tsx but also statically imported by src/contexts/AuthContext.tsx, src/lib/api.ts, src/pages/Auth.tsx, src/pages/ForgotPassword.tsx, src/pages/Settings.tsx, dynamic import will not move module into another chunk.
+10:38:59.556 
+10:38:59.556 [plugin builtin:vite-reporter] 
+10:38:59.557 (!) Some chunks are larger than 500 kB after minification. Consider:
+10:38:59.557 - Using dynamic import() to code-split the application
+10:38:59.557 - Use build.rolldownOptions.output.codeSplitting to improve chunking: https://rolldown.rs/reference/OutputOptions.codeSplitting
+10:38:59.557 - Adjust chunk size limit for this warning via build.chunkSizeWarningLimit.
+10:38:59.558 ✓ built in 1.82s
+10:38:59.714 
+10:38:59.715 > proposalforge@1.0.0 build:server
+10:38:59.715 > cd server && tsc
+10:38:59.716 
+10:39:03.696 Error: No Output Directory named "dist" found after the Build completed. Configure the Output Directory in your Project Settings. Alternatively, configure vercel.json#outputDirectory.
+10:39:03.697 Learn More: https://vercel.link/missing-public-directory
