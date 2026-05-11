@@ -88,10 +88,16 @@ const allowedOrigins = process.env.FRONTEND_URL
   ? process.env.FRONTEND_URL.split(',').map(o => o.trim())
   : []
 
+const TRUSTED_SUFFIXES = ['.vercel.app', '.railway.app', '.up.railway.app']
+
 app.use(cors({
   origin: isProd
     ? (origin, callback) => {
-        if (!origin || allowedOrigins.some(o => origin === o || origin.endsWith('.vercel.app'))) {
+        if (
+          !origin ||
+          allowedOrigins.some(o => origin === o) ||
+          TRUSTED_SUFFIXES.some(suffix => origin.endsWith(suffix))
+        ) {
           callback(null, true)
         } else {
           callback(new Error(`CORS: origin ${origin} not allowed`))
