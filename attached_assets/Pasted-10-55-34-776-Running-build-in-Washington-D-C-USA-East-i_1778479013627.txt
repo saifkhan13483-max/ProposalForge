@@ -1,0 +1,41 @@
+10:55:34.776 Running build in Washington, D.C., USA (East) – iad1
+10:55:34.776 Build machine configuration: 2 cores, 8 GB
+10:55:34.882 Cloning github.com/saifkhan13483-max/ProposalForge (Branch: main, Commit: e1cb147)
+10:55:34.883 Previous build caches not available.
+10:55:35.310 Cloning completed: 427.000ms
+10:55:35.642 Running "vercel build"
+10:55:36.506 Vercel CLI 53.3.2
+10:55:37.658 Running "install" command: `echo skip`...
+10:55:37.662 skip
+10:56:09.127 
+10:56:09.127 added 359 packages, and audited 360 packages in 31s
+10:56:09.127 
+10:56:09.128 52 packages are looking for funding
+10:56:09.128   run `npm fund` for details
+10:56:09.129 
+10:56:09.129 found 0 vulnerabilities
+10:56:09.297 
+10:56:09.297 > proposalforge-client@1.0.0 build
+10:56:09.298 > tsc && vite build
+10:56:09.298 
+10:56:16.529 vite v6.4.2 building for production...
+10:56:16.635 transforming...
+10:56:23.004 ✓ 2514 modules transformed.
+10:56:23.892 [plugin vite:reporter] 
+10:56:23.893 (!) /vercel/path0/client/src/lib/firebase.ts is dynamically imported by /vercel/path0/client/src/pages/InvoiceDetail.tsx, /vercel/path0/client/src/pages/Onboarding.tsx, /vercel/path0/client/src/pages/ProposalDetail.tsx, /vercel/path0/client/src/pages/Proposals.tsx but also statically imported by /vercel/path0/client/src/contexts/AuthContext.tsx, /vercel/path0/client/src/lib/api.ts, /vercel/path0/client/src/pages/Auth.tsx, /vercel/path0/client/src/pages/ForgotPassword.tsx, /vercel/path0/client/src/pages/Settings.tsx, dynamic import will not move module into another chunk.
+10:56:23.893 
+10:56:23.896 rendering chunks...
+10:56:23.935 computing gzip size...
+10:56:23.987 dist/index.html                     7.09 kB │ gzip:   1.87 kB
+10:56:23.988 dist/assets/index-Dc4LMfXG.css     96.60 kB │ gzip:  14.96 kB
+10:56:23.988 dist/assets/index-D7XUJpL0.js   1,414.47 kB │ gzip: 399.81 kB
+10:56:23.989 
+10:56:23.989 (!) Some chunks are larger than 500 kB after minification. Consider:
+10:56:23.989 - Using dynamic import() to code-split the application
+10:56:23.989 - Use build.rollupOptions.output.manualChunks to improve chunking: https://rollupjs.org/configuration-options/#output-manualchunks
+10:56:23.989 - Adjust chunk size limit for this warning via build.chunkSizeWarningLimit.
+10:56:23.990 ✓ built in 7.42s
+10:56:24.145 Build Completed in /vercel/output [47s]
+10:56:24.185 Deploying outputs...
+10:56:26.448 Deployment completed
+10:56:26.563 Creating build cache...
