@@ -64,6 +64,15 @@ async function syncWithBackend(firebaseUser: FirebaseUser): Promise<{ user: User
 
   if (!res.ok) {
     const err = await res.json().catch(() => ({ error: 'Auth failed' }))
+    if (res.status === 503) {
+      throw new Error(
+        'The server authentication service is not configured correctly. ' +
+        'Please contact the site administrator to check FIREBASE_SERVICE_ACCOUNT_JSON.'
+      )
+    }
+    if (res.status === 401) {
+      throw new Error('Authentication failed. Please sign in again.')
+    }
     throw new Error(err.error || 'Failed to authenticate with backend')
   }
   return res.json()

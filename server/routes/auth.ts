@@ -23,7 +23,23 @@ router.post('/firebase-login', async (req, res) => {
     const idToken = authHeader?.startsWith('Bearer ') ? authHeader.slice(7) : null
     if (!idToken) return res.status(401).json({ error: 'No token provided' })
 
-    const decoded = await verifyFirebaseToken(idToken)
+    let decoded: Awaited<ReturnType<typeof verifyFirebaseToken>>
+    try {
+      decoded = await verifyFirebaseToken(idToken)
+    } catch (firebaseErr) {
+      const msg = (firebaseErr as Error).message || ''
+      // Surface config problems clearly so they're easy to debug
+      if (msg.includes('FIREBASE_SERVICE_ACCOUNT_JSON')) {
+        console.error('Firebase Admin config error:', msg)
+        return res.status(503).json({
+          error: 'Server auth is misconfigured. Contact the site administrator.',
+          detail: msg,
+        })
+      }
+      // Expired / invalid token — normal auth failure
+      return res.status(401).json({ error: 'Invalid or expired Firebase token' })
+    }
+
     const { uid: firebaseUid, email, name } = decoded
 
     if (!email) return res.status(400).json({ error: 'Firebase account has no email' })

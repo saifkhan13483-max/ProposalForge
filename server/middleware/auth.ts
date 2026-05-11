@@ -28,6 +28,10 @@ export async function requireAuth(req: AuthRequest, res: Response, next: NextFun
     req.userPlan = result.rows[0].plan
     next()
   } catch (err) {
+    const msg = (err as Error).message || ''
+    if (msg.includes('FIREBASE_SERVICE_ACCOUNT_JSON')) {
+      return res.status(503).json({ error: 'Server auth is misconfigured.' })
+    }
     return res.status(401).json({ error: 'Invalid or expired token' })
   }
 }

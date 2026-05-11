@@ -272,8 +272,16 @@ function getFirebaseErrorMessage(code?: string): string {
       return 'Too many attempts. Please try again later.'
     case 'auth/popup-closed-by-user':
       return 'Sign-in popup was closed. Please try again.'
+    case 'auth/popup-blocked':
+      return 'Pop-up was blocked by your browser. Please allow pop-ups for this site and try again.'
     case 'auth/network-request-failed':
       return 'Network error. Please check your connection.'
+    case 'auth/unauthorized-domain':
+      return `This domain is not authorized for Google sign-in. To fix this, go to Firebase Console → Authentication → Settings → Authorized domains and add "${window.location.hostname}".`
+    case 'auth/cancelled-popup-request':
+      return 'Another sign-in is in progress. Please wait and try again.'
+    case 'auth/internal-error':
+      return 'An internal error occurred. Please try again.'
     default:
       return 'Something went wrong. Please try again.'
   }

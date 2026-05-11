@@ -6,6 +6,7 @@ import dotenv from 'dotenv'
 import path from 'path'
 import { fileURLToPath } from 'url'
 import { initDB } from './db.js'
+import { validateFirebaseAdmin } from './firebaseAdmin.js'
 import authRoutes from './routes/auth.js'
 import oauthRoutes from './routes/oauth.js'
 import clientRoutes from './routes/clients.js'
@@ -199,11 +200,14 @@ async function main() {
   try {
     await initDB()
 
-    // Start listening IMMEDIATELY — never block server startup on Stripe.
-    // Stripe initialization runs in the background after the server is already serving requests.
+    // Start listening IMMEDIATELY — never block server startup on optional services.
     app.listen(PORT, '0.0.0.0', () => {
       console.log(`Server running on port ${PORT}`)
     })
+
+    // Validate Firebase Admin early so config errors are visible in logs right away
+    // instead of silently failing on the first login attempt.
+    validateFirebaseAdmin().catch(() => {})
 
     // Non-blocking Stripe setup — failures are logged but never crash the server
     initStripe().catch(err => {
