@@ -3,7 +3,7 @@
   "outputDirectory": "client/dist",
   "installCommand": "echo skip",
   "rewrites": [
-    { "source": "/(.*)", "destination": "/index.html" }
+    { "source": "/((?!api/).*)", "destination": "/index.html" }
   ],
   "headers": [
     {
