@@ -70,7 +70,8 @@ export function Onboarding() {
         formData.append('logo', logoFile)
         const { getFirebaseIdToken } = await import('@/lib/firebase')
         const idToken = await getFirebaseIdToken()
-        await fetch('/api/auth/upload-logo', {
+        const apiBase = import.meta.env.VITE_API_URL ? `${import.meta.env.VITE_API_URL}/api` : '/api'
+        await fetch(`${apiBase}/auth/upload-logo`, {
           method: 'POST',
           headers: idToken ? { Authorization: `Bearer ${idToken}` } : {},
           body: formData,

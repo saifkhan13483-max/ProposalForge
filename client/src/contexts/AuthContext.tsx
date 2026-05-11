@@ -1,6 +1,7 @@
 import { createContext, useContext, useState, useEffect, useRef, type ReactNode } from 'react'
 import { onAuthStateChanged, type User as FirebaseUser } from 'firebase/auth'
 import { auth, firebaseSignOut, getFirebaseIdToken } from '@/lib/firebase'
+import { BASE_URL } from '@/lib/api'
 
 interface User {
   id: string
@@ -30,7 +31,7 @@ const AuthContext = createContext<AuthContextType | null>(null)
 
 async function syncWithBackend(firebaseUser: FirebaseUser): Promise<{ user: User; isNew: boolean }> {
   const idToken = await firebaseUser.getIdToken()
-  const res = await fetch('/api/auth/firebase-login', {
+  const res = await fetch(`${BASE_URL}/auth/firebase-login`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
@@ -69,7 +70,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
     try {
       const idToken = await fbUser.getIdToken(true)
-      const res = await fetch('/api/auth/me', {
+      const res = await fetch(`${BASE_URL}/auth/me`, {
         headers: { Authorization: `Bearer ${idToken}` },
       })
       if (!res.ok) throw new Error('Failed to refresh user')

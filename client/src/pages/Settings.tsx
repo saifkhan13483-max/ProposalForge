@@ -75,7 +75,8 @@ export function Settings() {
       const formData = new FormData()
       formData.append('logo', file)
       const idToken = await getFirebaseIdToken()
-      const res = await fetch('/api/auth/upload-logo', {
+      const apiBase = import.meta.env.VITE_API_URL ? `${import.meta.env.VITE_API_URL}/api` : '/api'
+      const res = await fetch(`${apiBase}/auth/upload-logo`, {
         method: 'POST',
         headers: idToken ? { Authorization: `Bearer ${idToken}` } : {},
         body: formData,

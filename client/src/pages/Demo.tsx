@@ -51,7 +51,8 @@ export function Demo() {
     }
     setLoading(true)
     try {
-      const res = await fetch('/api/public/demo/generate', {
+      const apiBase = import.meta.env.VITE_API_URL ? `${import.meta.env.VITE_API_URL}/api` : '/api'
+      const res = await fetch(`${apiBase}/public/demo/generate`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ projectDescription, clientName, projectType, budget, timeline }),
