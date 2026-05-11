@@ -1,4 +1,4 @@
-import { createContext, useContext, useState, useEffect, type ReactNode } from 'react'
+import { createContext, useContext, useState, useEffect, useRef, type ReactNode } from 'react'
 import { onAuthStateChanged, type User as FirebaseUser } from 'firebase/auth'
 import { auth, firebaseSignOut, getFirebaseIdToken } from '@/lib/firebase'
 
@@ -20,6 +20,8 @@ interface AuthContextType {
   user: User | null
   firebaseUser: FirebaseUser | null
   loading: boolean
+  authError: string | null
+  clearAuthError: () => void
   logout: () => Promise<void>
   refreshUser: () => Promise<void>
 }
@@ -35,6 +37,12 @@ async function syncWithBackend(firebaseUser: FirebaseUser): Promise<{ user: User
       Authorization: `Bearer ${idToken}`,
     },
   })
+
+  const contentType = res.headers.get('content-type') || ''
+  if (!contentType.includes('application/json')) {
+    throw new Error('Cannot reach the server. Please try again later.')
+  }
+
   if (!res.ok) {
     const err = await res.json().catch(() => ({ error: 'Auth failed' }))
     throw new Error(err.error || 'Failed to authenticate with backend')
@@ -46,6 +54,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(null)
   const [firebaseUser, setFirebaseUser] = useState<FirebaseUser | null>(null)
   const [loading, setLoading] = useState(true)
+  const [authError, setAuthError] = useState<string | null>(null)
+  const signingOut = useRef(false)
+
+  function clearAuthError() {
+    setAuthError(null)
+  }
 
   async function refreshUser() {
     const fbUser = auth.currentUser
@@ -68,13 +82,23 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (fbUser) => {
+      if (signingOut.current) return
+
       setFirebaseUser(fbUser)
       if (fbUser) {
         try {
           const { user: appUser } = await syncWithBackend(fbUser)
+          setAuthError(null)
           setUser(appUser)
-        } catch {
+        } catch (err) {
+          const message = err instanceof Error ? err.message : 'Sign-in failed. Please try again.'
+          setAuthError(message)
           setUser(null)
+          // Sign out from Firebase so the user can try again cleanly
+          signingOut.current = true
+          await firebaseSignOut().catch(() => {})
+          setFirebaseUser(null)
+          signingOut.current = false
         }
       } else {
         setUser(null)
@@ -85,13 +109,16 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, [])
 
   async function logout() {
+    signingOut.current = true
     await firebaseSignOut()
     setUser(null)
     setFirebaseUser(null)
+    setAuthError(null)
+    signingOut.current = false
   }
 
   return (
-    <AuthContext.Provider value={{ user, firebaseUser, loading, logout, refreshUser }}>
+    <AuthContext.Provider value={{ user, firebaseUser, loading, authError, clearAuthError, logout, refreshUser }}>
       {children}
     </AuthContext.Provider>
   )

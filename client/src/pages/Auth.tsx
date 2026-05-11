@@ -28,7 +28,7 @@ export function Auth() {
   const [businessName, setBusinessName] = useState('')
   const [loading, setLoading] = useState(false)
   const [googleLoading, setGoogleLoading] = useState(false)
-  const { user } = useAuth()
+  const { user, authError, clearAuthError } = useAuth()
   const [, setLocation] = useLocation()
   const { toast } = useToast()
 
@@ -39,6 +39,15 @@ export function Auth() {
       setLocation(user.onboarding_completed ? '/dashboard' : '/onboarding')
     }
   }, [user])
+
+  useEffect(() => {
+    if (authError) {
+      toast({ title: 'Sign-in failed', description: authError, variant: 'destructive' })
+      clearAuthError()
+      setGoogleLoading(false)
+      setLoading(false)
+    }
+  }, [authError])
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
