@@ -1,0 +1,34 @@
+10:51:40.897 Running build in Washington, D.C., USA (East) – iad1
+10:51:40.898 Build machine configuration: 2 cores, 8 GB
+10:51:41.010 Cloning github.com/saifkhan13483-max/ProposalForge (Branch: main, Commit: bbfccaf)
+10:51:41.011 Previous build caches not available.
+10:51:41.449 Cloning completed: 438.000ms
+10:51:41.793 Running "vercel build"
+10:51:43.776 Vercel CLI 53.3.2
+10:51:44.335 Running "install" command: `echo skip`...
+10:51:44.340 skip
+10:52:08.459 
+10:52:08.460 added 410 packages, and audited 411 packages in 24s
+10:52:08.461 
+10:52:08.461 65 packages are looking for funding
+10:52:08.461   run `npm fund` for details
+10:52:08.462 
+10:52:08.462 found 0 vulnerabilities
+10:52:09.000 
+10:52:09.000 > proposalforge-client@1.0.0 build
+10:52:09.000 > tsc && vite build
+10:52:09.000 
+10:52:16.472 failed to load config from /vercel/path0/client/vite.config.ts
+10:52:16.473 error during build:
+10:52:16.473 Error [ERR_MODULE_NOT_FOUND]: Cannot find package '@tailwindcss/vite' imported from /vercel/path0/client/node_modules/.vite-temp/vite.config.ts.timestamp-1778478736464-f21578bd7879b.mjs
+10:52:16.474     at Object.getPackageJSONURL (node:internal/modules/package_json_reader:301:9)
+10:52:16.474     at packageResolve (node:internal/modules/esm/resolve:768:81)
+10:52:16.474     at moduleResolve (node:internal/modules/esm/resolve:859:18)
+10:52:16.474     at defaultResolve (node:internal/modules/esm/resolve:991:11)
+10:52:16.475     at #cachedDefaultResolve (node:internal/modules/esm/loader:719:20)
+10:52:16.475     at #resolveAndMaybeBlockOnLoaderThread (node:internal/modules/esm/loader:736:38)
+10:52:16.475     at ModuleLoader.resolveSync (node:internal/modules/esm/loader:765:52)
+10:52:16.475     at #resolve (node:internal/modules/esm/loader:701:17)
+10:52:16.476     at ModuleLoader.getOrCreateModuleJob (node:internal/modules/esm/loader:621:35)
+10:52:16.476     at ModuleJob.syncLink (node:internal/modules/esm/module_job:160:33)
+10:52:16.495 Error: Command "cd client && npm install && npm run build" exited with 1
