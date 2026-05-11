@@ -10,10 +10,13 @@ async function getStripeCredentials(): Promise<{ secretKey: string; webhookSecre
       : null
 
   if (!hostname || !xReplitToken) {
-    // Fallback to env var if Replit connectors not available
+    // Fallback to env vars (used on Railway, Render, or any non-Replit host)
     const key = process.env.STRIPE_SECRET_KEY
-    if (key) return { secretKey: key }
-    throw new Error('Stripe integration not configured. Connect Stripe via the Integrations tab.')
+    if (key) return {
+      secretKey: key,
+      webhookSecret: process.env.STRIPE_WEBHOOK_SECRET,
+    }
+    throw new Error('Stripe not configured. Set STRIPE_SECRET_KEY env var or connect via Replit Integrations.')
   }
 
   const resp = await fetch(

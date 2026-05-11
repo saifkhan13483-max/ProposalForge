@@ -9,13 +9,49 @@ healthcheckTimeout = 300
 restartPolicyType = "on_failure"
 restartPolicyMaxRetries = 10
 
-# Required environment variables on Railway:
-# DATABASE_URL        — Neon PostgreSQL connection string (from neon.tech)
-# NODE_ENV            — Set to "production"
-# FRONTEND_URL        — Your Vercel frontend URL, e.g. https://proposalforge.vercel.app
-#                       (Setting this skips static file serving — Vercel handles the frontend)
-# FIREBASE_SERVICE_ACCOUNT_JSON — Firebase service account JSON (for auth token verification)
-# GEMINI_API_KEY      — (Optional) Your own Gemini key, or use Replit AI Integrations env vars
-# RESEND_API_KEY      — (Optional) For sending emails via Resend
-# PUBLIC_URL          — Your Railway public URL, e.g. https://proposalforge-api.up.railway.app
-#                       (Used for Stripe webhook registration and email links)
+# ─────────────────────────────────────────────────────────────────────────────
+# Required environment variables — set these in the Railway project dashboard
+# ─────────────────────────────────────────────────────────────────────────────
+#
+# DATABASE_URL
+#   Your Neon PostgreSQL connection string.
+#   Example: postgresql://user:pass@ep-xxx.us-east-1.aws.neon.tech/neondb?sslmode=require
+#
+# NODE_ENV
+#   Set to: production
+#
+# FRONTEND_URL
+#   Your Vercel frontend URL. Used for CORS and for building links in emails.
+#   Example: https://proposal-forge-mu.vercel.app
+#
+# PUBLIC_URL
+#   Your Railway backend's own public URL. Used for Stripe webhook registration.
+#   Example: https://proposalforge-api.up.railway.app
+#
+# FIREBASE_SERVICE_ACCOUNT_JSON
+#   The full JSON of your Firebase service account credentials (single line).
+#   Download from: Firebase Console → Project Settings → Service Accounts → Generate new private key
+#
+# PUPPETEER_SKIP_CHROMIUM_DOWNLOAD
+#   Set to: true  (PDF generation uses pdfmake, not Puppeteer — skip the download)
+#
+# ─────────────────────────────────────────────────────────────────────────────
+# Optional environment variables
+# ─────────────────────────────────────────────────────────────────────────────
+#
+# GEMINI_API_KEY
+#   Google Gemini API key for AI proposal generation.
+#   Get one at: https://aistudio.google.com/app/apikey
+#
+# RESEND_API_KEY
+#   Resend API key for sending emails (proposal delivery, notifications).
+#   Get one at: https://resend.com
+#
+# STRIPE_SECRET_KEY
+#   Stripe secret key for payment processing.
+#   Get from: https://dashboard.stripe.com/apikeys
+#   (Only needed if you want Stripe payments; app works without it)
+#
+# STRIPE_WEBHOOK_SECRET
+#   Stripe webhook signing secret for verifying webhook events.
+#   Created automatically when you register the webhook endpoint in Stripe dashboard.
