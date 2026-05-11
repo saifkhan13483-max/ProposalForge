@@ -54,11 +54,18 @@ async function syncWithBackend(firebaseUser: FirebaseUser): Promise<{ user: User
 
   const contentType = res.headers.get('content-type') || ''
   if (!contentType.includes('application/json')) {
-    // Got a response but it's HTML — wrong URL, server down, or CORS preflight rejected
+    // Got a non-JSON response — wrong URL, server crash, or Railway proxy error
+    if (res.status === 405) {
+      throw new Error(
+        'The server returned "Method Not Allowed" (HTTP 405). ' +
+        'This means Railway is running an outdated version of the server code that does not have the login endpoint. ' +
+        'Go to your Railway dashboard → your service → Deployments → click "Deploy" to redeploy with the latest code.'
+      )
+    }
     throw new Error(
       isUnconfigured
         ? 'Backend URL is not configured. Add VITE_API_URL in Vercel → Project Settings → Environment Variables (your Railway URL), then trigger a redeploy.'
-        : `Unexpected response (HTTP ${res.status}) from ${endpoint}. Check Railway logs — the server may be crashing on startup or the URL is wrong.`
+        : `Server error (HTTP ${res.status}) from ${endpoint}. Check your Railway deployment logs — the server may be crashing on startup.`
     )
   }
 

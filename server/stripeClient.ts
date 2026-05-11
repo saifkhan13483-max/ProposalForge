@@ -1,5 +1,4 @@
 import Stripe from 'stripe'
-import { StripeSync } from 'stripe-replit-sync'
 
 async function getStripeCredentials(): Promise<{ secretKey: string; webhookSecret?: string }> {
   const hostname = process.env.REPLIT_CONNECTORS_HOSTNAME
@@ -49,7 +48,12 @@ export async function getUncachableStripeClient(): Promise<Stripe> {
   return new Stripe(secretKey)
 }
 
-export async function getStripeSync(): Promise<StripeSync> {
+export async function getStripeSync() {
+  // StripeSync is dynamically imported so stripe-replit-sync is never loaded
+  // at module initialization time on non-Replit hosts (Railway, Render, etc.)
+  // where it would fail trying to connect to Replit's infrastructure.
+  const { StripeSync } = await import('stripe-replit-sync')
+
   const databaseUrl = process.env.DATABASE_URL
   if (!databaseUrl) throw new Error('DATABASE_URL required')
 
