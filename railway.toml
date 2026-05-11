@@ -1,6 +1,6 @@
 [build]
 builder = "nixpacks"
-buildCommand = "npm install && npm run build:server"
+buildCommand = "PUPPETEER_SKIP_CHROMIUM_DOWNLOAD=true npm install && npm run build:server"
 
 [deploy]
 startCommand = "node server/dist/index.js"
@@ -13,42 +13,33 @@ restartPolicyMaxRetries = 10
 # REQUIRED environment variables — set these in the Railway project dashboard
 # ─────────────────────────────────────────────────────────────────────────────
 #
-# DATABASE_URL
-#   Your Neon PostgreSQL connection string.
-#   Example: postgresql://user:pass@ep-xxx.us-east-1.aws.neon.tech/neondb?sslmode=require
-#
 # NODE_ENV
 #   Set to: production
 #
-# FRONTEND_URL
-#   Your Vercel frontend URL. Used for CORS and for building links in emails.
-#   Example: https://your-app.vercel.app
-#   If you use a custom domain on Vercel, put that here instead.
-#
-# PUBLIC_URL
-#   Your Railway backend's own public URL. Used for Stripe webhook registration.
-#   Example: https://your-app.up.railway.app
+# DATABASE_URL
+#   Your Neon PostgreSQL connection string.
+#   Example: postgresql://user:pass@ep-xxx.us-east-1.aws.neon.tech/neondb?sslmode=require
 #
 # FIREBASE_SERVICE_ACCOUNT_JSON
 #   Full JSON of your Firebase service account (on one line, no line breaks).
 #   Download from: Firebase Console → Project Settings → Service Accounts → Generate new private key
 #
+# FRONTEND_URL
+#   Your Vercel frontend URL. Used for CORS and for building links in emails.
+#   Example: https://your-app.vercel.app
+#   Comma-separate multiple URLs if needed: https://app.vercel.app,https://custom-domain.com
+#
+# PUBLIC_URL
+#   Your Railway backend's own public URL. Used for Stripe webhook registration.
+#   Example: https://your-app.up.railway.app
+#   Set this AFTER your first deploy (copy the Railway-generated URL).
+#
 # ─────────────────────────────────────────────────────────────────────────────
 # OPTIONAL environment variables
 # ─────────────────────────────────────────────────────────────────────────────
 #
-# GEMINI_API_KEY
-#   Google Gemini API key for AI proposal generation.
-#   Get one at: https://aistudio.google.com/app/apikey
-#
-# RESEND_API_KEY
-#   Resend API key for sending proposal emails to clients.
-#   Get one at: https://resend.com
-#
-# STRIPE_SECRET_KEY
-#   Stripe secret key for payment processing (Pro plan subscriptions).
-#   Get from: https://dashboard.stripe.com/apikeys
-#
-# STRIPE_WEBHOOK_SECRET
-#   Stripe webhook signing secret for verifying webhook events.
-#   Created in the Stripe dashboard when you add a webhook endpoint.
+# GEMINI_API_KEY        — AI proposal generation (aistudio.google.com/app/apikey)
+# RESEND_API_KEY        — Email sending (resend.com)
+# STRIPE_SECRET_KEY     — Pro plan payments (dashboard.stripe.com/apikeys)
+# STRIPE_WEBHOOK_SECRET — Stripe webhook signing secret
+#                         Webhook endpoint: https://your-app.up.railway.app/api/stripe/webhook

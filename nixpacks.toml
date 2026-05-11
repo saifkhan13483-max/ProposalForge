@@ -1,15 +1,6 @@
 [phases.setup]
 nixPkgs = ["nodejs_20"]
 
-[phases.install]
-cmds = ["npm install"]
-
-[phases.build]
-cmds = ["rm -rf server/dist", "npm run build:server"]
-
-[start]
-cmd = "node server/dist/index.js"
-
 [variables]
 NODE_ENV = "production"
 PUPPETEER_SKIP_CHROMIUM_DOWNLOAD = "true"

@@ -5,7 +5,7 @@ import { rateLimit } from 'express-rate-limit'
 import dotenv from 'dotenv'
 import path from 'path'
 import { fileURLToPath } from 'url'
-import { initDB } from './db.js'
+import { initDB, query } from './db.js'
 import { validateFirebaseAdmin } from './firebaseAdmin.js'
 import authRoutes from './routes/auth.js'
 import oauthRoutes from './routes/oauth.js'
@@ -61,7 +61,7 @@ const genLimiter = rateLimit({
   message: { error: 'Too many generation requests, please slow down.' },
 })
 
-// Stripe webhook MUST be before express.json()
+// Stripe webhook MUST be before express.json() to receive raw body
 app.post(
   '/api/stripe/webhook',
   express.raw({ type: 'application/json' }),
@@ -75,7 +75,62 @@ app.post(
       if (!Buffer.isBuffer(req.body)) {
         return res.status(400).json({ error: 'Body must be raw buffer' })
       }
+
+      // Verify + sync to stripe.* tables
       await sync.processWebhook(req.body, sig)
+
+      // Parse event to update user plan in our DB
+      let event: { type: string; data: { object: Record<string, unknown> } }
+      try {
+        event = JSON.parse(req.body.toString())
+      } catch {
+        return res.status(400).json({ error: 'Invalid webhook JSON' })
+      }
+
+      try {
+        if (event.type === 'checkout.session.completed') {
+          const session = event.data.object
+          if (
+            session.mode === 'subscription' &&
+            session.metadata &&
+            (session.metadata as Record<string, string>).userId
+          ) {
+            const userId = (session.metadata as Record<string, string>).userId
+            const subId = session.subscription as string | null
+            await query(
+              'UPDATE users SET plan = $1, stripe_subscription_id = $2 WHERE id = $3',
+              ['pro', subId, userId]
+            )
+            console.log(`User ${userId} upgraded to Pro via checkout`)
+          }
+        } else if (event.type === 'customer.subscription.updated') {
+          const sub = event.data.object
+          const status = sub.status as string
+          const customerId = sub.customer as string
+          if (status === 'active' || status === 'trialing') {
+            await query(
+              'UPDATE users SET plan = $1, stripe_subscription_id = $2 WHERE stripe_customer_id = $3',
+              ['pro', sub.id, customerId]
+            )
+          } else if (status === 'canceled' || status === 'unpaid' || status === 'past_due') {
+            await query(
+              'UPDATE users SET plan = $1, stripe_subscription_id = NULL WHERE stripe_customer_id = $2',
+              ['free', customerId]
+            )
+          }
+        } else if (event.type === 'customer.subscription.deleted') {
+          const sub = event.data.object
+          const customerId = sub.customer as string
+          await query(
+            'UPDATE users SET plan = $1, stripe_subscription_id = NULL WHERE stripe_customer_id = $2',
+            ['free', customerId]
+          )
+          console.log(`Subscription deleted for customer ${customerId} — plan set to free`)
+        }
+      } catch (planErr) {
+        console.error('Failed to update user plan from webhook:', planErr)
+      }
+
       res.json({ received: true })
     } catch (err) {
       console.error('Webhook error:', err)
