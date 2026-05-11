@@ -211,18 +211,18 @@ export function Demo() {
               </div>
             </div>
 
-            {result.executiveSummary && (
+            {result?.executiveSummary && (
               <div className="bg-white rounded-2xl border p-4 sm:p-6 shadow-sm">
                 <h3 className="font-bold text-base sm:text-lg mb-3" style={{ fontFamily: 'Bricolage Grotesque, sans-serif' }}>Executive Summary</h3>
-                <p className="text-gray-700 leading-relaxed whitespace-pre-line text-sm sm:text-base">{result.executiveSummary}</p>
+                <p className="text-gray-700 leading-relaxed whitespace-pre-line text-sm sm:text-base">{result?.executiveSummary}</p>
               </div>
             )}
 
-            {result.deliverables?.length > 0 && (
+            {(result?.deliverables?.length ?? 0) > 0 && (
               <div className="bg-white rounded-2xl border p-4 sm:p-6 shadow-sm">
                 <h3 className="font-bold text-base sm:text-lg mb-3" style={{ fontFamily: 'Bricolage Grotesque, sans-serif' }}>Deliverables</h3>
                 <ul className="space-y-2">
-                  {result.deliverables.map((d, i) => (
+                  {result?.deliverables.map((d, i) => (
                     <li key={i} className="flex items-start gap-3">
                       <CheckCircle className="h-5 w-5 mt-0.5 shrink-0 text-indigo-500" />
                       <span className="text-gray-700 text-sm sm:text-base">{d}</span>
@@ -232,7 +232,7 @@ export function Demo() {
               </div>
             )}
 
-            {result.lineItems?.length > 0 && (
+            {(result?.lineItems?.length ?? 0) > 0 && (
               <div className="bg-white rounded-2xl border p-4 sm:p-6 shadow-sm">
                 <h3 className="font-bold text-base sm:text-lg mb-4" style={{ fontFamily: 'Bricolage Grotesque, sans-serif' }}>Project Quote</h3>
                 <div className="overflow-x-auto -mx-4 sm:mx-0 px-4 sm:px-0">
@@ -246,7 +246,7 @@ export function Demo() {
                       </tr>
                     </thead>
                     <tbody>
-                      {result.lineItems.map((item, i) => (
+                      {result?.lineItems.map((item, i) => (
                         <tr key={i} className="border-b last:border-0">
                           <td className="py-3 text-gray-700 text-sm">{item.description}</td>
                           <td className="py-3 text-right text-muted-foreground text-sm">{item.quantity}</td>
@@ -258,7 +258,7 @@ export function Demo() {
                     <tfoot>
                       <tr>
                         <td colSpan={3} className="pt-4 text-right font-bold text-base sm:text-lg">Total</td>
-                        <td className="pt-4 text-right font-bold text-base sm:text-lg text-indigo-600">{formatCurrency(result.totalEstimate)}</td>
+                        <td className="pt-4 text-right font-bold text-base sm:text-lg text-indigo-600">{formatCurrency(result?.totalEstimate ?? 0)}</td>
                       </tr>
                     </tfoot>
                   </table>

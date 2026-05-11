@@ -278,7 +278,7 @@ export function PublicProposal() {
         </div>
 
         {/* Executive Summary */}
-        {content.executiveSummary && (
+        {!!content.executiveSummary && (
           <div className="bg-white rounded-2xl border p-4 sm:p-8 shadow-sm">
             <h2 className="text-lg sm:text-xl font-bold mb-3 sm:mb-4" style={{ fontFamily: 'Bricolage Grotesque, sans-serif' }}>Executive Summary</h2>
             <div className="prose prose-gray max-w-none" dangerouslySetInnerHTML={{ __html: content.executiveSummary as string }} />
@@ -286,7 +286,7 @@ export function PublicProposal() {
         )}
 
         {/* Scope of Work */}
-        {content.scopeOfWork && (
+        {!!content.scopeOfWork && (
           <div className="bg-white rounded-2xl border p-4 sm:p-8 shadow-sm">
             <h2 className="text-lg sm:text-xl font-bold mb-3 sm:mb-4" style={{ fontFamily: 'Bricolage Grotesque, sans-serif' }}>Scope of Work</h2>
             <div className="prose prose-gray max-w-none" dangerouslySetInnerHTML={{ __html: content.scopeOfWork as string }} />
@@ -294,7 +294,7 @@ export function PublicProposal() {
         )}
 
         {/* Timeline */}
-        {content.timeline && (
+        {!!content.timeline && (
           <div className="bg-white rounded-2xl border p-4 sm:p-8 shadow-sm">
             <h2 className="text-lg sm:text-xl font-bold mb-3 sm:mb-4" style={{ fontFamily: 'Bricolage Grotesque, sans-serif' }}>Project Timeline</h2>
             <div className="prose prose-gray max-w-none" dangerouslySetInnerHTML={{ __html: content.timeline as string }} />
@@ -302,7 +302,7 @@ export function PublicProposal() {
         )}
 
         {/* Deliverables */}
-        {content.deliverables && (
+        {!!content.deliverables && (
           <div className="bg-white rounded-2xl border p-4 sm:p-8 shadow-sm">
             <h2 className="text-lg sm:text-xl font-bold mb-3 sm:mb-4" style={{ fontFamily: 'Bricolage Grotesque, sans-serif' }}>Deliverables</h2>
             <ul className="space-y-2">
@@ -352,7 +352,7 @@ export function PublicProposal() {
         )}
 
         {/* Terms */}
-        {content.terms && (
+        {!!content.terms && (
           <div className="bg-white rounded-2xl border p-4 sm:p-8 shadow-sm">
             <h2 className="text-lg sm:text-xl font-bold mb-3 sm:mb-4" style={{ fontFamily: 'Bricolage Grotesque, sans-serif' }}>Terms & Conditions</h2>
             <div className="prose prose-gray max-w-none text-sm" dangerouslySetInnerHTML={{ __html: content.terms as string }} />

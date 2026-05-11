@@ -255,7 +255,7 @@ export function Analytics() {
                       <Cell key={`cell-${index}`} fill={PIE_COLORS[index % PIE_COLORS.length]} />
                     ))}
                   </Pie>
-                  <Tooltip formatter={(value: number, name: string) => [value, name]} />
+                  <Tooltip formatter={(value) => [Number(value), '']} />
                   <Legend wrapperStyle={{ fontSize: '12px' }} />
                 </PieChart>
               </ResponsiveContainer>

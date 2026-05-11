@@ -1,0 +1,49 @@
+10:44:47.325 Running build in Washington, D.C., USA (East) – iad1
+10:44:47.325 Build machine configuration: 2 cores, 8 GB
+10:44:47.443 Cloning github.com/saifkhan13483-max/ProposalForge (Branch: main, Commit: 2265c0c)
+10:44:47.444 Previous build caches not available.
+10:44:47.889 Cloning completed: 445.000ms
+10:44:48.180 Running "vercel build"
+10:44:49.503 Vercel CLI 53.3.2
+10:44:50.087 Running "install" command: `echo skip`...
+10:44:50.091 skip
+10:44:58.330 
+10:44:58.332 added 327 packages, and audited 328 packages in 8s
+10:44:58.332 
+10:44:58.333 62 packages are looking for funding
+10:44:58.333   run `npm fund` for details
+10:44:58.333 
+10:44:58.334 found 0 vulnerabilities
+10:44:58.526 
+10:44:58.527 > proposalforge-client@1.0.0 build
+10:44:58.527 > tsc && vite build
+10:44:58.527 
+10:45:05.394 src/contexts/AuthContext.tsx(2,63): error TS2307: Cannot find module 'firebase/auth' or its corresponding type declarations.
+10:45:05.396 src/contexts/AuthContext.tsx(70,57): error TS7006: Parameter 'fbUser' implicitly has an 'any' type.
+10:45:05.396 src/lib/api.ts(3,30): error TS2339: Property 'env' does not exist on type 'ImportMeta'.
+10:45:05.396 src/lib/api.ts(4,20): error TS2339: Property 'env' does not exist on type 'ImportMeta'.
+10:45:05.396 src/lib/firebase.ts(1,40): error TS2307: Cannot find module 'firebase/app' or its corresponding type declarations.
+10:45:05.397 src/lib/firebase.ts(11,8): error TS2307: Cannot find module 'firebase/auth' or its corresponding type declarations.
+10:45:05.397 src/lib/firebase.ts(14,23): error TS2339: Property 'env' does not exist on type 'ImportMeta'.
+10:45:05.397 src/lib/firebase.ts(15,30): error TS2339: Property 'env' does not exist on type 'ImportMeta'.
+10:45:05.397 src/lib/firebase.ts(16,26): error TS2339: Property 'env' does not exist on type 'ImportMeta'.
+10:45:05.397 src/lib/firebase.ts(17,33): error TS2339: Property 'env' does not exist on type 'ImportMeta'.
+10:45:05.397 src/lib/firebase.ts(18,22): error TS2339: Property 'env' does not exist on type 'ImportMeta'.
+10:45:05.398 src/pages/Analytics.tsx(258,28): error TS2322: Type '(value: number, name: string) => [number, string]' is not assignable to type 'Formatter<ValueType, NameType> & ((value: ValueType, name: NameType, item: TooltipPayloadEntry, index: number, payload: TooltipPayload) => ReactNode | [...])'.
+10:45:05.399   Type '(value: number, name: string) => [number, string]' is not assignable to type 'Formatter<ValueType, NameType>'.
+10:45:05.399     Types of parameters 'value' and 'value' are incompatible.
+10:45:05.400       Type 'ValueType | undefined' is not assignable to type 'number'.
+10:45:05.400         Type 'undefined' is not assignable to type 'number'.
+10:45:05.400 src/pages/Demo.tsx(214,14): error TS18047: 'result' is possibly 'null'.
+10:45:05.400 src/pages/Demo.tsx(217,104): error TS18047: 'result' is possibly 'null'.
+10:45:05.400 src/pages/Demo.tsx(221,14): error TS18047: 'result' is possibly 'null'.
+10:45:05.400 src/pages/Demo.tsx(225,20): error TS18047: 'result' is possibly 'null'.
+10:45:05.400 src/pages/Demo.tsx(235,14): error TS18047: 'result' is possibly 'null'.
+10:45:05.401 src/pages/Demo.tsx(249,24): error TS18047: 'result' is possibly 'null'.
+10:45:05.401 src/pages/Demo.tsx(261,120): error TS18047: 'result' is possibly 'null'.
+10:45:05.401 src/pages/PublicProposal.tsx(255,9): error TS2322: Type 'unknown' is not assignable to type 'ReactNode'.
+10:45:05.401 src/pages/PublicProposal.tsx(280,9): error TS2322: Type 'unknown' is not assignable to type 'ReactNode'.
+10:45:05.402 src/pages/PublicProposal.tsx(281,9): error TS2322: Type 'unknown' is not assignable to type 'ReactNode'.
+10:45:05.402 src/pages/PublicProposal.tsx(288,9): error TS2322: Type 'unknown' is not assignable to type 'ReactNode'.
+10:45:05.402 src/pages/PublicProposal.tsx(296,9): error TS2322: Type 'unknown' is not assignable to type 'ReactNode'.
+10:45:05.441 Error: Command "cd client && npm install && npm run build" exited with 2
