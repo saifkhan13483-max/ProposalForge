@@ -1,18 +1,18 @@
 import { Router, Request, Response } from 'express'
+import { getBaseUrl } from '../lib/baseUrl.js'
 
 const router = Router()
 
-function getBaseUrl(req: Request): string {
-  if (process.env.REPLIT_DOMAINS) {
-    return `https://${process.env.REPLIT_DOMAINS.split(',')[0]}`
-  }
+function getSitemapBaseUrl(req: Request): string {
+  const envUrl = getBaseUrl()
+  if (!envUrl.includes('localhost')) return envUrl
   const proto = req.headers['x-forwarded-proto'] || req.protocol || 'https'
-  const host = req.headers['x-forwarded-host'] || req.headers.host || 'proposalforge.replit.app'
+  const host = req.headers['x-forwarded-host'] || req.headers.host || 'localhost'
   return `${proto}://${host}`
 }
 
 router.get('/sitemap.xml', (req: Request, res: Response) => {
-  const base = getBaseUrl(req)
+  const base = getSitemapBaseUrl(req)
   const now = new Date().toISOString().split('T')[0]
 
   const pages = [
@@ -43,7 +43,7 @@ router.get('/sitemap.xml', (req: Request, res: Response) => {
 })
 
 router.get('/robots.txt', (req: Request, res: Response) => {
-  const base = getBaseUrl(req)
+  const base = getSitemapBaseUrl(req)
 
   const content = `User-agent: *
 Allow: /

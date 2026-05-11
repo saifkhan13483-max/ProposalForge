@@ -83,9 +83,21 @@ app.post(
   }
 )
 
-// Middleware
+// CORS — allow the Vercel frontend (or any FRONTEND_URL) in production
+const allowedOrigins = process.env.FRONTEND_URL
+  ? process.env.FRONTEND_URL.split(',').map(o => o.trim())
+  : []
+
 app.use(cors({
-  origin: isProd ? false : true,
+  origin: isProd
+    ? (origin, callback) => {
+        if (!origin || allowedOrigins.some(o => origin === o || origin.endsWith('.vercel.app'))) {
+          callback(null, true)
+        } else {
+          callback(new Error(`CORS: origin ${origin} not allowed`))
+        }
+      }
+    : true,
   credentials: true,
 }))
 app.use(express.json({ limit: '10mb' }))
@@ -148,9 +160,8 @@ async function main() {
       const { getStripeSync } = await import('./stripeClient.js')
       const stripeSync = await getStripeSync()
 
-      const baseUrl = process.env.REPLIT_DOMAINS
-        ? `https://${process.env.REPLIT_DOMAINS.split(',')[0]}`
-        : `http://localhost:${PORT}`
+      const baseUrl = process.env.PUBLIC_URL
+        || (process.env.REPLIT_DOMAINS ? `https://${process.env.REPLIT_DOMAINS.split(',')[0]}` : `http://localhost:${PORT}`)
 
       await stripeSync.findOrCreateManagedWebhook(`${baseUrl}/api/stripe/webhook`)
       stripeSync.syncBackfill().catch(err => console.error('Stripe backfill error:', err))

@@ -1,6 +1,7 @@
 import { Router } from 'express'
 import { query } from '../db.js'
 import { generateContent, hasGeminiKey } from '../lib/gemini.js'
+import { getBaseUrl } from '../lib/baseUrl.js'
 
 const router = Router()
 
@@ -22,12 +23,6 @@ async function sendFreelancerEmail(to: string, subject: string, html: string) {
   } catch (err) {
     console.error('Notification email failed:', err)
   }
-}
-
-function getBaseUrl(): string {
-  return process.env.REPLIT_DOMAINS
-    ? `https://${process.env.REPLIT_DOMAINS.split(',')[0]}`
-    : 'http://localhost:5000'
 }
 
 // Get proposal by accept token (public)

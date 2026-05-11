@@ -2,6 +2,7 @@ import { Router } from 'express'
 import { query } from '../db.js'
 import { requireAuth, type AuthRequest } from '../middleware/auth.js'
 import { generateContent, hasGeminiKey } from '../lib/gemini.js'
+import { getBaseUrl } from '../lib/baseUrl.js'
 
 const router = Router()
 router.use(requireAuth)
@@ -361,9 +362,7 @@ router.post('/:id/send', async (req: AuthRequest, res) => {
       ['sent', personalMessage || null, req.params.id]
     )
 
-    const baseUrl = process.env.REPLIT_DOMAINS
-      ? `https://${process.env.REPLIT_DOMAINS.split(',')[0]}`
-      : 'http://localhost:5000'
+    const baseUrl = getBaseUrl()
     const acceptUrl = `${baseUrl}/proposal/${proposal.accept_token}`
 
     // Try to send email via Resend

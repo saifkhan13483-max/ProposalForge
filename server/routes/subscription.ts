@@ -1,4 +1,5 @@
 import { Router } from 'express'
+import { getBaseUrl } from '../lib/baseUrl.js'
 import { query } from '../db.js'
 import { requireAuth, type AuthRequest } from '../middleware/auth.js'
 
@@ -139,9 +140,7 @@ router.post('/subscription/checkout', requireAuth, async (req: AuthRequest, res)
       p.recurring?.interval === interval
     )
 
-    const baseUrl = process.env.REPLIT_DOMAINS
-      ? `https://${process.env.REPLIT_DOMAINS.split(',')[0]}`
-      : 'http://localhost:5000'
+    const baseUrl = getBaseUrl()
 
     const session = await stripe.checkout.sessions.create({
       customer: customerId,
@@ -182,9 +181,7 @@ router.post('/subscription/portal', requireAuth, async (req: AuthRequest, res) =
     const { getUncachableStripeClient } = await import('../stripeClient.js')
     const stripe = await getUncachableStripeClient()
 
-    const baseUrl = process.env.REPLIT_DOMAINS
-      ? `https://${process.env.REPLIT_DOMAINS.split(',')[0]}`
-      : 'http://localhost:5000'
+    const baseUrl = getBaseUrl()
 
     const session = await stripe.billingPortal.sessions.create({
       customer: user.stripe_customer_id,

@@ -1,4 +1,5 @@
 import { Router } from 'express'
+import { getBaseUrl } from '../lib/baseUrl.js'
 import { query } from '../db.js'
 import { requireAuth, type AuthRequest } from '../middleware/auth.js'
 
@@ -147,9 +148,7 @@ router.post('/:id/checkout', async (req: AuthRequest, res) => {
     const { getUncachableStripeClient } = await import('../stripeClient.js')
     const stripe = await getUncachableStripeClient()
 
-    const baseUrl = process.env.REPLIT_DOMAINS
-      ? `https://${process.env.REPLIT_DOMAINS.split(',')[0]}`
-      : 'http://localhost:5000'
+    const baseUrl = getBaseUrl()
 
     const session = await stripe.checkout.sessions.create({
       payment_method_types: ['card'],
@@ -193,9 +192,7 @@ router.post('/:id/send', async (req: AuthRequest, res) => {
     const userResult = await query('SELECT business_name, email FROM users WHERE id = $1', [req.userId])
     const user = userResult.rows[0]
 
-    const baseUrl = process.env.REPLIT_DOMAINS
-      ? `https://${process.env.REPLIT_DOMAINS.split(',')[0]}`
-      : 'http://localhost:5000'
+    const baseUrl = getBaseUrl()
 
     const resendKey = process.env.RESEND_API_KEY
     if (!resendKey) return res.status(503).json({ error: 'Email not configured. Please add RESEND_API_KEY.' })
