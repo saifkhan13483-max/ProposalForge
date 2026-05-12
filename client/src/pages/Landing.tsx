@@ -453,13 +453,20 @@ export function Landing() {
           </div>
         )
         return (
-          <section className="bg-slate-50 border-y border-slate-200 py-3">
-            <div className="overflow-x-auto scrollbar-none">
-              <div className="flex items-center justify-start lg:justify-center gap-2 px-4 sm:px-6 min-w-max lg:min-w-0 mx-auto max-w-5xl">
-                {items.map((item) => (
-                  <Pill key={item.label} icon={item.icon} label={item.label} />
+          <section className="bg-slate-50 border-y border-slate-200 py-3 overflow-hidden">
+            {/* Mobile: marquee */}
+            <div className="sm:hidden">
+              <div className="animate-marquee">
+                {[...items, ...items].map((item, i) => (
+                  <Pill key={i} icon={item.icon} label={item.label} />
                 ))}
               </div>
+            </div>
+            {/* Desktop: static centred row */}
+            <div className="hidden sm:flex max-w-5xl mx-auto px-6 items-center justify-center gap-3">
+              {items.map((item) => (
+                <Pill key={item.label} icon={item.icon} label={item.label} />
+              ))}
             </div>
           </section>
         )
