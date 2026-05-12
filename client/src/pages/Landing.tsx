@@ -756,9 +756,7 @@ export function Landing() {
         <div className="max-w-5xl mx-auto px-4 sm:px-6">
           <div className="flex flex-col items-center gap-4 md:flex-row md:justify-between">
             <div className="flex items-center gap-2">
-              <div className="h-7 w-7 rounded-lg bg-indigo-600 flex items-center justify-center shrink-0">
-                <Sparkles className="h-3.5 w-3.5 text-white" />
-              </div>
+              <img src="/logo.png" alt="ProposalForge" className="h-7 w-7 object-contain shrink-0" />
               <span className="font-bold text-white">ProposalForge</span>
             </div>
             <div className="flex items-center gap-6 text-sm text-slate-500">
