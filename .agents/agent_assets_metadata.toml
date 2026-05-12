@@ -6,3 +6,9 @@ id = "2hZbv4yN02dzCqACiSn77"
 uri = "file://DEPLOYMENT.md"
 type = "text"
 title = "ProposalForge Deployment Guide"
+
+[[outputs]]
+id = "2RfIQtgnYRdjt9WuoK_-J"
+uri = "file://README.md"
+type = "text"
+title = "ProposalForge README"
