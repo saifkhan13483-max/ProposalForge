@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { useRoute } from 'wouter'
-import { api } from '@/lib/api'
+import { api, BASE_URL } from '@/lib/api'
 import { useSEO } from '@/hooks/useSEO'
 import { formatCurrency, formatDate } from '@/lib/utils'
 import { Button } from '@/components/ui/button'
@@ -207,7 +207,7 @@ export function PublicProposal() {
           </div>
           <div className="flex items-center gap-1.5 sm:gap-2 shrink-0 flex-wrap justify-end">
             <a
-              href={`/api/public/proposal/${params?.token}/pdf`}
+              href={`${BASE_URL}/public/proposal/${params?.token}/pdf`}
               download
               className="inline-flex items-center gap-1 sm:gap-1.5 px-2 sm:px-3 py-1.5 text-xs sm:text-sm font-medium rounded-md border bg-white hover:bg-gray-50 transition-colors text-gray-700"
               data-testid="button-download-pdf"

@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { Link, useLocation } from 'wouter'
-import { api } from '@/lib/api'
+import { api, BASE_URL } from '@/lib/api'
 import { useSEO } from '@/hooks/useSEO'
 import { formatCurrency, formatDate, getStatusColor } from '@/lib/utils'
 import { Button } from '@/components/ui/button'
@@ -104,7 +104,7 @@ export function Proposals() {
     try {
       const { getFirebaseIdToken } = await import('@/lib/firebase')
       const idToken = await getFirebaseIdToken()
-      const res = await fetch(`/api/proposals/${proposal.id}/pdf`, {
+      const res = await fetch(`${BASE_URL}/proposals/${proposal.id}/pdf`, {
         headers: idToken ? { Authorization: `Bearer ${idToken}` } : {},
       })
       if (!res.ok) throw new Error('Failed to generate PDF')
