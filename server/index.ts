@@ -68,23 +68,50 @@ app.post(
   async (req, res) => {
     const signature = req.headers['stripe-signature']
     if (!signature) return res.status(400).json({ error: 'Missing stripe-signature' })
+
+    if (!Buffer.isBuffer(req.body)) {
+      return res.status(400).json({ error: 'Body must be raw buffer' })
+    }
+
+    const sig = Array.isArray(signature) ? signature[0] : signature
+    const isReplit = !!(process.env.REPLIT_DOMAINS || process.env.REPL_ID)
+
+    let event: { type: string; data: { object: Record<string, unknown> } }
+
     try {
-      const { getStripeSync } = await import('./stripeClient.js')
-      const sync = await getStripeSync()
-      const sig = Array.isArray(signature) ? signature[0] : signature
-      if (!Buffer.isBuffer(req.body)) {
-        return res.status(400).json({ error: 'Body must be raw buffer' })
-      }
-
-      // Verify + sync to stripe.* tables
-      await sync.processWebhook(req.body, sig)
-
-      // Parse event to update user plan in our DB
-      let event: { type: string; data: { object: Record<string, unknown> } }
-      try {
-        event = JSON.parse(req.body.toString())
-      } catch {
-        return res.status(400).json({ error: 'Invalid webhook JSON' })
+      if (isReplit) {
+        // On Replit: use stripe-replit-sync to verify + mirror to stripe.* tables
+        const { getStripeSync } = await import('./stripeClient.js')
+        const sync = await getStripeSync()
+        await sync.processWebhook(req.body, sig)
+        try {
+          event = JSON.parse(req.body.toString())
+        } catch {
+          return res.status(400).json({ error: 'Invalid webhook JSON' })
+        }
+      } else {
+        // On Railway / any non-Replit host: verify directly with the Stripe SDK.
+        // stripe-replit-sync is intentionally NOT used here — it requires Replit
+        // infrastructure that won't be available outside of Replit.
+        const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET
+        if (!webhookSecret) {
+          // No secret configured — accept but warn (useful during initial setup)
+          console.warn('STRIPE_WEBHOOK_SECRET not set; skipping signature verification')
+          try {
+            event = JSON.parse(req.body.toString())
+          } catch {
+            return res.status(400).json({ error: 'Invalid webhook JSON' })
+          }
+        } else {
+          const { getUncachableStripeClient } = await import('./stripeClient.js')
+          const stripe = await getUncachableStripeClient()
+          try {
+            event = stripe.webhooks.constructEvent(req.body, sig, webhookSecret) as unknown as typeof event
+          } catch (err) {
+            console.error('Stripe webhook signature verification failed:', err)
+            return res.status(400).json({ error: 'Webhook signature verification failed' })
+          }
+        }
       }
 
       try {
@@ -199,9 +226,14 @@ app.use('/api', subscriptionRoutes)
 // Sitemap + robots.txt (dynamic, with correct base URL)
 app.use('/', sitemapRoutes)
 
-// Health check
-app.get('/api/health', (_req, res) => {
-  res.json({ status: 'ok', timestamp: new Date().toISOString() })
+// Health check — Railway uses this path to decide if the service is healthy
+app.get('/api/health', async (_req, res) => {
+  try {
+    await query('SELECT 1')
+    res.json({ status: 'ok', db: 'connected', timestamp: new Date().toISOString() })
+  } catch {
+    res.status(503).json({ status: 'error', db: 'unreachable', timestamp: new Date().toISOString() })
+  }
 })
 
 // Serve React client in production ONLY when frontend is not separately hosted
