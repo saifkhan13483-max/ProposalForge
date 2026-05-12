@@ -11,6 +11,8 @@ channel = "stable-25_05"
 
 [userenv.shared]
 SERVER_PORT = "3000"
+NODE_ENV = "development"
+PUPPETEER_SKIP_CHROMIUM_DOWNLOAD = "true"
 
 [workflows]
 runButton = "Project"
