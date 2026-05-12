@@ -199,9 +199,7 @@ export function PublicProposal() {
             {proposal.logo_url ? (
               <img src={proposal.logo_url} alt={proposal.business_name} className="h-7 sm:h-8 w-auto object-contain shrink-0" />
             ) : (
-              <div className="h-7 w-7 sm:h-8 sm:w-8 rounded-lg flex items-center justify-center shrink-0" style={{ backgroundColor: accentColor }}>
-                <Sparkles className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-white" />
-              </div>
+              <img src="/logo.png" alt="ProposalForge" className="h-7 sm:h-8 w-auto object-contain shrink-0" />
             )}
             <span className="font-semibold text-gray-900 truncate text-sm sm:text-base">{proposal.business_name || 'Proposal'}</span>
           </div>
