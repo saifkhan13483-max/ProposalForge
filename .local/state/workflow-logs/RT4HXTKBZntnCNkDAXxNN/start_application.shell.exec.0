@@ -1,0 +1,29 @@
+
+> proposalforge@1.0.0 dev
+> concurrently -n client,server -c cyan,yellow "npm run dev:client" "npm run dev:server"
+
+[1G[0K[36m[client][39m 
+[36m[client][39m > proposalforge@1.0.0 dev:client
+[36m[client][39m > cd client && npm run dev
+[36m[client][39m 
+[33m[server][39m 
+[33m[server][39m > proposalforge@1.0.0 dev:server
+[33m[server][39m > tsx watch server/index.ts
+[33m[server][39m 
+[36m[client][39m 
+[36m[client][39m > proposalforge-client@1.0.0 dev
+[36m[client][39m > vite --port 5000 --host
+[36m[client][39m 
+[36m[client][39m 
+[36m[client][39m   [32m[1mVITE[22m v6.4.2[39m  [2mready in [0m[1m532[22m[2m[0m ms[22m
+[36m[client][39m 
+[36m[client][39m   [32m➜[39m  [1mLocal[22m:   [36mhttp://localhost:[1m5000[22m/[39m
+[36m[client][39m   [32m➜[39m  [1mNetwork[22m: [36mhttp://172.31.70.34:[1m5000[22m/[39m
+[33m[server][39m Database initialized
+[33m[server][39m ⚠️  Firebase Admin initialization FAILED: FIREBASE_SERVICE_ACCOUNT_JSON is not set. Go to Firebase Console → Project Settings → Service Accounts → Generate new private key, then add the JSON as a single-line secret named FIREBASE_SERVICE_ACCOUNT_JSON.
+[33m[server][39m    Auth endpoints will return 503 until this is fixed.
+[33m[server][39m Server running on port 3000
+[33m[server][39m Stripe schema ready
+[33m[server][39m Stripe init failed (optional): Failed to fetch Stripe credentials: 401 Unauthorized
+[33m[server][39m [0mnpm run dev:server exited with code SIGHUP[0m
+[36m[client][39m [0mnpm run dev:client exited with code SIGHUP[0m

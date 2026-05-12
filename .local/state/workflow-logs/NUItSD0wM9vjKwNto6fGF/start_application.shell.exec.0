@@ -1,0 +1,199 @@
+
+> proposalforge@1.0.0 dev
+> concurrently -n client,server -c cyan,yellow "npm run dev:client" "npm run dev:server"
+
+[1G[0K[36m[client][39m 
+[36m[client][39m > proposalforge@1.0.0 dev:client
+[36m[client][39m > cd client && npm run dev
+[36m[client][39m 
+[33m[server][39m 
+[33m[server][39m > proposalforge@1.0.0 dev:server
+[33m[server][39m > tsx watch server/index.ts
+[33m[server][39m 
+[36m[client][39m 
+[36m[client][39m > proposalforge-client@1.0.0 dev
+[36m[client][39m > vite --port 5000 --host
+[36m[client][39m 
+[36m[client][39m Port 5000 is in use, trying another one...
+[36m[client][39m Port 5001 is in use, trying another one...
+[36m[client][39m 
+[36m[client][39m   [32m[1mVITE[22m v6.4.2[39m  [2mready in [0m[1m1121[22m[2m[0m ms[22m
+[36m[client][39m 
+[36m[client][39m   [32m➜[39m  [1mLocal[22m:   [36mhttp://localhost:[1m5002[22m/[39m
+[36m[client][39m   [32m➜[39m  [1mNetwork[22m: [36mhttp://172.31.70.34:[1m5002[22m/[39m
+[33m[server][39m Database initialized
+[33m[server][39m Firebase Admin initialized successfully
+[33m[server][39m node:events:502
+[33m[server][39m       throw er; // Unhandled 'error' event
+[33m[server][39m       ^
+[33m[server][39m 
+[33m[server][39m Error: listen EADDRINUSE: address already in use 0.0.0.0:3000
+[33m[server][39m [90m    at Server.setupListenHandle [as _listen2] (node:net:1908:16)[39m
+[33m[server][39m [90m    at listenInCluster (node:net:1965:12)[39m
+[33m[server][39m [90m    at doListen (node:net:2139:7)[39m
+[33m[server][39m [90m    at process.processTicksAndRejections (node:internal/process/task_queues:83:21)[39m
+[33m[server][39m Emitted 'error' event on Server instance at:
+[33m[server][39m [90m    at emitErrorNT (node:net:1944:8)[39m
+[33m[server][39m [90m    at process.processTicksAndRejections (node:internal/process/task_queues:82:21)[39m {
+[33m[server][39m   code: [32m'EADDRINUSE'[39m,
+[33m[server][39m   errno: [33m-98[39m,
+[33m[server][39m   syscall: [32m'listen'[39m,
+[33m[server][39m   address: [32m'0.0.0.0'[39m,
+[33m[server][39m   port: [33m3000[39m
+[33m[server][39m }
+[33m[server][39m 
+[33m[server][39m Node.js v20.20.0
+[36m[client][39m [2m9:41:29 AM[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mpage reload [39m[2mindex.html[22m
+[36m[client][39m [2m9:41:41 AM[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mpage reload [39m[2mindex.html[22m
+[36m[client][39m [2m9:41:51 AM[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mpage reload [39m[2mindex.html[22m
+[36m[client][39m [2m9:41:52 AM[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mpage reload [39m[2mindex.html[22m
+[33m[server][39m [90m10:19:32 AM[39m [96m[tsx][39m [95mchange[39m in [92m./server/index.ts[39m [33mRerunning...[39m
+[33m[server][39m cDatabase initialized
+[33m[server][39m Firebase Admin initialized successfully
+[33m[server][39m node:events:502
+[33m[server][39m       throw er; // Unhandled 'error' event
+[33m[server][39m       ^
+[33m[server][39m 
+[33m[server][39m Error: listen EADDRINUSE: address already in use 0.0.0.0:3000
+[33m[server][39m [90m    at Server.setupListenHandle [as _listen2] (node:net:1908:16)[39m
+[33m[server][39m [90m    at listenInCluster (node:net:1965:12)[39m
+[33m[server][39m [90m    at doListen (node:net:2139:7)[39m
+[33m[server][39m [90m    at process.processTicksAndRejections (node:internal/process/task_queues:83:21)[39m
+[33m[server][39m Emitted 'error' event on Server instance at:
+[33m[server][39m [90m    at emitErrorNT (node:net:1944:8)[39m
+[33m[server][39m [90m    at process.processTicksAndRejections (node:internal/process/task_queues:82:21)[39m {
+[33m[server][39m   code: [32m'EADDRINUSE'[39m,
+[33m[server][39m   errno: [33m-98[39m,
+[33m[server][39m   syscall: [32m'listen'[39m,
+[33m[server][39m   address: [32m'0.0.0.0'[39m,
+[33m[server][39m   port: [33m3000[39m
+[33m[server][39m }
+[33m[server][39m 
+[33m[server][39m Node.js v20.20.0
+[33m[server][39m [90m10:19:40 AM[39m [96m[tsx][39m [95mchange[39m in [92m./server/lib/gemini.ts[39m [33mRerunning...[39m
+[33m[server][39m cDatabase initialized
+[33m[server][39m Firebase Admin initialized successfully
+[33m[server][39m node:events:502
+[33m[server][39m       throw er; // Unhandled 'error' event
+[33m[server][39m       ^
+[33m[server][39m 
+[33m[server][39m Error: listen EADDRINUSE: address already in use 0.0.0.0:3000
+[33m[server][39m [90m    at Server.setupListenHandle [as _listen2] (node:net:1908:16)[39m
+[33m[server][39m [90m    at listenInCluster (node:net:1965:12)[39m
+[33m[server][39m [90m    at doListen (node:net:2139:7)[39m
+[33m[server][39m [90m    at process.processTicksAndRejections (node:internal/process/task_queues:83:21)[39m
+[33m[server][39m Emitted 'error' event on Server instance at:
+[33m[server][39m [90m    at emitErrorNT (node:net:1944:8)[39m
+[33m[server][39m [90m    at process.processTicksAndRejections (node:internal/process/task_queues:82:21)[39m {
+[33m[server][39m   code: [32m'EADDRINUSE'[39m,
+[33m[server][39m   errno: [33m-98[39m,
+[33m[server][39m   syscall: [32m'listen'[39m,
+[33m[server][39m   address: [32m'0.0.0.0'[39m,
+[33m[server][39m   port: [33m3000[39m
+[33m[server][39m }
+[33m[server][39m 
+[33m[server][39m Node.js v20.20.0
+[33m[server][39m [90m10:19:44 AM[39m [96m[tsx][39m [95mchange[39m in [92m./server/lib/baseUrl.ts[39m [33mRerunning...[39m
+[33m[server][39m cDatabase initialized
+[33m[server][39m Firebase Admin initialized successfully
+[33m[server][39m Server running on port 3000
+[33m[server][39m Stripe schema ready
+[33m[server][39m Stripe init failed (optional): Failed to fetch Stripe credentials: 401 Unauthorized
+[33m[server][39m [90m10:19:58 AM[39m [96m[tsx][39m [95mchange[39m in [92m./server/index.ts[39m [33mRestarting...[39m
+[33m[server][39m cDatabase initialized
+[33m[server][39m Firebase Admin initialized successfully
+[33m[server][39m node:events:502
+[33m[server][39m       throw er; // Unhandled 'error' event
+[33m[server][39m       ^
+[33m[server][39m 
+[33m[server][39m Error: listen EADDRINUSE: address already in use 0.0.0.0:3000
+[33m[server][39m [90m    at Server.setupListenHandle [as _listen2] (node:net:1908:16)[39m
+[33m[server][39m [90m    at listenInCluster (node:net:1965:12)[39m
+[33m[server][39m [90m    at doListen (node:net:2139:7)[39m
+[33m[server][39m [90m    at process.processTicksAndRejections (node:internal/process/task_queues:83:21)[39m
+[33m[server][39m Emitted 'error' event on Server instance at:
+[33m[server][39m [90m    at emitErrorNT (node:net:1944:8)[39m
+[33m[server][39m [90m    at process.processTicksAndRejections (node:internal/process/task_queues:82:21)[39m {
+[33m[server][39m   code: [32m'EADDRINUSE'[39m,
+[33m[server][39m   errno: [33m-98[39m,
+[33m[server][39m   syscall: [32m'listen'[39m,
+[33m[server][39m   address: [32m'0.0.0.0'[39m,
+[33m[server][39m   port: [33m3000[39m
+[33m[server][39m }
+[33m[server][39m 
+[33m[server][39m Node.js v20.20.0
+[33m[server][39m [90m10:20:00 AM[39m [96m[tsx][39m [95mchange[39m in [92m./server/index.ts[39m [33mRerunning...[39m
+[33m[server][39m cDatabase initialized
+[33m[server][39m Firebase Admin initialized successfully
+[33m[server][39m node:events:502
+[33m[server][39m       throw er; // Unhandled 'error' event
+[33m[server][39m       ^
+[33m[server][39m 
+[33m[server][39m Error: listen EADDRINUSE: address already in use 0.0.0.0:3000
+[33m[server][39m [90m    at Server.setupListenHandle [as _listen2] (node:net:1908:16)[39m
+[33m[server][39m [90m    at listenInCluster (node:net:1965:12)[39m
+[33m[server][39m [90m    at doListen (node:net:2139:7)[39m
+[33m[server][39m [90m    at process.processTicksAndRejections (node:internal/process/task_queues:83:21)[39m
+[33m[server][39m Emitted 'error' event on Server instance at:
+[33m[server][39m [90m    at emitErrorNT (node:net:1944:8)[39m
+[33m[server][39m [90m    at process.processTicksAndRejections (node:internal/process/task_queues:82:21)[39m {
+[33m[server][39m   code: [32m'EADDRINUSE'[39m,
+[33m[server][39m   errno: [33m-98[39m,
+[33m[server][39m   syscall: [32m'listen'[39m,
+[33m[server][39m   address: [32m'0.0.0.0'[39m,
+[33m[server][39m   port: [33m3000[39m
+[33m[server][39m }
+[33m[server][39m 
+[33m[server][39m Node.js v20.20.0
+[33m[server][39m [90m10:20:09 AM[39m [96m[tsx][39m [95mchange[39m in [92m./server/index.ts[39m [33mRerunning...[39m
+[33m[server][39m cDatabase initialized
+[33m[server][39m Firebase Admin initialized successfully
+[33m[server][39m Server running on port 3000
+[33m[server][39m Stripe schema ready
+[33m[server][39m Stripe init failed (optional): Failed to fetch Stripe credentials: 401 Unauthorized
+[33m[server][39m [90m10:20:17 AM[39m [96m[tsx][39m [95mchange[39m in [92m./server/stripeClient.ts[39m [33mRestarting...[39m
+[33m[server][39m cDatabase initialized
+[33m[server][39m Firebase Admin initialized successfully
+[33m[server][39m node:events:502
+[33m[server][39m       throw er; // Unhandled 'error' event
+[33m[server][39m       ^
+[33m[server][39m 
+[33m[server][39m Error: listen EADDRINUSE: address already in use 0.0.0.0:3000
+[33m[server][39m [90m    at Server.setupListenHandle [as _listen2] (node:net:1908:16)[39m
+[33m[server][39m [90m    at listenInCluster (node:net:1965:12)[39m
+[33m[server][39m [90m    at doListen (node:net:2139:7)[39m
+[33m[server][39m [90m    at process.processTicksAndRejections (node:internal/process/task_queues:83:21)[39m
+[33m[server][39m Emitted 'error' event on Server instance at:
+[33m[server][39m [90m    at emitErrorNT (node:net:1944:8)[39m
+[33m[server][39m [90m    at process.processTicksAndRejections (node:internal/process/task_queues:82:21)[39m {
+[33m[server][39m   code: [32m'EADDRINUSE'[39m,
+[33m[server][39m   errno: [33m-98[39m,
+[33m[server][39m   syscall: [32m'listen'[39m,
+[33m[server][39m   address: [32m'0.0.0.0'[39m,
+[33m[server][39m   port: [33m3000[39m
+[33m[server][39m }
+[33m[server][39m 
+[33m[server][39m Node.js v20.20.0
+[33m[server][39m [90m10:20:20 AM[39m [96m[tsx][39m [95mchange[39m in [92m./server/stripeClient.ts[39m [33mRerunning...[39m
+[33m[server][39m cDatabase initialized
+[33m[server][39m Firebase Admin initialized successfully
+[33m[server][39m node:events:502
+[33m[server][39m       throw er; // Unhandled 'error' event
+[33m[server][39m       ^
+[33m[server][39m 
+[33m[server][39m Error: listen EADDRINUSE: address already in use 0.0.0.0:3000
+[33m[server][39m [90m    at Server.setupListenHandle [as _listen2] (node:net:1908:16)[39m
+[33m[server][39m [90m    at listenInCluster (node:net:1965:12)[39m
+[33m[server][39m [90m    at doListen (node:net:2139:7)[39m
+[33m[server][39m [90m    at process.processTicksAndRejections (node:internal/process/task_queues:83:21)[39m
+[33m[server][39m Emitted 'error' event on Server instance at:
+[33m[server][39m [90m    at emitErrorNT (node:net:1944:8)[39m
+[33m[server][39m [90m    at process.processTicksAndRejections (node:internal/process/task_queues:82:21)[39m {
+[33m[server][39m   code: [32m'EADDRINUSE'[39m,
+[33m[server][39m   errno: [33m-98[39m,
+[33m[server][39m   syscall: [32m'listen'[39m,
+[33m[server][39m   address: [32m'0.0.0.0'[39m,
+[33m[server][39m   port: [33m3000[39m
+[33m[server][39m }
+[33m[server][39m 
+[33m[server][39m Node.js v20.20.0
