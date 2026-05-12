@@ -214,11 +214,11 @@ export function Landing() {
           }} />
         </div>
 
-        <div className="relative w-full max-w-6xl mx-auto px-4 sm:px-6 py-8 sm:py-20 md:py-0">
-          <div className="flex flex-col lg:flex-row items-center gap-8 lg:gap-16">
+        <div className="relative w-full max-w-6xl mx-auto px-4 sm:px-6 py-8 sm:py-16 md:py-0">
+          <div className="flex flex-col md:flex-row items-center gap-8 md:gap-12 lg:gap-16">
 
             {/* Left: Copy */}
-            <div className="flex-1 text-center lg:text-left">
+            <div className="flex-1 text-center md:text-left">
               {/* Badge */}
               <div className="inline-flex items-center gap-1.5 bg-indigo-500/10 border border-indigo-500/30 text-indigo-300 rounded-full px-3 py-1 text-xs font-medium mb-3 sm:mb-6">
                 <Sparkles className="h-3 w-3 shrink-0" />
@@ -235,12 +235,12 @@ export function Landing() {
                 </span>
               </h1>
 
-              <p className="text-sm sm:text-lg text-slate-400 max-w-lg mx-auto lg:mx-0 mb-4 sm:mb-8 leading-relaxed">
+              <p className="text-sm sm:text-lg text-slate-400 max-w-lg mx-auto md:mx-0 mb-4 sm:mb-8 leading-relaxed">
                 Describe your project and get a fully written, branded proposal with scope, deliverables, and pricing — in under a minute.
               </p>
 
               {/* CTA */}
-              <div className="flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-2.5 sm:gap-3 mb-4 sm:mb-8">
+              <div className="flex flex-col sm:flex-row items-center justify-center md:justify-start gap-2.5 sm:gap-3 mb-4 sm:mb-8">
                 <Link href="/auth" className="w-full sm:w-auto">
                   <Button size="lg" className="w-full sm:w-auto h-10 sm:h-12 px-8 gap-2 text-sm sm:text-base bg-indigo-600 hover:bg-indigo-500 border-0 shadow-xl shadow-indigo-900/60 font-semibold">
                     <Sparkles className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
@@ -253,7 +253,7 @@ export function Landing() {
               </div>
 
               {/* Trust row */}
-              <div className="flex flex-wrap items-center justify-center lg:justify-start gap-x-4 gap-y-1.5">
+              <div className="flex flex-wrap items-center justify-center md:justify-start gap-x-4 gap-y-1.5">
                 <div className="flex items-center gap-2">
                   <div className="flex -space-x-2">
                     {['SC', 'MR', 'PN', 'JK'].map((initials, i) => (
@@ -275,7 +275,7 @@ export function Landing() {
             </div>
 
             {/* Mobile-only: compact proof strip */}
-            <div className="lg:hidden w-full mt-1">
+            <div className="md:hidden w-full mt-1">
               <div className="bg-white/5 border border-white/10 rounded-2xl overflow-hidden">
                 {/* Header bar */}
                 <div className="flex items-center gap-2 px-3 py-2 border-b border-white/10 bg-white/5">
@@ -326,8 +326,8 @@ export function Landing() {
               </div>
             </div>
 
-            {/* Right: Proposal card mockup (desktop only) */}
-            <div className="hidden lg:block flex-1 w-full max-w-md lg:max-w-none relative">
+            {/* Right: Proposal card mockup (tablet + desktop) */}
+            <div className="hidden md:block flex-1 w-full max-w-sm md:max-w-md lg:max-w-none relative">
               {/* Glow behind card */}
               <div className="absolute inset-0 bg-indigo-600/20 blur-3xl rounded-3xl scale-90" />
 
@@ -484,7 +484,7 @@ export function Landing() {
               ProposalForge handles the writing so you can focus on winning the work.
             </p>
           </div>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
             {[
               {
                 step: '01',
@@ -524,7 +524,7 @@ export function Landing() {
                 <h3 className="text-base font-bold text-slate-900 mb-2">{title}</h3>
                 <p className="text-slate-500 text-sm leading-relaxed">{desc}</p>
                 {idx < 2 && (
-                  <div className="hidden md:block absolute top-10 -right-4 z-10">
+                  <div className="hidden lg:block absolute top-10 -right-4 z-10">
                     <ArrowRight className="h-5 w-5 text-slate-200" />
                   </div>
                 )}
@@ -604,7 +604,7 @@ export function Landing() {
             </h2>
             <p className="text-slate-400 text-sm sm:text-lg">Real results from real users.</p>
           </div>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-5">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-5">
             {testimonials.map((t) => (
               <div key={t.name} className="flex flex-col bg-slate-50 border border-slate-100 rounded-2xl p-6 hover:shadow-md transition-shadow">
                 <div className="flex gap-0.5 mb-4">
