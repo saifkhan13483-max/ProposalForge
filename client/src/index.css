@@ -169,3 +169,8 @@
   animation: marquee 18s linear infinite;
 }
 .animate-marquee:hover { animation-play-state: paused; }
+
+/* Hide Replit watermark */
+#replit-badge { display: none !important; }
+[data-replit-badge] { display: none !important; }
+iframe[src*="replit.com/badge"] { display: none !important; }
