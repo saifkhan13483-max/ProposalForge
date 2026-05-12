@@ -123,9 +123,7 @@ export function Landing() {
       <header className="sticky top-0 z-50 border-b bg-white/90 backdrop-blur-sm">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">
           <div className="flex items-center gap-2.5">
-            <div className="h-8 w-8 rounded-lg bg-indigo-600 flex items-center justify-center shadow-sm shrink-0">
-              <Sparkles className="h-4 w-4 text-white" />
-            </div>
+            <img src="/logo.png" alt="ProposalForge" className="h-8 w-8 object-contain shrink-0" />
             <span className="font-bold text-lg" style={{ fontFamily: 'Bricolage Grotesque, sans-serif' }}>
               ProposalForge
             </span>

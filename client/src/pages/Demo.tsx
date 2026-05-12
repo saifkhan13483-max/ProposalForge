@@ -77,9 +77,7 @@ export function Demo() {
         <div className="max-w-6xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">
           <Link href="/">
             <div className="flex items-center gap-2 sm:gap-2.5 cursor-pointer">
-              <div className="h-8 w-8 rounded-lg bg-indigo-600 flex items-center justify-center shrink-0">
-                <Sparkles className="h-4 w-4 text-white" />
-              </div>
+              <img src="/logo.png" alt="ProposalForge" className="h-8 w-8 object-contain shrink-0" />
               <span className="font-bold text-lg" style={{ fontFamily: 'Bricolage Grotesque, sans-serif' }}>
                 ProposalForge
               </span>

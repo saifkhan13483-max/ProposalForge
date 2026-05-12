@@ -4,7 +4,7 @@ import { Button } from '@/components/ui/button'
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from '@/components/ui/dropdown-menu'
 import {
   LayoutDashboard, FileText, Receipt, Users, Settings, LogOut, ChevronDown,
-  Sparkles, Menu, X, Crown, BarChart3
+  Menu, X, Crown, BarChart3
 } from 'lucide-react'
 import { useState } from 'react'
 import { cn } from '@/lib/utils'
@@ -31,9 +31,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
       )}>
         {/* Logo */}
         <div className="flex items-center gap-2.5 px-5 py-5 border-b border-sidebar-border">
-          <div className="h-8 w-8 rounded-lg bg-primary flex items-center justify-center">
-            <Sparkles className="h-4 w-4 text-white" />
-          </div>
+          <img src="/logo.png" alt="ProposalForge" className="h-8 w-8 object-contain shrink-0" />
           <span className="font-bold text-sidebar-foreground text-lg tracking-tight" style={{ fontFamily: 'Bricolage Grotesque, sans-serif' }}>
             ProposalForge
           </span>

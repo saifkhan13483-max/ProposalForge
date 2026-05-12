@@ -92,9 +92,7 @@ export function Onboarding() {
     <div className="min-h-screen bg-gradient-to-br from-slate-900 via-indigo-950 to-slate-900 flex items-center justify-center p-6">
       <div className="w-full max-w-lg">
         <div className="flex items-center justify-center gap-2 mb-10">
-          <div className="h-10 w-10 rounded-xl bg-indigo-600 flex items-center justify-center">
-            <Sparkles className="h-5 w-5 text-white" />
-          </div>
+          <img src="/logo.png" alt="ProposalForge" className="h-10 w-10 object-contain shrink-0" />
           <span className="text-white font-bold text-xl" style={{ fontFamily: 'Bricolage Grotesque, sans-serif' }}>
             ProposalForge
           </span>

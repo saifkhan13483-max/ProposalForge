@@ -92,9 +92,7 @@ export function Auth() {
         </div>
 
         <div className="relative z-10 flex items-center gap-3 mb-16">
-          <div className="h-10 w-10 rounded-xl bg-indigo-500 flex items-center justify-center shadow-lg shadow-indigo-500/40">
-            <Sparkles className="h-5 w-5 text-white" />
-          </div>
+          <img src="/logo.png" alt="ProposalForge" className="h-10 w-10 object-contain shrink-0" />
           <span className="text-white font-bold text-xl" style={{ fontFamily: 'Bricolage Grotesque, sans-serif' }}>ProposalForge</span>
         </div>
 
