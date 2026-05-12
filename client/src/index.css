@@ -171,6 +171,19 @@
 .animate-marquee:hover { animation-play-state: paused; }
 
 /* Hide Replit watermark */
-#replit-badge { display: none !important; }
-[data-replit-badge] { display: none !important; }
-iframe[src*="replit.com/badge"] { display: none !important; }
+#replit-badge,
+[data-replit-badge],
+[id*="replit"],
+[class*="replit-badge"],
+iframe[src*="replit.com"],
+a[href*="replit.com/badge"],
+div[data-cy="replit-badge"] {
+  display: none !important;
+  visibility: hidden !important;
+  opacity: 0 !important;
+  pointer-events: none !important;
+  width: 0 !important;
+  height: 0 !important;
+  position: absolute !important;
+  overflow: hidden !important;
+}
