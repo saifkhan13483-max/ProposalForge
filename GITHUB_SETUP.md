@@ -11,9 +11,9 @@ A complete step-by-step guide to push this project from your local machine to Gi
 
 ---
 
-## Step 1: Download the Project from Replit
+## Step 1: Download the Project Files
 
-1. Open your Replit project
+1. Open your project editor
 2. Click the three-dot menu **(...)** in the top-right corner of the file tree
 3. Select **Download as zip**
 4. Extract the downloaded `.zip` file to a folder on your computer (e.g., `proposal-forge`)

@@ -19,7 +19,7 @@ function getAI(): GoogleGenAI {
     return new GoogleGenAI({ apiKey: legacyKey })
   }
 
-  throw new Error('AI generation not configured. Please add a Gemini API key or enable the Replit AI integration.')
+  throw new Error('AI generation not configured. Please set the GEMINI_API_KEY environment variable.')
 }
 
 export async function generateContent(prompt: string): Promise<string> {

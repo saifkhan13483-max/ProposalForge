@@ -11,5 +11,5 @@
     "types": ["node"]
   },
   "include": ["./**/*.ts"],
-  "exclude": ["node_modules", "dist", "replit_integrations", "integrations"]
+  "exclude": ["node_modules", "dist", "integrations"]
 }

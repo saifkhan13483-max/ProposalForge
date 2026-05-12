@@ -38,7 +38,7 @@ ProposalForge is a full-stack SaaS application built for freelancers who want to
 | **Database** | PostgreSQL via raw `pg` pool (no ORM) |
 | **Auth** | Firebase Authentication (email/password + Google OAuth); Firebase Admin SDK for token verification |
 | **AI** | Google Gemini 1.5 Flash (`@google/generative-ai`) |
-| **Payments** | Stripe (via `stripe-replit-sync` on Replit or `STRIPE_SECRET_KEY` on Railway) |
+| **Payments** | Stripe (via `STRIPE_SECRET_KEY` on Railway or sync connector when available) |
 | **Email** | Resend API |
 | **PDF** | pdfmake (pure Node.js, no Chromium) |
 
@@ -69,7 +69,7 @@ proposalforge/
 │   ├── middleware/auth.ts     # Firebase token middleware
 │   ├── db.ts                 # PostgreSQL schema + initDB()
 │   ├── firebaseAdmin.ts      # Firebase Admin SDK singleton
-│   ├── stripeClient.ts       # Stripe client (Replit connector → env var fallback)
+│   ├── stripeClient.ts       # Stripe client (connector → env var fallback)
 │   └── index.ts              # Express app entry point
 ├── railway.toml              # Railway deployment config
 ├── vercel.json               # Vercel deployment config
@@ -83,7 +83,7 @@ proposalforge/
 ### Prerequisites
 
 - Node.js 20+
-- PostgreSQL database (or use Replit's built-in DB)
+- PostgreSQL database (e.g. [Neon](https://neon.tech) — free tier available)
 - Firebase project with Authentication enabled
 - Google Gemini API key (optional — AI features degrade gracefully)
 

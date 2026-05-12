@@ -170,7 +170,7 @@
 }
 .animate-marquee:hover { animation-play-state: paused; }
 
-/* Hide Replit watermark */
+/* Hide injected watermark badge */
 #replit-badge,
 [data-replit-badge],
 [id*="replit"],

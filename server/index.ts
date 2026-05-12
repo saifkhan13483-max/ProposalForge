@@ -25,7 +25,7 @@ const app = express()
 const PORT = parseInt(process.env.SERVER_PORT || process.env.PORT || '3000')
 const isProd = process.env.NODE_ENV === 'production'
 
-// Trust proxy — required on Replit (behind a reverse proxy) for rate limiting and IP detection
+// Trust proxy — required when running behind a reverse proxy (Vercel, Railway, etc.)
 app.set('trust proxy', 1)
 
 // Security headers
@@ -74,13 +74,13 @@ app.post(
     }
 
     const sig = Array.isArray(signature) ? signature[0] : signature
-    const isReplit = !!(process.env.REPLIT_DOMAINS || process.env.REPL_ID)
+    const useSyncConnector = !!(process.env.REPLIT_CONNECTORS_HOSTNAME || process.env.REPL_ID)
 
     let event: { type: string; data: { object: Record<string, unknown> } }
 
     try {
-      if (isReplit) {
-        // On Replit: use stripe-replit-sync to verify + mirror to stripe.* tables
+      if (useSyncConnector) {
+        // Use stripe sync connector to verify + mirror to stripe.* tables
         const { getStripeSync } = await import('./stripeClient.js')
         const sync = await getStripeSync()
         await sync.processWebhook(req.body, sig)
@@ -90,9 +90,7 @@ app.post(
           return res.status(400).json({ error: 'Invalid webhook JSON' })
         }
       } else {
-        // On Railway / any non-Replit host: verify directly with the Stripe SDK.
-        // stripe-replit-sync is intentionally NOT used here — it requires Replit
-        // infrastructure that won't be available outside of Replit.
+        // On Railway / Vercel: verify directly with the Stripe SDK.
         const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET
         if (!webhookSecret) {
           // No secret configured — accept but warn (useful during initial setup)
@@ -175,8 +173,6 @@ const TRUSTED_SUFFIXES = [
   '.vercel.app',
   '.railway.app',
   '.up.railway.app',
-  '.replit.app',
-  '.replit.dev',
 ]
 
 const corsOptions: cors.CorsOptions = {
@@ -257,11 +253,11 @@ app.use((err: Error, _req: express.Request, res: express.Response, _next: expres
 })
 
 async function initStripe() {
-  // stripe-replit-sync only works in Replit environments.
-  // On Railway/other hosts it will hang trying to reach Replit connectors, so skip it.
-  const isReplit = !!(process.env.REPLIT_DOMAINS || process.env.REPL_ID)
+  // Sync connector (uses connector hostname env vars) — only available in specific environments.
+  // On Railway/Vercel it will fall back to STRIPE_SECRET_KEY env var.
+  const useSyncConnector = !!(process.env.REPLIT_CONNECTORS_HOSTNAME || process.env.REPL_ID)
 
-  if (isReplit) {
+  if (useSyncConnector) {
     const { runMigrations } = await import('stripe-replit-sync')
     await runMigrations({ databaseUrl: process.env.DATABASE_URL! })
     console.log('Stripe schema ready')
@@ -269,12 +265,11 @@ async function initStripe() {
     const { getStripeSync } = await import('./stripeClient.js')
     const stripeSync = await getStripeSync()
 
-    const baseUrl = process.env.PUBLIC_URL
-      || (process.env.REPLIT_DOMAINS ? `https://${process.env.REPLIT_DOMAINS.split(',')[0]}` : `http://localhost:${PORT}`)
+    const baseUrl = process.env.PUBLIC_URL || `http://localhost:${PORT}`
 
     await stripeSync.findOrCreateManagedWebhook(`${baseUrl}/api/stripe/webhook`)
     stripeSync.syncBackfill().catch(err => console.error('Stripe backfill error:', err))
-    console.log('Stripe initialized (Replit)')
+    console.log('Stripe initialized (sync connector)')
   } else if (process.env.STRIPE_SECRET_KEY) {
     // On Railway: just validate the key is usable, no webhook registration needed here
     console.log('Stripe configured via STRIPE_SECRET_KEY')
