@@ -20,4 +20,4 @@ Disallow: /reset-password
 Disallow: /api/
 
 # Sitemap location
-Sitemap: https://proposalforge.replit.app/sitemap.xml
+Sitemap: https://proposal-forge-mu.vercel.app/sitemap.xml

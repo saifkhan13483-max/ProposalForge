@@ -114,7 +114,7 @@ export function Landing() {
   useSEO({
     title: 'AI-Powered Proposals & Invoices for Freelancers',
     description: 'Turn your project description into a polished client proposal in under 60 seconds. AI-powered proposals, quotes, and invoices for freelancers.',
-    canonical: 'https://proposalforge.replit.app/',
+    canonical: 'https://proposal-forge-mu.vercel.app/',
   })
 
   return (
