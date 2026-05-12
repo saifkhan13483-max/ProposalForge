@@ -12,3 +12,9 @@ id = "2RfIQtgnYRdjt9WuoK_-J"
 uri = "file://README.md"
 type = "text"
 title = "ProposalForge README"
+
+[[outputs]]
+id = "rLFwrYFnsAELJSVILUmRG"
+uri = "file://GITHUB_SETUP.md"
+type = "text"
+title = "GitHub Push Guide (Step-by-Step)"
